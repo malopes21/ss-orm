@@ -66,8 +66,6 @@ public class Main {
 		//interpreter.interpretar();
 		
 		
-		
-		
 		/*
 		System.out.println("\nAnalise Sintatica OK!");
 		analisadorSintaticoGA.mostraArvore();
