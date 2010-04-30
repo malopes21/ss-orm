@@ -1,0 +1,14 @@
+
+def principal ( ) : Nada { 
+
+	var v1 , v2 : Int ;
+
+	v1 = 2 ;
+	v2 = v1 + 3 ;
+	ver ( v2 ) ;
+	
+} 
+
+def bla ( n : Int , m : Int ) : Nada {
+	var v1 : Real ;
+}
