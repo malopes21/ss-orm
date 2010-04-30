@@ -1,0 +1,39 @@
+def soma ( a : Int , b : Int ) : Int {
+	var aux : Int ;
+	aux = a + b ;
+	ret aux ;
+}
+
+def principal ( ) : Nada { 
+
+	var v1 , v2 : Int ;
+	var v3 : Real ; 
+	var v4 : Str ; 
+	var a , b , aux : Str ;
+	
+	v1 = v2 ; 
+	v4 = "teste novo" ; 
+	ver ( "entre v2" ) ; 
+	ler ( v2 ) ; 				// leitura 
+	ver ( "valor de v2" ) ; 
+	ver ( v2 ) ; 
+	
+	se ( v1 > v2 ) { 
+		v1 = v1 + 20 ; 
+		v2 = 1 ; 
+	} senao { 
+		v3 = 5.2 ; 
+	} 
+	
+	enquanto ( v3 < 100 ) { 
+		v3 = v3 * 2 ; 
+	}
+	 
+	ver ( "valor de v3 : \n" ) ; 
+	ver ( v3 ) ; 
+	
+	var v5 : Int ;
+	v5 = soma ( v1 , v2 ) ;
+	soma ( v2 , v4 ) ;
+	ver ( v5 ) ;
+} 

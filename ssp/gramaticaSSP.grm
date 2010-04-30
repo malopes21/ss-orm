@@ -1,0 +1,79 @@
+"Name"     = 'Gram SSP'
+"Author"   = 'Malopes'
+"Version"  = '0_1'
+"About"    = 'Script de Scala em Portugues'
+ 
+"Start Symbol" = <Program>
+ 
+! ------------------------------------------------- Sets
+ 
+{ID Head}      = {Letter} + [_]
+{ID Tail}      = {Alphanumeric} + [_]
+{String Chars} = {Printable} + {HT} - ["]
+ 
+! ------------------------------------------------- Terminals
+ 
+Identifier    = {ID Head}{ID Tail}*
+StringLiteral = '"' {String Chars}* '"'
+IntegerLiteral = {Digit}+
+RealLiteral = {Digit}+ '.' {Digit}+
+ 
+! ------------------------------------------------- Rules
+ 
+<Program>   ::= <ListDef>
+ 
+<ListDef>   ::= <Def> <ListDef> |
+ 
+<def>       ::= 'def' Identifier '(' <ListArg> ')' ':' <Tipo> '{' <ListComand> '}'
+ 
+<ListArg>   ::= <Arg> <ListArg2> |
+ 
+<ListArg2>  ::= ',' <Arg> <ListArg2> |
+ 
+<Arg>       ::= Identifier ':' <Tipo>
+ 
+<Tipo>      ::= 'Int' | 'Real' | 'Str' | 'Nada'
+ 
+<ListComand> ::= <Comand> <ListComand> |
+ 
+<Comand>    ::= <Decl> ';' | <Atrib> ';' | <While> | <If> | <Ler> ';' | <Ver> ';' | <Ret> ';' | <Call> ';' | '{' <ListComand> '}'
+ 
+<Decl>      ::= 'var' <ListId> ':' <Tipo>
+ 
+<ListId>    ::= Identifier <ListId2> 
+
+<ListId2>  ::=  ',' Identifier <ListId2> | 
+ 
+<Atrib>     ::= Identifier '=' <ExpAtrib>
+ 
+<ExpAtrib>  ::= <Operan> <ExpAtrib2>
+ 
+<ExpAtrib2> ::= <OpArit> <Operan> <ExpAtrib2> |
+ 
+<OpArit>    ::= '+' | '-' | '*' | '/'
+
+<Operan>   ::= Identifier | IntegerLiteral | RealLiteral | StringLiteral | <Call>
+ 
+<While>     ::= 'enquanto' '(' <ExpCond> ')' <Comand>
+
+<If>        ::= 'se' '(' <ExpCond> ')' <Comand> <Else>
+ 
+<Else>      ::= 'senao' <Comand> |
+ 
+<ExpCond>   ::= <Operan> <OpCond> <Operan>
+ 
+<OpCond>    ::= '>' | '<' | '>=' | '<=' | '!=' | '=='
+ 
+<Ler>       ::= 'ler' '(' Identifier ')'
+ 
+<Ver>       ::= 'ver' '(' <Operan> ')'
+ 
+//////<Operan2>   ::= Identifier | StringLiteral
+ 
+<Ret>       ::= 'ret' <Operan>
+ 
+<Call>      ::= Identifier '(' <ListParam> ')'
+ 
+<ListParam> ::= <Operan> <ListParam2> |
+ 
+<ListParam2> ::= ',' <Operan> <ListParam2> |
