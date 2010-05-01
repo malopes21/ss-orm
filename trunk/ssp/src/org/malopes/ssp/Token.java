@@ -61,6 +61,11 @@ public class Token {
 	}
 
 	@Override
+	public String toString() {
+		return imagem;
+	}
+	
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
