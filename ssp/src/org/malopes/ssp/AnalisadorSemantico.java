@@ -103,7 +103,7 @@ public class AnalisadorSemantico {
 		Token id = node.getFilho(1).getToken();
 		String tipoBuscado = TabelaSimbolos.getTipoSimbolo(id);
 		if (tipoBuscado != null) {
-			erros.add("Erro sem‚ntico: identificador de funÁ„o '" + id.getImagem() + "' redeclarado! Linha: " + id.getLinha() + ", coluna: " + id.getColuna() );
+			erros.add("Erro semantico: identificador de funcao '" + id.getImagem() + "' redeclarado! Linha: " + id.getLinha() + ", coluna: " + id.getColuna() );
 		}
 		TabelaSimbolos.setTipoSimbolo(id, tipo);
 		
@@ -140,7 +140,7 @@ public class AnalisadorSemantico {
 		Token id = node.getFilho(0).getToken();
 		String tipoBuscado = TabelaSimbolos.getTipoSimbolo(id);
 		if (tipoBuscado != null) {
-			erros.add("Erro sem‚ntico: identificador de argumento '" + id.getImagem() + "' redeclarado! Linha: " + id.getLinha() + ", coluna: " + id.getColuna() );
+			erros.add("Erro semantico: identificador de argumento '" + id.getImagem() + "' redeclarado! Linha: " + id.getLinha() + ", coluna: " + id.getColuna() );
 		}
 		TabelaSimbolos.setTipoSimbolo(id, tipo);
 		
@@ -157,6 +157,11 @@ public class AnalisadorSemantico {
 	 * <ListComand> ::= <Comand> <ListComand> |
 	 */
 	private Object listComand(Node node) {
+		if(node.getFilhos().size() > 0) {
+			analisar(node.getFilho(0));
+			analisar(node.getFilho(1));	
+		}
+		
 		return null;
 	}
 
@@ -165,6 +170,13 @@ public class AnalisadorSemantico {
 	 * <Ver> ';' | <Ret> ';' | <Call> ';' | '{' <ListComand> '}'
 	 */
 	private Object comand(Node node) {
+		
+		if(node.getFilhos().size() < 3) {
+			analisar(node.getFilho(0));
+		} else {
+			analisar(node.getFilho(1));
+		}
+		
 		return null;
 	}
 
@@ -172,6 +184,31 @@ public class AnalisadorSemantico {
 	 * <Atrib> ::= Identifier '=' <ExpAtrib>
 	 */
 	private Object atrib(Node node) {
+		Token id = node.getFilho(0).getToken();
+		List<Token> listOperan = (List<Token>) analisar(node.getFilho(2));
+		
+		String tipoId = TabelaSimbolos.getTipoSimbolo(id);
+		if (tipoId == null) {
+			erros.add("Erro semantico: identificador de vari√°vel '" + id.getImagem() + "' n√£o declarado! Linha: " + id.getLinha() + ", coluna: " + id.getColuna() );
+		} else {
+			for(Token operan : listOperan) {
+				String tipoOperan = null;
+				if(operan.getClasse() == Classe.Identificador) {
+					tipoOperan = TabelaSimbolos.getTipoSimbolo(operan);
+					if (tipoOperan == null) {
+						erros.add("Erro semantico: identificador de vari√°vel '" + operan.getImagem() + "' n√£o declarado! Linha: " + operan.getLinha() + ", coluna: " + operan.getColuna() );
+						break;
+					}
+				} else {
+					tipoOperan = TabelaSimbolos.getTipoCompativel(operan.getClasse());
+				}
+				if (!tipoId.equals(tipoOperan)) {
+					erros.add("Erro semantico: operando '" + operan.getImagem() + "' com tipo incimpativel! Linha: " + operan.getLinha() + ", coluna: " + operan.getColuna() );
+					break;
+				}
+			}
+		}
+		
 		return null;
 	}
 
@@ -179,38 +216,33 @@ public class AnalisadorSemantico {
 	 * <ExpAtrib> ::= <Operan> <ExpAtrib2>
 	 */
 	private Object exprAtrib(Node node) {
-/*		Object operan = interpretar(node.getFilho(0));
-		if (node.getFilho(1).getFilhos().size() > 0) {
-			String operador = node.getFilho(1).getFilho(0).getFilho(0).getToken().getImagem();
-			Object exprAtrib2 = interpretar(node.getFilho(1));
-			return calcula(operan, exprAtrib2, operador);
-		}
-		return operan;
-*/	
-		return null;	
+		Token operan = (Token) analisar(node.getFilho(0));
+		List<Token> listOperan = (List<Token>) analisar(node.getFilho(1));
+		listOperan.add(operan);
+		
+		return listOperan;
 	}
 
 	/**
 	 * <ExpAtrib2> ::= <OpArit> <Operan> <ExpAtrib2> |
 	 */
 	private Object exprAtrib2(Node node) {
-/*		Object operan = interpretar(node.getFilho(1));
-		if (node.getFilho(2).getFilhos().size() > 0) {
-			String operador = node.getFilho(2).getFilho(0).getToken().getImagem();
-			Object exprAtrib2 = interpretar(node.getFilho(2));
-			return calcula(operan, exprAtrib2, operador);
+		if(node.getFilhos().size() == 0) {
+			return new ArrayList<Token>();
 		}
-		return operan;
-*/	
-		return null;	
+				
+		Token operan = (Token) analisar(node.getFilho(1));
+		List<Token> listOperan = (List<Token>) analisar(node.getFilho(2));
+		listOperan.add(operan);
+		
+		return listOperan;
 	}
-	
 
 	/**
 	 * <Operan>   ::= Identifier | IntegerLiteral | RealLiteral | StringLiteral | <Call>
 	 */
 	private Object operan(Node node) {
-		return null;
+		return node.getFilho(0);
 	}
 
 	public void mostraErros() {
