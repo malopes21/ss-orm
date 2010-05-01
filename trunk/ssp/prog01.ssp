@@ -25,15 +25,15 @@ def principal ( ) : Nada {
 		v3 = 5.2 ; 
 	} 
 	
-	enquanto ( v3 < 100 ) { 
-		v3 = v3 * 2 ; 
+	enquanto ( v3 < 100.0 ) { 
+		v3 = v3 * 2.0 ; 
 	}
 	 
 	ver ( "valor de v3 : \n" ) ; 
 	ver ( v3 ) ; 
 	
 	var v5 : Int ;
-	v5 = soma ( v1 , v2 ) ;
+	//v5 = soma ( v1 , v2 ) ;
 	soma ( v2 , v4 ) ;
 	ver ( v5 ) ;
 } 
