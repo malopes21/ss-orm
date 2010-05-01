@@ -7,8 +7,11 @@ def principal ( ) : Nada {
 	v2 = v1 + 3 ;
 	ver ( v2 ) ;
 	
+	var v3 : Real ;
+	v3 = 3.4 ;
+	
 } 
 
-def bla ( n : Int , m : Int ) : Nada {
+def bla ( n : Int , m : Str ) : Nada {
 	var v1 : Real ;
 }
