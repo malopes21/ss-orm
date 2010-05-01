@@ -1,11 +1,15 @@
 package org.malopes.ssp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Simbolo {
 
 	private Token token;
 	private String escopo;
 	private String tipo;
 	private Object valor;
+	private List<Token> params = new ArrayList<Token>();
 
 	public Simbolo() {
 	}
@@ -19,6 +23,10 @@ public class Simbolo {
 		this.escopo = escopo;
 		this.tipo = tipo;
 		this.valor = value;
+	}
+	
+	public void addParam(Token param) {
+		params.add(param);
 	}
 
 	public Object getValor() {

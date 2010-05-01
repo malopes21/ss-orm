@@ -36,16 +36,13 @@ public class AnalisadorSemantico {
 			break;
 
 		case ListArg:
-			listArg(node);
-			break;
+			return listArg(node);
 
 		case ListArg2:
-			listArg2(node);
-			break;
+			return listArg2(node);
 		
 		case Arg:
-			arg(node);
-			break;
+			return arg(node);
 			
 		case Tipo:
 			return tipo(node);
@@ -105,6 +102,15 @@ public class AnalisadorSemantico {
 			ver(node);
 			break;
 			
+		case Call:
+			return call(node);
+			
+		case ListParam:
+			return listParam(node);
+			
+		case ListParam2:
+			return listParam2(node);
+			
 		default:
 			System.out.println("Tipo de node desconhecido: " + node.getTipo().name());
 			break;
@@ -129,8 +135,7 @@ public class AnalisadorSemantico {
 	}
 	
 	/**
-	 * <def> ::= 'def' Identifier '(' <ListArg> ')' ':' <Tipo> '{' <ListComand>
-	 * '}'
+	 * <def> ::= 'def' Identifier '(' <ListArg> ')' ':' <Tipo> '{' <ListComand> '}'
 	 */
 	private Object def(Node node) {
 		String tipo = (String) analisar(node.getFilho(6));
@@ -141,7 +146,11 @@ public class AnalisadorSemantico {
 		}
 		TabelaSimbolos.setTipoSimbolo(id, tipo);
 		
-		analisar(node.getFilho(3));
+		List<Token> listArg = (List<Token>) analisar(node.getFilho(3));
+		for(int i = listArg.size()-1; i>=0; i--) {
+			//TabelaSimbolos
+		}
+		
 		analisar(node.getFilho(8));
 		return null;
 	}
@@ -149,27 +158,36 @@ public class AnalisadorSemantico {
 	/**
 	 *	<ListArg>   ::= <Arg> <ListArg2> | 
 	 */
-	private void listArg(Node node) {
-		if (node.getFilhos().size() > 0) {
-			analisar(node.getFilho(0));
-			analisar(node.getFilho(1));
+	private Object listArg(Node node) {
+		if(node.getFilhos().size() == 0) {
+			return new ArrayList<Token>();
 		}
+		
+		Token arg = (Token) analisar(node.getFilho(0));
+		List<Token> listArg2 = (List<Token>) analisar(node.getFilho(1));
+		listArg2.add(arg);
+		return listArg2;
+		
 	}
 	
 	/**
 	 * <ListArg2>  ::= ',' <Arg> <ListArg2> |
 	 */
-	private void listArg2(Node node) {
-		if (node.getFilhos().size() > 0) {
-			analisar(node.getFilho(1));
-			analisar(node.getFilho(2));
+	private Object listArg2(Node node) {
+		if(node.getFilhos().size() == 0) {
+			return new ArrayList<Token>();
 		}
+		
+		Token arg = (Token) analisar(node.getFilho(1));
+		List<Token> listArg2 = (List<Token>) analisar(node.getFilho(2));
+		listArg2.add(arg);
+		return listArg2;
 	}
 
 	/**
 	 * <Arg>       ::= Identifier ':' <Tipo>
 	 */
-	private void arg(Node node) {
+	private Object arg(Node node) {
 		String tipo = (String) analisar(node.getFilho(2));
 		Token id = node.getFilho(0).getToken();
 		String tipoBuscado = TabelaSimbolos.getTipoSimbolo(id);
@@ -177,6 +195,7 @@ public class AnalisadorSemantico {
 			erros.add("Erro semantico: identificador de argumento '" + id.getImagem() + "' redeclarado! Linha: " + id.getLinha() + ", coluna: " + id.getColuna() );
 		}
 		TabelaSimbolos.setTipoSimbolo(id, tipo);
+		return id;
 		
 	}
 	
@@ -276,16 +295,54 @@ public class AnalisadorSemantico {
 	 * <Operan>   ::= Identifier | IntegerLiteral | RealLiteral | StringLiteral | <Call>
 	 */
 	private Object operan(Node node) {
+		if (node.getFilho(0).getTipo() == TipoOfNode.Call) {
+			return analisar(node.getFilho(0));
+		}
 		return node.getFilho(0).getToken();
 	}
 
-	public void mostraErros() {
-		for (String erro : erros) {
-			System.err.println(erro);
+	/**
+	 * <Call>      ::= Identifier '(' <ListParam> ')' 
+	 */
+	public Object call(Node node) {
+		Token defId = node.getFilho(0).getToken();
+		String tipo = TabelaSimbolos.getTipoDefSimbolo(defId);
+		TabelaSimbolos.setTipoSimbolo(defId, tipo);
+		//verificar os tipos dos argumentos passados na chamada
+		List<Token> listParam = (List<Token>) analisar(node.getFilho(2));
+		for(Token param : listParam) {
+			
 		}
+		
+		return defId;
 	}
 	
+	/*
+	 * <ListParam> ::= <Operan> <ListParam2> |
+	 */
+	private Object listParam(Node node) {
+		if(node.getFilhos().size() == 0) {
+			return new ArrayList<Token>();
+		}
+		Token operan = (Token) analisar(node.getFilho(0));
+		List<Token> listParam2 = (List<Token>) analisar(node.getFilho(1));
+		listParam2.add(operan);
+		return listParam2;
+	}
 
+	/*
+	 * <ListParam2> ::= ',' <Operan> <ListParam2> |
+	 */
+	private Object listParam2(Node node) {
+		if(node.getFilhos().size() == 0) {
+			return new ArrayList<Token>();
+		}
+		Token operan = (Token) analisar(node.getFilho(1));
+		List<Token> listParam2 = (List<Token>) analisar(node.getFilho(2));
+		listParam2.add(operan);
+		return listParam2;
+	}
+	
 	/**
 	 * <Decl>      ::= 'var' <ListId> ':' <Tipo> 
 	 */
@@ -412,4 +469,12 @@ public class AnalisadorSemantico {
 		}
 	}
 
+
+	
+	public void mostraErros() {
+		for (String erro : erros) {
+			System.err.println(erro);
+		}
+	}
+	
 }

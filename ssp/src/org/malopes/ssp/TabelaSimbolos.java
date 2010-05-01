@@ -87,4 +87,15 @@ public class TabelaSimbolos {
 		return false;
 	}
 
+	public static String getTipoDefSimbolo(Token defId) {
+		for(Simbolo simbolo : tabela) {
+			if(simbolo.getToken().equals(defId) && simbolo.getEscopo().equals(defId.getImagem())) {
+				//System.out.println("Simbolo id def encontrado: " + simbolo);
+				return simbolo.getTipo();
+			}
+		}
+
+		return null;
+	}
+
 }
