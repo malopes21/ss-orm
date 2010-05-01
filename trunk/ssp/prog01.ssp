@@ -33,7 +33,7 @@ def principal ( ) : Nada {
 	ver ( v3 ) ; 
 	
 	var v5 : Int ;
-	//v5 = soma ( v1 , v2 ) ;
+	v5 = soma ( v1 , v2 ) ;
 	soma ( v2 , v4 ) ;
 	ver ( v5 ) ;
 } 
