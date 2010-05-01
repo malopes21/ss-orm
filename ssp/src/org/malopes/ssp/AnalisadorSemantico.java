@@ -71,6 +71,40 @@ public class AnalisadorSemantico {
 		case Operan:
 			return operan(node);
 			
+		case Decl:
+			decl(node);
+			break;
+			
+		case ListId:
+			return listId(node);
+			
+		case ListId2:
+			return listId2(node);
+			
+		case Enquanto:
+			enquanto(node);
+			break;
+			
+		case ExprCond:
+			expCond(node);
+			break;
+			
+		case Se:
+			se(node);
+			break;
+			
+		case Senao:
+			senao(node);
+			break;
+			
+		case Ler:
+			ler(node);
+			break;
+			
+		case Ver:
+			ver(node);
+			break;
+			
 		default:
 			System.out.println("Tipo de node desconhecido: " + node.getTipo().name());
 			break;
@@ -197,14 +231,14 @@ public class AnalisadorSemantico {
 					tipoOperan = TabelaSimbolos.getTipoSimbolo(operan);
 					if (tipoOperan == null) {
 						erros.add("Erro semantico: identificador de variável '" + operan.getImagem() + "' não declarado! Linha: " + operan.getLinha() + ", coluna: " + operan.getColuna() );
-						break;
+						//break;
 					}
 				} else {
 					tipoOperan = TabelaSimbolos.getTipoCompativel(operan.getClasse());
 				}
 				if (!tipoId.equals(tipoOperan)) {
-					erros.add("Erro semantico: operando '" + operan.getImagem() + "' com tipo incimpativel! Linha: " + operan.getLinha() + ", coluna: " + operan.getColuna() );
-					break;
+					erros.add("Erro semantico: operando '" + operan.getImagem() + "' com tipo incompativel! Linha: " + operan.getLinha() + ", coluna: " + operan.getColuna() );
+					//break;
 				}
 			}
 		}
@@ -242,7 +276,7 @@ public class AnalisadorSemantico {
 	 * <Operan>   ::= Identifier | IntegerLiteral | RealLiteral | StringLiteral | <Call>
 	 */
 	private Object operan(Node node) {
-		return node.getFilho(0);
+		return node.getFilho(0).getToken();
 	}
 
 	public void mostraErros() {
@@ -251,5 +285,131 @@ public class AnalisadorSemantico {
 		}
 	}
 	
+
+	/**
+	 * <Decl>      ::= 'var' <ListId> ':' <Tipo> 
+	 */
+	private void decl(Node node) {
+		String tipo = (String) analisar(node.getFilho(3));
+		List<Token> listId = (List<Token>) analisar(node.getFilho(1));
+		
+		for(Token id : listId) {
+			String tipoId = TabelaSimbolos.getTipoSimbolo(id);
+			if(tipoId != null) {
+				erros.add("Erro semantico: identificador de variável '" + id.getImagem() + "' redeclarado! Linha: " + id.getLinha() + ", coluna: " + id.getColuna() );
+				//break;
+			} else {
+				TabelaSimbolos.setTipoSimbolo(id, tipo);
+			}
+		}
+		
+	}
 	
+
+	/**
+	 * <ListId>    ::= Identifier <ListId2> 
+	 */
+	private Object listId(Node node) {
+		Token id = node.getFilho(0).getToken();
+		List<Token> listId2 = (List<Token>) analisar(node.getFilho(1));
+		listId2.add(id);
+		
+		return listId2;
+	}
+	
+
+	/**
+	 * <ListId2>  ::=  ',' Identifier <ListId2> | 
+	 */
+	private Object listId2(Node node) {
+		if(node.getFilhos().size() == 0) {
+			return new ArrayList<Token>();
+		}
+		
+		Token id = node.getFilho(1).getToken();
+		List<Token> listId2 = (List<Token>) analisar(node.getFilho(2));
+		listId2.add(id);
+		
+		return listId2;
+	}
+	
+
+	/**
+	 * <While>     ::= 'enquanto' '(' <ExpCond> ')' <Comand>
+	 */
+	private void enquanto(Node node) {
+		analisar(node.getFilho(2));
+		analisar(node.getFilho(4));
+	}
+	
+	/**
+	 * <ExpCond>   ::= <Operan> <OpCond> <Operan>
+	 */
+	private void expCond(Node node) {
+		Token operan1 = (Token) analisar(node.getFilho(0));
+		String tipoOperan1 = null;
+		if (operan1.getClasse() == Classe.Identificador) {
+			tipoOperan1 = TabelaSimbolos.getTipoSimbolo(operan1);
+			if(tipoOperan1 == null) {
+				erros.add("Erro semantico: identificador de variável '" + operan1.getImagem() + "' não declarado! Linha: " + operan1.getLinha() + ", coluna: " + operan1.getColuna() );
+			} 
+		} else {
+			tipoOperan1 = TabelaSimbolos.getTipoCompativel(operan1.getClasse());
+		}
+		
+		Token operan2 = (Token) analisar(node.getFilho(2));
+		String tipoOperan2 = null;
+		if (operan2.getClasse() == Classe.Identificador) {
+			tipoOperan2 = TabelaSimbolos.getTipoSimbolo(operan2);
+			if(tipoOperan2 == null) {
+				erros.add("Erro semantico: identificador de variável '" + operan2.getImagem() + "' não declarado! Linha: " + operan2.getLinha() + ", coluna: " + operan2.getColuna() );
+			} 
+		} else {
+			tipoOperan2 = TabelaSimbolos.getTipoCompativel(operan2.getClasse());
+		}
+		
+		if(tipoOperan1 != null && tipoOperan2 != null && !tipoOperan1.equals(tipoOperan2)) {
+			erros.add("Erro semantico: identificadores de variável '" + operan1.getImagem() + "', '" + operan2.getImagem() + "' com tipos incompativeis! Linha: " + operan2.getLinha() + ", coluna: " + operan2.getColuna() );
+		}
+	}
+
+	/**
+	 * <If>        ::= 'se' '(' <ExpCond> ')' <Comand> <Else>
+	 */
+	private void se(Node node) {
+		analisar(node.getFilho(2));
+		analisar(node.getFilho(4));
+		analisar(node.getFilho(5));
+	}
+	
+	/**
+	 * <Else>      ::= 'senao' <Comand> |
+	 */
+	private void senao(Node node) {
+		if (node.getFilhos().size() > 0) {
+			analisar(node.getFilho(1));
+		}
+	}
+	
+
+	/**
+	 * <Ler>       ::= 'ler' '(' Identifier ')' 
+	 */
+	private void ler(Node node) {
+		Token id = node.getFilho(2).getToken();
+		if (TabelaSimbolos.getTipoSimbolo(id) == null) {
+			erros.add("Erro semantico: identificador de variável '" + id.getImagem() + "' não declarado! Linha: " + id.getLinha() + ", coluna: " + id.getColuna() );
+		}
+	}
+	
+	/**
+	 * <Ver>       ::= 'ver' '(' <Operan> ')'
+	 */
+	private void ver(Node node) {
+		Token operan = (Token) analisar(node.getFilho(2));
+		if (operan.getClasse() == Classe.Identificador && TabelaSimbolos.getTipoSimbolo(operan) == null) {
+			erros.add("Erro semantico: identificador de variável '" + operan.getImagem() + "' não declarado! Linha: " + operan.getLinha() + ", coluna: " + operan.getColuna() );
+		}
+	}
+
 }
