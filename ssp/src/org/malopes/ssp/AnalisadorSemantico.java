@@ -2,6 +2,7 @@ package org.malopes.ssp;
 
 import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AnalisadorSemantico {
@@ -129,6 +130,8 @@ public class AnalisadorSemantico {
 	 * <ListDef>   ::= <Def> <ListDef> |
 	 */
 	private void listDef(Node node) {
+		//TODO: antecipar a obtenção dos tipos das defs
+		
 		for(Node no : node.getFilhos()) {
 			analisar(no);
 		}
@@ -148,7 +151,7 @@ public class AnalisadorSemantico {
 		
 		List<Token> listArg = (List<Token>) analisar(node.getFilho(3));
 		for(int i = listArg.size()-1; i>=0; i--) {
-			//TabelaSimbolos
+			TabelaSimbolos.addParamToSimbolo(listArg.get(i), id);
 		}
 		
 		analisar(node.getFilho(8));
@@ -310,8 +313,18 @@ public class AnalisadorSemantico {
 		TabelaSimbolos.setTipoSimbolo(defId, tipo);
 		//verificar os tipos dos argumentos passados na chamada
 		List<Token> listParam = (List<Token>) analisar(node.getFilho(2));
-		for(Token param : listParam) {
-			
+		Collections.reverse(listParam);
+		List<Token> listParamValida = TabelaSimbolos.getParamsBySimbolo(defId);
+		if(listParam.size() == listParamValida.size()) {
+			for(int i=0; i<listParamValida.size(); i++) {
+				String tipoParamValido = TabelaSimbolos.getTipoToken(listParamValida.get(i));
+				String tipoParam = TabelaSimbolos.getTipoToken(listParam.get(i));
+				if(!(tipoParamValido != null && tipoParam != null && tipoParamValido.equals(tipoParam))) {
+					erros.add("Erro semantico: tipo de argumento de '"+listParam.get(i).getImagem()+"' incompativel! Linha: " + listParam.get(i).getLinha() + ", coluna: " + listParam.get(i).getColuna() );
+				}
+			}	
+		} else {
+			erros.add("Erro semantico: quantidade de argumentos inválida! Linha: " + defId.getLinha() + ", coluna: " + defId.getColuna() );
 		}
 		
 		return defId;

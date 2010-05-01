@@ -32,8 +32,8 @@ def principal ( ) : Nada {
 	ver ( "valor de v3 : \n" ) ; 
 	ver ( v3 ) ; 
 	
-	var v5 : Int ;
+	var v5 , v6 : Int ;
 	v5 = soma ( v1 , v2 ) ;
-	soma ( v2 , v4 ) ;
+	soma ( v2 , v6 ) ;
 	ver ( v5 ) ;
 } 

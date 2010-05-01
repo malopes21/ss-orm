@@ -60,10 +60,14 @@ public class Simbolo {
 	public void setEscopo(String escopo) {
 		this.escopo = escopo;
 	}
+	
+	public List<Token> getParams() {
+		return params;
+	}
 
 	public void debug() {
-		String params[] = { token.getImagem(), escopo, token.getIndiceTabSimb() + "", tipo, valor + "" };
-		System.out.printf("%-20s %-20s %-20s %-20s %-20s\n", (Object[]) params);
+		String params[] = { token.getImagem(), escopo, token.getIndiceTabSimb() + "", tipo, valor + "", this.params.toString() };
+		System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s\n", (Object[]) params);
 	}
 
 	@Override

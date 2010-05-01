@@ -98,4 +98,30 @@ public class TabelaSimbolos {
 		return null;
 	}
 
+	public static void addParamToSimbolo(Token arg, Token token) {
+		Simbolo simboloAchado = tabela.get(token.getIndiceTabSimb());
+		if (simboloAchado != null) {
+			simboloAchado.addParam(arg);
+		}
+	}
+
+	public static List<Token> getParamsBySimbolo(Token token) {
+		Simbolo simboloLocal = new Simbolo();
+		simboloLocal.setToken(token);
+		simboloLocal.setEscopo(token.getImagem());
+		Simbolo simboloAchado = tabela.get( tabela.indexOf(simboloLocal) );
+		if (simboloAchado != null) {
+			return simboloAchado.getParams();
+		}
+		return null;
+	}
+
+	public static String getTipoToken(Token token) {
+		if(token.getClasse() == Classe.Identificador) {
+			return getTipoSimbolo(token);
+		} else {
+			return getTipoCompativel(token.getClasse());
+		}
+	}
+
 }
