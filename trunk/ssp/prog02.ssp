@@ -3,12 +3,12 @@ def principal ( ) : Nada {
 
 	var v1 , v2 : Int ;
 
-	v1 = 2 ;
-	v2 = v1 + 3 ;
+	v1 = 3 ;
+	v2 = v1 / 3 ;
 	ver ( v2 ) ;
 	
 	var v3 : Real ;
-	v3 = 3.4 ;
+	v3 = 3.0 * 2.0 ;
 	
 } 
 

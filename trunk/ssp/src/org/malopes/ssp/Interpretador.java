@@ -148,6 +148,12 @@ public class Interpretador {
 	private Object calcula(Object operan, Object exprAtrib2, String operador) {
 		if ("+".equals(operador)) {
 			return soma(operan, exprAtrib2);
+		} else if ("-".equals(operador)) {
+			return subt(operan, exprAtrib2);
+		} else if ("*".equals(operador)) {
+			return mult(operan, exprAtrib2);
+		} else if ("/".equals(operador)) {
+			return divi(operan, exprAtrib2);
 		}
 		return null;
 	}
@@ -157,11 +163,42 @@ public class Interpretador {
 		if (operan instanceof Integer) {
 			return (Integer) operan + (Integer) exprAtrib2;
 		} else if(operan instanceof Double) {
-			return (Integer) operan + (Integer) exprAtrib2;
+			return (Double) operan + (Double) exprAtrib2;
 		}
 		return null;
 	}
 
+	private Object subt(Object operan, Object exprAtrib2) {
+
+		if (operan instanceof Integer) {
+			return (Integer) operan - (Integer) exprAtrib2;
+		} else if(operan instanceof Double) {
+			return (Double) operan - (Double) exprAtrib2;
+		}
+		return null;
+	}
+	
+	private Object mult(Object operan, Object exprAtrib2) {
+
+		if (operan instanceof Integer) {
+			return (Integer) operan * (Integer) exprAtrib2;
+		} else if(operan instanceof Double) {
+			return (Double) operan * (Double) exprAtrib2;
+		}
+		return null;
+	}
+
+	private Object divi(Object operan, Object exprAtrib2) {
+
+		if (operan instanceof Integer) {
+			return (Integer) operan / (Integer) exprAtrib2;
+		} else if(operan instanceof Double) {
+			return (Double) operan / (Double) exprAtrib2;
+		}
+		return null;
+	}
+
+	
 	/**
 	 * <ExpAtrib2> ::= <OpArit> <Operan> <ExpAtrib2> |
 	 */
