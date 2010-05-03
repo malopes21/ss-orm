@@ -112,6 +112,10 @@ public class AnalisadorSemantico {
 		case ListParam2:
 			return listParam2(node);
 			
+		case Ret:
+			ret(node);
+			break;
+			
 		default:
 			System.out.println("Tipo de node desconhecido: " + node.getTipo().name());
 			break;
@@ -482,8 +486,16 @@ public class AnalisadorSemantico {
 		}
 	}
 
+	/**
+	 * <Ret>       ::= 'ret' <Operan> 
+	 */
+	private void ret(Node node) {
+		Token operan = (Token) analisar(node.getFilho(1));
+		if (operan.getClasse() == Classe.Identificador && TabelaSimbolos.getTipoSimbolo(operan) == null) {
+			erros.add("Erro semantico: identificador de variável '" + operan.getImagem() + "' não declarado! Linha: " + operan.getLinha() + ", coluna: " + operan.getColuna() );
+		}
+	}
 
-	
 	public void mostraErros() {
 		for (String erro : erros) {
 			System.err.println(erro);
