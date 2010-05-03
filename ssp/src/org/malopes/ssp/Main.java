@@ -14,7 +14,7 @@ public class Main {
 		String filePath;
 		try {
 			//filePath = getClass().getResource("prog01.ssp").getFile();
-			filePath = "prog01.ssp";
+			filePath = "prog02.ssp";
 			System.out.println("Analisando arquivo: "+filePath);
 		} catch (Exception e) {
 			System.err.println("ERRO de : "+e);
@@ -62,10 +62,11 @@ public class Main {
 		System.out.println("\nAnalise Semantica OK!");
 		TabelaSimbolos.listaTabela();
 		
-		//Interpretador interpreter = new Interpretador( analisadorSintatico.getRaiz() );
-		//interpreter.interpretar();
+		Interpretador interpreter = new Interpretador( analisadorSintatico.getRaiz() );
+		interpreter.interpretar();
 		
-		
+		System.out.println("\nInterpretação OK!");
+		TabelaSimbolos.listaTabela();
 		/*
 		System.out.println("\nAnalise Sintatica OK!");
 		analisadorSintaticoGA.mostraArvore();
