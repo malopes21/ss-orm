@@ -64,6 +64,22 @@ public class TabelaSimbolos {
 		 */
 		Simbolo simboloLocal = tabela.get(token.getIndiceTabSimb());
 		simboloLocal.setTipo(tipo);
+		simboloLocal.setValor(getValorPadrao(tipo));
+	}
+
+	private static Object getValorPadrao(String tipo) {
+		
+		if ("Int".equals(tipo)) {
+			return new Integer(0);
+		} else if ("Real".equals(tipo)) {
+			return new Double(0.0);
+		} else if ("Str".equals(tipo)) {
+			return new String("");
+		} else if ("Nada".equals(tipo)) {
+			return new Nada();
+		} 
+
+		return null;
 	}
 
 	public static Object getValor(Token token) {
