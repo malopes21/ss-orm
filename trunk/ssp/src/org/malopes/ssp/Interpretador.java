@@ -1,6 +1,7 @@
 package org.malopes.ssp;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -453,6 +454,7 @@ public class Interpretador {
 		Node nodeDefId = mapDefs.get(defId.getImagem());
 		List<Token> listParamFormal = TabelaSimbolos.getParamsBySimbolo(defId);
 		List<Object> listParamAtual = (List<Object>) interpretar(node.getFilho(2));
+		Collections.reverse(listParamAtual);
 		for(int i=0; i < listParamFormal.size(); i++) {
 			Token paramFormal = listParamFormal.get(i);
 			Object valorParamAtual = listParamAtual.get(i);
