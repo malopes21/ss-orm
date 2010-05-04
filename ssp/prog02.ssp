@@ -1,14 +1,34 @@
 
 def principal ( ) : Nada { 
 
+	var v5 , v3 : Real ;
+	v3 = 3.0 + 2.0 * 4.0 ;
+	
+	ver ( v3 ) ;
+	ver ( "teste\n" ) ;
+	ver ( "Entre v5: " ) ;
+	//ler ( v5 ) ;
+	ver ( v5 ) ;
+
 	var v1 , v2 : Int ;
 
 	v1 = 3 ;
 	v2 = v1 / 3 ;
+	enquanto ( v2 < 8 ) {
+		v2 = v2 + 5 ;
+	}	
+	
+	se ( v2 < 10 ) {
+		v2 = 22 ;
+	} senao {
+		v2 = 33 ;
+	}
+	
 	ver ( v2 ) ;
 	
-	var v3 : Real ;
-	v3 = 3.0 * 2.0 ;
+	var s1 : Str ;
+	s1 = "qualquer coisa" ;
+
 	
 } 
 

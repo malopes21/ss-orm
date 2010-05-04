@@ -2,6 +2,7 @@ package org.malopes.ssp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Stack;
 import java.util.Map.Entry;
 
@@ -18,9 +19,9 @@ public class Interpretador {
 	public void interpretar() {
 		mapDefs = getDefs();
 		Node defPrincipal = mapDefs.get("principal");
-		for (Entry<String, Node> entrada : mapDefs.entrySet()) {
+		/*for (Entry<String, Node> entrada : mapDefs.entrySet()) {
 			System.out.println(entrada.getKey() + " -> " + entrada.getValue().getFilho(0).getToken().getImagem() + " : " + entrada.getValue().getFilho(1).getToken().getImagem());
-		}
+		}*/
 		interpretar(defPrincipal);
 		/*
 		 * mostraTipoNo(no, espacamento); if (no != null && no.getFilhos() !=
@@ -43,6 +44,9 @@ public class Interpretador {
 			comand(node);
 			break;
 
+		case Decl:
+			break;
+			
 		case Atrib:
 			atrib(node);
 			break;
@@ -56,12 +60,36 @@ public class Interpretador {
 		case Operan:
 			return operan(node);
 			
+		case Ver:
+			ver(node);
+			break;
+			
+		case Ler:
+			ler(node);
+			break;
+			
+		case Enquanto:
+			enquanto(node);
+			break;
+			
+		case ExprCond:
+			return expCond(node);
+			
+		case Se:
+			se(node);
+			break;
+			
+		case Senao:
+			senao(node);
+			break;
+			
 		default:
 			System.out.println("Tipo de node desconhecido: " + node.getTipo().name());
 			break;
 		}
 		return null;
 	}
+
 
 	/**
 	 * <def> ::= 'def' Identifier '(' <ListArg> ')' ':' <Tipo> '{' <ListComand>
@@ -205,7 +233,7 @@ public class Interpretador {
 	private Object exprAtrib2(Node node) {
 		Object operan = interpretar(node.getFilho(1));
 		if (node.getFilho(2).getFilhos().size() > 0) {
-			String operador = node.getFilho(2).getFilho(0).getToken().getImagem();
+			String operador = node.getFilho(2).getFilho(0).getFilho(0).getToken().getImagem();
 			Object exprAtrib2 = interpretar(node.getFilho(2));
 			return calcula(operan, exprAtrib2, operador);
 		}
@@ -237,6 +265,175 @@ public class Interpretador {
 		default:
 			return null;
 		} 
+	}
+	
+
+	/**
+	 * <Ver>       ::= 'ver' '(' <Operan> ')'
+	 */
+	private void ver(Node node) {
+		Node nodeOperan = node.getFilho(2);
+		Object valorOut = null;
+		if (nodeOperan.getFilho(0).getTipo() == TipoOfNode.Call) {
+			valorOut = interpretar(nodeOperan);
+		} else {
+			if (nodeOperan.getFilho(0).getToken().getClasse() == Classe.Identificador) {
+				valorOut = TabelaSimbolos.getValor(nodeOperan.getFilho(0).getToken());
+			} else if (nodeOperan.getFilho(0).getToken().getClasse() == Classe.ConstanteLiteralString) { 
+				//TODO: consertar a impressao do \n
+				valorOut = nodeOperan.getFilho(0).getToken().getImagem();
+			} else {
+				valorOut = nodeOperan.getFilho(0).getToken().getImagem();
+			}
+		} 
+		
+		System.out.println(valorOut);
+	}
+	
+	/**
+	 * <Ler>       ::= 'ler' '(' Identifier ')'
+	 */
+	private void ler(Node node) {
+		try {
+			Token id = node.getFilho(2).getToken();
+			Scanner sc = new Scanner(System.in);
+			String entrada = sc.nextLine();
+			String tipoId = TabelaSimbolos.getTipoSimbolo(id);
+			if (tipoId.equals("Int")) {
+				TabelaSimbolos.setValor(id, Integer.parseInt(entrada));
+			} else if (tipoId.equals("Real")) {
+				TabelaSimbolos.setValor(id, Double.parseDouble(entrada));
+			} else if (tipoId.equals("Str")) {
+				TabelaSimbolos.setValor(id, entrada);
+			} else if (tipoId.equals("Nada")) {
+				System.err.println("Excecao: variavel do tipo Nada não pode receber valor!");
+			} 
+		} catch (Exception e) {
+			System.err.println("Excecao: entrada com formato invalido para conversao!");
+		}
+	}
+	
+
+	/**
+	 * <While>     ::= 'enquanto' '(' <ExpCond> ')' <Comand>
+	 */
+	private void enquanto(Node node) {
+		Boolean expCond = (Boolean) interpretar(node.getFilho(2));
+		while(expCond) {
+			interpretar(node.getFilho(4));
+			expCond = (Boolean) interpretar(node.getFilho(2));
+		}
+	}
+	
+	/**
+	 * <ExpCond>   ::= <Operan> <OpCond> <Operan>
+	 */
+	private Object expCond(Node node) {
+		Object valorOp1 = interpretar(node.getFilho(0));
+		Object valorOp2 = interpretar(node.getFilho(2));
+		String opCond = node.getFilho(1).getFilho(0).getToken().getImagem();
+		if (opCond.equals(">")) {
+			return maior(valorOp1, valorOp2);
+		} else if (opCond.equals("<")) {
+			return menor(valorOp1, valorOp2);
+		} else if (opCond.equals(">=")) {
+			return maiorIgual(valorOp1, valorOp2);
+		} else if (opCond.equals("<=")) {
+			return menorIgual(valorOp1, valorOp2);
+		} else if (opCond.equals("==")) {
+			return igual(valorOp1, valorOp2);
+		} else if (opCond.equals("!=")) {
+			return diferente(valorOp1, valorOp2);
+		} 
+		return null;
+	}
+
+	private Object maior(Object valorOp1, Object valorOp2) {
+		if (valorOp1 instanceof Integer) {
+			return (Integer) valorOp1 > (Integer)valorOp2;
+		} else if (valorOp1 instanceof Double) {
+			return (Double) valorOp1 > (Double)valorOp2;
+		} else if (valorOp1 instanceof String) {
+			return ((String)valorOp1).compareTo((String)valorOp2) > 0;
+		} 
+		return false;
+	}
+	
+	private Object menor(Object valorOp1, Object valorOp2) {
+		if (valorOp1 instanceof Integer) {
+			return (Integer) valorOp1 < (Integer)valorOp2;
+		} else if (valorOp1 instanceof Double) {
+			return (Double) valorOp1 < (Double)valorOp2;
+		} else if (valorOp1 instanceof String) {
+			return ((String)valorOp1).compareTo((String)valorOp2) < 0;
+		} 
+		return false;
+	}
+	
+	private Object maiorIgual(Object valorOp1, Object valorOp2) {
+		if (valorOp1 instanceof Integer) {
+			return (Integer) valorOp1 >= (Integer)valorOp2;
+		} else if (valorOp1 instanceof Double) {
+			return (Double) valorOp1 >= (Double)valorOp2;
+		} else if (valorOp1 instanceof String) {
+			return ((String)valorOp1).compareTo((String)valorOp2) >= 0;
+		} 
+		return false;
+	}
+
+	private Object menorIgual(Object valorOp1, Object valorOp2) {
+		if (valorOp1 instanceof Integer) {
+			return (Integer) valorOp1 <= (Integer)valorOp2;
+		} else if (valorOp1 instanceof Double) {
+			return (Double) valorOp1 <= (Double)valorOp2;
+		} else if (valorOp1 instanceof String) {
+			return ((String)valorOp1).compareTo((String)valorOp2) <= 0;
+		} 
+		return false;
+	}
+
+	private Object igual(Object valorOp1, Object valorOp2) {
+		if (valorOp1 instanceof Integer) {
+			return ((Integer) valorOp1).intValue() == ((Integer)valorOp2).intValue();
+		} else if (valorOp1 instanceof Double) {
+			return ((Double) valorOp1).doubleValue() == ((Double)valorOp2).doubleValue();
+		} else if (valorOp1 instanceof String) {
+			return ((String)valorOp1).compareTo((String)valorOp2) == 0;
+		} 
+		return false;
+	}
+
+	private Object diferente(Object valorOp1, Object valorOp2) {
+		if (valorOp1 instanceof Integer) {
+			return ((Integer) valorOp1).intValue() != ((Integer)valorOp2).intValue();
+		} else if (valorOp1 instanceof Double) {
+			return ((Double) valorOp1).doubleValue() != ((Double)valorOp2).doubleValue();
+		} else if (valorOp1 instanceof String) {
+			return ((String)valorOp1).compareTo((String)valorOp2) != 0;
+		} 
+		return false;
+	}
+	
+
+	/**
+	 * <If>        ::= 'se' '(' <ExpCond> ')' <Comand> <Else>
+	 */
+	private void se(Node node) {
+		Boolean expCond = (Boolean) interpretar(node.getFilho(2));
+		if (expCond) {
+			interpretar(node.getFilho(4));
+		} else {
+			interpretar(node.getFilho(5));
+		}
+	}
+	
+	/**
+	 * <Else>      ::= 'senao' <Comand> | 
+	 */
+	private void senao(Node node) {
+		if (node.getFilhos().size() > 0) {
+			interpretar(node.getFilho(1));
+		}
 	}
 
 }
