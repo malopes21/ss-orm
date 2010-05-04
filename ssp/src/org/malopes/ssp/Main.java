@@ -65,7 +65,7 @@ public class Main {
 		Interpretador interpreter = new Interpretador( analisadorSintatico.getRaiz() );
 		interpreter.interpretar();
 		
-		System.out.println("\nInterpretação OK!");
+		System.out.println("\nInterpretacao OK!");
 		TabelaSimbolos.listaTabela();
 		/*
 		System.out.println("\nAnalise Sintatica OK!");

@@ -6,7 +6,7 @@ def bla ( n : Int , m : Str ) : Nada {
 	ver ( "Teste mais um" ) ;
 	
 	var v2 : Int ;
-	v2 = n + 3 ;
+	//v2 = n + 3 ;
 	
 	ver ( "v2 em Bla: " ) ;
 	ver ( v2 ) ;
