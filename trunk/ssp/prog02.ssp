@@ -1,5 +1,20 @@
 
+def bla ( n : Int , m : Str ) : Nada {
+	var v1 : Real ;
+	
+	ver ( "Em Bla!!" ) ;
+	ver ( "Teste mais um" ) ;
+	
+	var v2 : Int ;
+	v2 = n + 3 ;
+	
+	ver ( "v2 em Bla: " ) ;
+	ver ( v2 ) ;
+}
+
 def principal ( ) : Nada { 
+
+	bla ( 2 , "teste" ) ;
 
 	var v5 , v3 : Real ;
 	v3 = 3.0 + 2.0 * 4.0 ;
@@ -31,7 +46,3 @@ def principal ( ) : Nada {
 
 	
 } 
-
-def bla ( n : Int , m : Str ) : Nada {
-	var v1 : Real ;
-}

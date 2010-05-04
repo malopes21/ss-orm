@@ -1,6 +1,8 @@
 package org.malopes.ssp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
@@ -33,8 +35,7 @@ public class Interpretador {
 	private Object interpretar(Node node) {
 		switch (node.getTipo()) {
 		case Def:
-			def(node);
-			break;
+			return def(node);
 
 		case ListComand:
 			listComand(node);
@@ -83,13 +84,21 @@ public class Interpretador {
 			senao(node);
 			break;
 			
+		case Call:
+			return call(node);
+			
+		case ListParam:
+			return listParam(node);
+			
+		case ListParam2:
+			return listParam2(node);
+			
 		default:
 			System.out.println("Tipo de node desconhecido: " + node.getTipo().name());
 			break;
 		}
 		return null;
 	}
-
 
 	/**
 	 * <def> ::= 'def' Identifier '(' <ListArg> ')' ':' <Tipo> '{' <ListComand>
@@ -434,6 +443,50 @@ public class Interpretador {
 		if (node.getFilhos().size() > 0) {
 			interpretar(node.getFilho(1));
 		}
+	}
+
+	/**
+	 * <Call>      ::= Identifier '(' <ListParam> ')'
+	 */
+	private Object call(Node node) {
+		Token defId = node.getFilho(0).getToken();
+		Node nodeDefId = mapDefs.get(defId.getImagem());
+		List<Token> listParamFormal = TabelaSimbolos.getParamsBySimbolo(defId);
+		List<Object> listParamAtual = (List<Object>) interpretar(node.getFilho(2));
+		for(int i=0; i < listParamFormal.size(); i++) {
+			Token paramFormal = listParamFormal.get(i);
+			Object valorParamAtual = listParamAtual.get(i);
+						
+			TabelaSimbolos.setValor(paramFormal, valorParamAtual);
+		}
+		
+		return interpretar(nodeDefId);
+	}
+
+	/*
+	 * <ListParam> ::= <Operan> <ListParam2> |
+	 */
+	private Object listParam(Node node) {
+		if(node.getFilhos().size() == 0) {
+			return new ArrayList<Object>();
+		}
+		Object operan = interpretar(node.getFilho(0));
+		List<Object> listParam2 = (List<Object>) interpretar(node.getFilho(1));
+		listParam2.add(operan);
+		return listParam2;
+	}
+
+	/*
+	 * <ListParam2> ::= ',' <Operan> <ListParam2> |
+	 */
+	private Object listParam2(Node node) {
+		if(node.getFilhos().size() == 0) {
+			return new ArrayList<Object>();
+		}
+		Object operan = interpretar(node.getFilho(1));
+		List<Object> listParam2 = (List<Object>) interpretar(node.getFilho(2));
+		listParam2.add(operan);
+		return listParam2;
 	}
 
 }
