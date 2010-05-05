@@ -94,6 +94,9 @@ public class Interpretador {
 		case ListParam2:
 			return listParam2(node);
 			
+		case Ret:
+			return ret(node);
+			
 		default:
 			System.out.println("Tipo de node desconhecido: " + node.getTipo().name());
 			break;
@@ -255,13 +258,16 @@ public class Interpretador {
 	 * <Operan>   ::= Identifier | IntegerLiteral | RealLiteral | StringLiteral | <Call>
 	 */
 	private Object operan(Node node) {
-		Token operan = node.getFilho(0).getToken();
-		if (operan.getClasse() == Classe.Identificador) {
-			return TabelaSimbolos.getValor(operan);
+		if(node.getFilho(0).getTipo() != TipoOfNode.Call) {
+			Token operan = node.getFilho(0).getToken();
+			if (operan.getClasse() == Classe.Identificador) {
+				return TabelaSimbolos.getValor(operan);
+			} else {
+				return imagemToValor(operan);
+			}
 		} else {
-			return imagemToValor(operan);
+			return interpretar(node.getFilho(0));
 		}
-		
 	}
 
 	private Object imagemToValor(Token operan) {
@@ -489,6 +495,13 @@ public class Interpretador {
 		List<Object> listParam2 = (List<Object>) interpretar(node.getFilho(2));
 		listParam2.add(operan);
 		return listParam2;
+	}
+	
+	/**
+	 * <Ret>       ::= 'ret' <Operan>
+	 */
+	private Object ret(Node node) {
+		return interpretar(node.getFilho(1));
 	}
 
 }
