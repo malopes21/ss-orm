@@ -134,7 +134,7 @@ public class AnalisadorSemantico {
 	 * <ListDef>   ::= <Def> <ListDef> |
 	 */
 	private void listDef(Node node) {
-		//TODO: antecipar a obtenção dos tipos das defs
+		//TODO: antecipar a obtencao dos tipos das defs
 		
 		for(Node no : node.getFilhos()) {
 			analisar(no);
