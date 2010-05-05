@@ -122,8 +122,10 @@ public class Interpretador {
 	}
 
 	private void populaStackFrame(HashMap<String, Object> stackFrame, Node defId) {
+		//System.out.println("STACKFRAME "+defId);
 		for(Simbolo simb : TabelaSimbolos.getSimbolosByEscopo(defId.getToken().getImagem())) {
 			stackFrame.put(simb.getToken().getImagem(), simb.getValor());
+			//System.out.println("Imagem "+ simb.getToken().getImagem() + " : " + simb.getValor());
 		}
 	}
 
@@ -141,6 +143,14 @@ public class Interpretador {
 			mapDefsLocal.put(idDef, def);
 			addDefsRec(listDef.getFilho(1), mapDefsLocal);
 		}
+	}
+	
+	private Object getValor(String imagem) {
+		return pilha.peek().get(imagem);
+	}
+	
+	private void setValor(String imagem, Object valor) {
+		pilha.peek().put(imagem, valor);
 	}
 
 	/**
@@ -173,7 +183,8 @@ public class Interpretador {
 	 */
 	private Object atrib(Node node) {
 		Object exprAtrib = interpretar(node.getFilho(2));
-		TabelaSimbolos.setValor(node.getFilho(0).getToken(), exprAtrib);
+		//TabelaSimbolos.setValor(node.getFilho(0).getToken(), exprAtrib);
+		setValor(node.getFilho(0).getToken().getImagem(), exprAtrib);
 		return null;
 	}
 
@@ -265,7 +276,8 @@ public class Interpretador {
 		if(node.getFilho(0).getTipo() != TipoOfNode.Call) {
 			Token operan = node.getFilho(0).getToken();
 			if (operan.getClasse() == Classe.Identificador) {
-				return TabelaSimbolos.getValor(operan);
+				//return TabelaSimbolos.getValor(operan);
+				return getValor(operan.getImagem());
 			} else {
 				return imagemToValor(operan);
 			}
@@ -298,7 +310,8 @@ public class Interpretador {
 			valorOut = interpretar(nodeOperan);
 		} else {
 			if (nodeOperan.getFilho(0).getToken().getClasse() == Classe.Identificador) {
-				valorOut = TabelaSimbolos.getValor(nodeOperan.getFilho(0).getToken());
+				//valorOut = TabelaSimbolos.getValor(nodeOperan.getFilho(0).getToken());
+				valorOut = getValor(nodeOperan.getFilho(0).getToken().getImagem());
 			} else if (nodeOperan.getFilho(0).getToken().getClasse() == Classe.ConstanteLiteralString) { 
 				//TODO: consertar a impressao do \n
 				valorOut = nodeOperan.getFilho(0).getToken().getImagem();
@@ -320,11 +333,14 @@ public class Interpretador {
 			String entrada = sc.nextLine();
 			String tipoId = TabelaSimbolos.getTipoSimbolo(id);
 			if (tipoId.equals("Int")) {
-				TabelaSimbolos.setValor(id, Integer.parseInt(entrada));
+				//TabelaSimbolos.setValor(id, Integer.parseInt(entrada));
+				setValor(id.getImagem(), Integer.parseInt(entrada));
 			} else if (tipoId.equals("Real")) {
-				TabelaSimbolos.setValor(id, Double.parseDouble(entrada));
+				//TabelaSimbolos.setValor(id, Double.parseDouble(entrada));
+				setValor(id.getImagem(), Double.parseDouble(entrada));
 			} else if (tipoId.equals("Str")) {
-				TabelaSimbolos.setValor(id, entrada);
+				//TabelaSimbolos.setValor(id, entrada);
+				setValor(id.getImagem(), entrada);
 			} else if (tipoId.equals("Nada")) {
 				System.err.println("Excecao: variavel do tipo Nada não pode receber valor!");
 			} 
@@ -469,7 +485,8 @@ public class Interpretador {
 			Token paramFormal = listParamFormal.get(i);
 			Object valorParamAtual = listParamAtual.get(i);
 						
-			TabelaSimbolos.setValor(paramFormal, valorParamAtual);
+			//TabelaSimbolos.setValor(paramFormal, valorParamAtual);
+			setValor(paramFormal.getImagem(), valorParamAtual);
 		}
 		
 		return interpretar(nodeDefId);

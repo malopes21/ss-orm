@@ -9,7 +9,7 @@ def calc ( n : Int ) : Int {
 def principal ( ) : Nada { 
 
 	var v8 : Int ;
-	v8 = calc ( 3 ) + 5 ;
+	v8 = calc ( 3 ) ;
 	ver ( "v8: " ) ;
 	ver ( v8 ) ;
 	
