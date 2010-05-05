@@ -112,7 +112,11 @@ public class Interpretador {
 		HashMap<String, Object> stackFrame = new HashMap<String, Object>();
 		populaStackFrame(stackFrame, node.getFilho(1));
 		pilha.push(stackFrame);
-		interpretar(node.getFilho(8)); // ListComand
+		try {
+			interpretar(node.getFilho(8)); // ListComand
+		} catch(RetCommandException rcex) {
+			return rcex.getValorRetorno();
+		}
 		pilha.pop();
 		return null;
 	}
@@ -501,7 +505,8 @@ public class Interpretador {
 	 * <Ret>       ::= 'ret' <Operan>
 	 */
 	private Object ret(Node node) {
-		return interpretar(node.getFilho(1));
+		Object retorno = interpretar(node.getFilho(1));
+		throw new RetCommandException(retorno);
 	}
 
 }

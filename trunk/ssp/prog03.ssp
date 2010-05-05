@@ -1,11 +1,16 @@
 def calc ( n : Int ) : Int {
-	ret 3 ;
+	var aux : Int ;
+	aux = n + 4 ;
+	ver ( "Teste de comando antes do retorno!" ) ;
+	ret aux ;
+	ver ( "Teste de comando depois do retorno!" ) ; //comando nunca executado!!
 }
 
 def principal ( ) : Nada { 
 
 	var v8 : Int ;
-	v8 = calc ( 3 ) ;
-	
+	v8 = calc ( 3 ) + 5 ;
+	ver ( "v8: " ) ;
+	ver ( v8 ) ;
 	
 } 
