@@ -1,0 +1,11 @@
+def calc ( n : Int ) : Int {
+	ret 3 ;
+}
+
+def principal ( ) : Nada { 
+
+	var v8 : Int ;
+	v8 = calc ( 3 ) ;
+	
+	
+} 

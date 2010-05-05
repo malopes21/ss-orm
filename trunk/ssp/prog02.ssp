@@ -14,7 +14,18 @@ def bla ( n : Int , m : Str ) : Nada {
 	ver ( v2 ) ;
 }
 
+def calc ( n : Int ) : Int {
+	var aux : Int ;
+	aux = 2 * n ;
+	ret aux ;
+}
+
 def principal ( ) : Nada { 
+
+	var v8 : Int ;
+	v8 = calc ( 3 ) ;
+	
+
 
 	bla ( 2 , "teste" ) ;
 

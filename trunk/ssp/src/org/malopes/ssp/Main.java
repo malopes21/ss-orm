@@ -14,7 +14,7 @@ public class Main {
 		String filePath;
 		try {
 			//filePath = getClass().getResource("prog01.ssp").getFile();
-			filePath = "prog02.ssp";
+			filePath = "prog03.ssp";
 			System.out.println("Analisando arquivo: "+filePath);
 		} catch (Exception e) {
 			System.err.println("ERRO de : "+e);
