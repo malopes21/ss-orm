@@ -25,6 +25,10 @@ public class Interpretador {
 		/*for (Entry<String, Node> entrada : mapDefs.entrySet()) {
 			System.out.println(entrada.getKey() + " -> " + entrada.getValue().getFilho(0).getToken().getImagem() + " : " + entrada.getValue().getFilho(1).getToken().getImagem());
 		}*/
+		HashMap<String, Object> stackFrame = new HashMap<String, Object>();
+		populaStackFrame(stackFrame, "principal");
+		pilha.push(stackFrame);
+		
 		interpretar(defPrincipal);
 		/*
 		 * mostraTipoNo(no, espacamento); if (no != null && no.getFilhos() !=
@@ -109,23 +113,24 @@ public class Interpretador {
 	 * '}'
 	 */
 	private Object def(Node node) {
-		HashMap<String, Object> stackFrame = new HashMap<String, Object>();
+/*		HashMap<String, Object> stackFrame = new HashMap<String, Object>();
 		populaStackFrame(stackFrame, node.getFilho(1));
-		pilha.push(stackFrame);
+		pilha.push(stackFrame);*/
 		try {
 			interpretar(node.getFilho(8)); // ListComand
 		} catch(RetCommandException rcex) {
 			return rcex.getValorRetorno();
+		} finally {
+			pilha.pop();
 		}
-		pilha.pop();
 		return null;
 	}
 
-	private void populaStackFrame(HashMap<String, Object> stackFrame, Node defId) {
-		//System.out.println("STACKFRAME "+defId);
-		for(Simbolo simb : TabelaSimbolos.getSimbolosByEscopo(defId.getToken().getImagem())) {
+	private void populaStackFrame(HashMap<String, Object> stackFrame, String imagemDefId) {
+		System.out.println("STACKFRAME "+imagemDefId);
+		for(Simbolo simb : TabelaSimbolos.getSimbolosByEscopo(imagemDefId)) {
 			stackFrame.put(simb.getToken().getImagem(), simb.getValor());
-			//System.out.println("Imagem "+ simb.getToken().getImagem() + " : " + simb.getValor());
+			System.out.println("Imagem "+ simb.getToken().getImagem() + " | Valor : " + simb.getValor());
 		}
 	}
 
@@ -477,10 +482,16 @@ public class Interpretador {
 	 */
 	private Object call(Node node) {
 		Token defId = node.getFilho(0).getToken();
+
+		HashMap<String, Object> stackFrame = new HashMap<String, Object>();
+		populaStackFrame(stackFrame, defId.getImagem());
+				
 		Node nodeDefId = mapDefs.get(defId.getImagem());
 		List<Token> listParamFormal = TabelaSimbolos.getParamsBySimbolo(defId);
 		List<Object> listParamAtual = (List<Object>) interpretar(node.getFilho(2));
 		Collections.reverse(listParamAtual);
+		
+		pilha.push(stackFrame);
 		for(int i=0; i < listParamFormal.size(); i++) {
 			Token paramFormal = listParamFormal.get(i);
 			Object valorParamAtual = listParamAtual.get(i);

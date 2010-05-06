@@ -6,11 +6,27 @@ def calc ( n : Int ) : Int {
 	ver ( "Teste de comando depois do retorno!" ) ; //comando nunca executado!!
 }
 
+def multRec ( n : Int , m : Int ) : Int {
+	var aux , retAux : Int ;
+	se ( n == 0 ) {
+		ret 0 ;
+	} senao {
+		aux = n - 1 ;
+		retAux = multRec ( aux , m ) + m ;
+		ret retAux ;
+	}
+}
+
 def principal ( ) : Nada { 
 
 	var v8 : Int ;
-	v8 = calc ( 3 ) ;
+	v8 = calc ( 3 ) + 5 ;
 	ver ( "v8: " ) ;
 	ver ( v8 ) ;
+	
+	var v9 : Int ;
+	v9 = multRec ( 8 , 3 ) ;
+	ver ( "v9: " ) ;
+	ver ( v9 ) ;
 	
 } 
