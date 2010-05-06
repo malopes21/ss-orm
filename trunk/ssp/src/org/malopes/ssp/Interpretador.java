@@ -325,7 +325,7 @@ public class Interpretador {
 			}
 		} 
 		
-		System.out.println(valorOut);
+		System.out.print(valorOut);
 	}
 	
 	/**
