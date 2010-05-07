@@ -318,8 +318,8 @@ public class Interpretador {
 				//valorOut = TabelaSimbolos.getValor(nodeOperan.getFilho(0).getToken());
 				valorOut = getValor(nodeOperan.getFilho(0).getToken().getImagem());
 			} else if (nodeOperan.getFilho(0).getToken().getClasse() == Classe.ConstanteLiteralString) { 
-				//TODO: consertar a impressao do \n
-				valorOut = nodeOperan.getFilho(0).getToken().getImagem();
+				//o replaceALL serve consertar a impressao do \n
+				valorOut = nodeOperan.getFilho(0).getToken().getImagem().replaceAll("\\\\n", "\n");
 			} else {
 				valorOut = nodeOperan.getFilho(0).getToken().getImagem();
 			}
