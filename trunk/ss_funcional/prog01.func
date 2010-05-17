@@ -1,0 +1,6 @@
+:defs
+soma =  a b . ( + a b ) 
+soma =  x y . ( - x y ) 
+
+:run
+( soma 1 2 )
