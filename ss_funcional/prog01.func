@@ -1,6 +1,6 @@
 :defs
 soma =  a b . ( + a b ) 
-soma =  x y . ( - x y ) 
+subt =  x y . ( - x y ) 
 
 :run
-( soma 1 2 )
+( soma 1 ( subt 2 3 ) )
