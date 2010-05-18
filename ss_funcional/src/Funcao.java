@@ -5,13 +5,13 @@ public class Funcao {
 
 	private List<String> argumentos = new ArrayList<String>();
 	private String nome;
-	private List<String> corpo = new ArrayList<String>();
+	private List<Expressao> corpo = new ArrayList<Expressao>();
 
 	public void addArgumento(String arg) {
 		argumentos.add(arg);
 	}
-	
-	public void addFragCorpo(String frag) {
+
+	public void addFragCorpo(Expressao frag) {
 		corpo.add(frag);
 	}
 
@@ -31,11 +31,11 @@ public class Funcao {
 		this.nome = nome;
 	}
 
-	public List<String> getCorpo() {
+	public List<Expressao> getCorpo() {
 		return corpo;
 	}
 
-	public void setCorpo(List<String> corpo) {
+	public void setCorpo(List<Expressao> corpo) {
 		this.corpo = corpo;
 	}
 

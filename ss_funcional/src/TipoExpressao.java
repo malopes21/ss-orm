@@ -1,8 +1,8 @@
 
 public enum TipoExpressao {
 	
-	VALOR,
-	FUNCAO,
-	NOME
+	ATOM,
+	EXPRESSAO,
+	ID_FUNCAO
 
 }

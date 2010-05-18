@@ -58,6 +58,7 @@ public class Interpretador {
 
 	private void leDef(String[] defs) {
 		tokens = defs;
+		pToken = 0;
 		nextToken();
 		Funcao funcao = new Funcao();
 		if (token.matches("\\D\\p{Alpha}*")) {
@@ -77,7 +78,20 @@ public class Interpretador {
 
 				nextToken();
 				while (!token.equals("$")) {
-					funcao.addFragCorpo(token);
+					//funcao.addFragCorpo( token );
+					if (token.equals("(")) {
+						try {
+							funcao.addFragCorpo(leExpressao());
+						} catch (Exception e) {
+							System.out.println("ERRO de parser nas expressoes");
+							System.exit(0);
+						}
+						
+					} else {
+						Expressao atom = new Expressao(TipoExpressao.ATOM);
+						atom.setAtom(token);
+						funcao.addFragCorpo(atom);
+					}
 					nextToken();
 				}
 			}
@@ -86,6 +100,39 @@ public class Interpretador {
 			System.exit(0);
 		}
 		funcoes.put(funcao.getNome(), funcao);
+	}
+
+	private Expressao leExpressao() throws Exception {
+		
+		if (token.equals("$")) {
+			throw new Exception("EOF encontrado!");
+		}
+		
+		if (token.equals("(") ) {
+			nextToken();
+			Expressao expressaoRetorno = new Expressao(TipoExpressao.EXPRESSAO);
+			
+			Expressao exprIdFuncao = new Expressao(TipoExpressao.ID_FUNCAO);
+			exprIdFuncao.setIdFuncao(token);
+			expressaoRetorno.addExpressao(exprIdFuncao);
+			
+			nextToken();
+			
+			while (!token.equals(")")) {
+				expressaoRetorno.addExpressao(leExpressao());
+				
+				//ler o fecha parenteses
+				nextToken();
+				if (token.equals("$")) {
+					throw new Exception("EOF encontrado!");
+				}
+			}
+			return expressaoRetorno;
+		} else {
+			Expressao atom = new Expressao(TipoExpressao.ATOM);
+			atom.setAtom(token);
+			return atom;
+		}
 	}
 
 	private Boolean nextToken() {
