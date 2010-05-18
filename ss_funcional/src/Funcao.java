@@ -39,4 +39,8 @@ public class Funcao {
 		this.corpo = corpo;
 	}
 
+	@Override
+	public String toString() {
+		return argumentos + " : " + corpo; 
+	}
 }

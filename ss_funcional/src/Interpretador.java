@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class Interpretador {
 
@@ -18,9 +19,16 @@ public class Interpretador {
 		Interpretador interpretador = new Interpretador();
 		interpretador.leArquivo("prog01.func");
 		interpretador.parse();
+		interpretador.mostraDefs();
 
 		System.out.println("OK!");
 
+	}
+
+	private void mostraDefs() {
+		for(Entry<String, Funcao> entrada : funcoes.entrySet()) {
+			System.out.println(entrada.getKey() + " -> " + entrada.getValue());
+		}
 	}
 
 	private void leArquivo(String filename) throws FileNotFoundException {
@@ -78,8 +86,7 @@ public class Interpretador {
 
 				nextToken();
 				while (!token.equals("$")) {
-					//funcao.addFragCorpo( token );
-					if (token.equals("(")) {
+					//if (token.equals("(")) {
 						try {
 							funcao.addFragCorpo(leExpressao());
 						} catch (Exception e) {
@@ -87,11 +94,11 @@ public class Interpretador {
 							System.exit(0);
 						}
 						
-					} else {
-						Expressao atom = new Expressao(TipoExpressao.ATOM);
-						atom.setAtom(token);
-						funcao.addFragCorpo(atom);
-					}
+					//} else {
+					//	Expressao atom = new Expressao(TipoExpressao.ATOM);
+					//	atom.setAtom(token);
+					//	funcao.addFragCorpo(atom);
+					//}
 					nextToken();
 				}
 			}
