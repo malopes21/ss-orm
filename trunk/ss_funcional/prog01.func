@@ -4,6 +4,7 @@ subt =  x y . ( - x y )
 id = x . x
 zero = x . 0
 inc = x . ( + x 1 )
+teste = x y . ( + ( - x y ) y )
 
 :run
 ( soma 1 ( subt 2 3 ) )
