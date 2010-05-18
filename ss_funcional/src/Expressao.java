@@ -56,9 +56,11 @@ public class Expressao {
 			return idFuncao;
 		} else {
 			StringBuilder sb = new StringBuilder();
+			sb.append("(");
 			for(Expressao expr : corpo) {
-				sb.append(expr.toString());
+				sb.append(expr.toString() +" ");
 			}
+			sb.append(")");
 			return sb.toString();
 		}
 	}
