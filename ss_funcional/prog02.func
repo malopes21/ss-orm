@@ -1,0 +1,11 @@
+:defs
+soma =  a b . ( + a b ) 
+subt =  x y . ( - x y ) 
+id = x . x
+zero = x . 0
+inc = x . ( + x 1 )
+teste = x y . ( + ( - x y ) y )
+se = v w . ( se ( = v w ) v w )
+
+:run
+( + 2 3 )
