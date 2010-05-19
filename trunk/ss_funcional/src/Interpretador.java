@@ -13,6 +13,7 @@ public class Interpretador {
 	private String token;
 	private String[] tokens;
 	private Integer pToken = 0;
+	private Expressao exprRun;
 
 	public static void main(String[] args) throws Exception {
 
@@ -20,9 +21,15 @@ public class Interpretador {
 		interpretador.leArquivo("prog01.func");
 		interpretador.parse();
 		interpretador.mostraDefs();
+		interpretador.mostraRun();
 
 		System.out.println("OK!");
 
+	}
+
+	private void mostraRun() {
+		System.out.println();
+		System.out.println(exprRun);
 	}
 
 	private void mostraDefs() {
@@ -50,7 +57,17 @@ public class Interpretador {
 	}
 
 	private void leRun() throws IOException {
-		String run = br.readLine();
+		String run = br.readLine() + " $";
+		try {
+			tokens = run.split(" +");
+			pToken = 0;
+			nextToken();
+			exprRun = leExpressao();
+			
+		} catch (Exception e) {
+			System.out.println("ERRO de parser do comando run!");
+			System.exit(0);
+		}
 		System.out.println(run);
 	}
 
@@ -78,7 +95,7 @@ public class Interpretador {
 					funcao.addArgumento(token);
 					nextToken();
 				}
-				// verificação de segurança
+				// verificao de seguranca
 				if (token.equals("$")) {
 					System.out.println("ERRO de parser!");
 					System.exit(0);
@@ -88,7 +105,7 @@ public class Interpretador {
 				while (!token.equals("$")) {
 					//if (token.equals("(")) {
 						try {
-							funcao.addFragCorpo(leExpressao());
+							funcao.setExpressao(leExpressao());
 						} catch (Exception e) {
 							System.out.println("ERRO de parser nas expressoes");
 							System.exit(0);

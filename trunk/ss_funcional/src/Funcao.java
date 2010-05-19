@@ -5,14 +5,10 @@ public class Funcao {
 
 	private List<String> argumentos = new ArrayList<String>();
 	private String nome;
-	private List<Expressao> corpo = new ArrayList<Expressao>();
+	private Expressao expressao;
 
 	public void addArgumento(String arg) {
 		argumentos.add(arg);
-	}
-
-	public void addFragCorpo(Expressao frag) {
-		corpo.add(frag);
 	}
 
 	public List<String> getArgumentos() {
@@ -31,16 +27,16 @@ public class Funcao {
 		this.nome = nome;
 	}
 
-	public List<Expressao> getCorpo() {
-		return corpo;
+	public Expressao getExpressao() {
+		return expressao;
 	}
 
-	public void setCorpo(List<Expressao> corpo) {
-		this.corpo = corpo;
+	public void setExpressao(Expressao expressao) {
+		this.expressao = expressao;
 	}
 
 	@Override
 	public String toString() {
-		return argumentos + " : " + corpo; 
+		return argumentos + " : " + expressao;
 	}
 }
