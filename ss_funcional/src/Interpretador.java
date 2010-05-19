@@ -22,7 +22,7 @@ public class Interpretador {
 		interpretador.parse();
 		interpretador.mostraDefs();
 		interpretador.mostraRun();
-		
+
 		interpretador.eval();
 
 		System.out.println("OK!");
@@ -30,7 +30,7 @@ public class Interpretador {
 	}
 
 	private void eval() {
-		
+
 	}
 
 	private void mostraRun() {
@@ -39,7 +39,7 @@ public class Interpretador {
 	}
 
 	private void mostraDefs() {
-		for(Entry<String, Funcao> entrada : funcoes.entrySet()) {
+		for (Entry<String, Funcao> entrada : funcoes.entrySet()) {
 			System.out.println(entrada.getKey() + " -> " + entrada.getValue());
 		}
 	}
@@ -54,9 +54,9 @@ public class Interpretador {
 		if (linha.equals(":defs")) {
 			leDefs();
 		}
-		
+
 		linha = br.readLine();
-		
+
 		if (linha.equals(":run")) {
 			leRun();
 		}
@@ -69,7 +69,7 @@ public class Interpretador {
 			pToken = 0;
 			nextToken();
 			exprRun = leExpressao();
-			
+
 		} catch (Exception e) {
 			System.out.println("ERRO de parser do comando run!");
 			System.exit(0);
@@ -109,19 +109,13 @@ public class Interpretador {
 
 				nextToken();
 				while (!token.equals("$")) {
-					//if (token.equals("(")) {
-						try {
-							funcao.setExpressao(leExpressao());
-						} catch (Exception e) {
-							System.out.println("ERRO de parser nas expressoes");
-							System.exit(0);
-						}
-						
-					//} else {
-					//	Expressao atom = new Expressao(TipoExpressao.ATOM);
-					//	atom.setAtom(token);
-					//	funcao.addFragCorpo(atom);
-					//}
+					try {
+						funcao.setExpressao(leExpressao());
+					} catch (Exception e) {
+						System.out.println("ERRO de parser nas expressoes");
+						System.exit(0);
+					}
+
 					nextToken();
 				}
 			}
@@ -133,25 +127,25 @@ public class Interpretador {
 	}
 
 	private Expressao leExpressao() throws Exception {
-		
+
 		if (token.equals("$")) {
 			throw new Exception("EOF encontrado!");
 		}
-		
-		if (token.equals("(") ) {
+
+		if (token.equals("(")) {
 			nextToken();
 			Expressao expressaoRetorno = new Expressao(TipoExpressao.EXPRESSAO);
-			
+
 			Expressao exprIdFuncao = new Expressao(TipoExpressao.ID_FUNCAO);
 			exprIdFuncao.setIdFuncao(token);
 			expressaoRetorno.addExpressao(exprIdFuncao);
-			
+
 			nextToken();
-			
+
 			while (!token.equals(")")) {
 				expressaoRetorno.addExpressao(leExpressao());
-				
-				//ler o fecha parenteses
+
+				// ler o fecha parenteses
 				nextToken();
 				if (token.equals("$")) {
 					throw new Exception("EOF encontrado!");
