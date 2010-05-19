@@ -6,6 +6,7 @@ zero = x . 0
 inc = x . ( + x 1 )
 teste = x y . ( + ( - x y ) y )
 sefunc = v w . ( se ( = v w ) v w )
+fat = n . ( se ( = n 0 ) 1 ( * n ( fat ( - n 1 ) ) ) )
 
 :run
-( zero 4.0 )
+( soma ( - 2 3 ) 4 )
