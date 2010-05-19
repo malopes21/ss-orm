@@ -22,9 +22,15 @@ public class Interpretador {
 		interpretador.parse();
 		interpretador.mostraDefs();
 		interpretador.mostraRun();
+		
+		interpretador.eval();
 
 		System.out.println("OK!");
 
+	}
+
+	private void eval() {
+		
 	}
 
 	private void mostraRun() {
