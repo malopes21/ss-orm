@@ -5,7 +5,7 @@ id = x . x
 zero = x . 0
 inc = x . ( + x 1 )
 teste = x y . ( + ( - x y ) y )
-se = v w . ( se ( = v w ) v w )
+sefunc = v w . ( se ( = v w ) v w )
 
 :run
-( + 2 3 )
+( zero 4.0 )

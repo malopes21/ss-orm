@@ -5,11 +5,15 @@ public class Expressao {
 
 	private TipoExpressao tipo;
 	private List<Expressao> corpo = new ArrayList<Expressao>();
-	private Object atom;
+	private String atom;
 	private String idFuncao;
 
 	public Expressao(TipoExpressao tipo) {
 		this.tipo = tipo;
+	}
+	
+	public Expressao getFilho(int index) {
+		return corpo.get(index);
 	}
 	
 	public void addExpressao(Expressao expr) {
@@ -32,11 +36,11 @@ public class Expressao {
 		this.corpo = corpo;
 	}
 
-	public Object getAtom() {
+	public String getAtom() {
 		return atom;
 	}
 
-	public void setAtom(Object atom) {
+	public void setAtom(String atom) {
 		this.atom = atom;
 	}
 

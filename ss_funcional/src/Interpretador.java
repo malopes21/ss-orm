@@ -2,7 +2,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -18,19 +20,156 @@ public class Interpretador {
 	public static void main(String[] args) throws Exception {
 
 		Interpretador interpretador = new Interpretador();
-		interpretador.leArquivo("prog01.func");
+		interpretador.leArquivo("prog02.func");
 		interpretador.parse();
 		interpretador.mostraDefs();
 		interpretador.mostraRun();
 
-		interpretador.eval();
+		Object valor = interpretador.eval(interpretador.exprRun);
 
-		System.out.println("OK!");
+		System.out.println(valor);
 
 	}
 
-	private void eval() {
+	private Object eval(Expressao expr) {
+		switch (expr.getTipo()) {
+			case ATOM:
+				return new Double(expr.getAtom());
+				
+			case EXPRESSAO:
+				String idFuncao = expr.getFilho(0).getIdFuncao();
+				
+				if (idFuncao.equals("+") || idFuncao.equals("-") || idFuncao.equals("*") || idFuncao.equals("/") ) {
+					List<Object> valores = new ArrayList<Object>();
+					for (int i=1; i<expr.getCorpo().size(); i++) {
+						valores.add(eval(expr.getFilho(i)));
+					}
+					if (valores.size() < 2) {
+						System.out.println("ERRO de quantidade de parâmetros!");
+						System.exit(0);
+					}
+					return calculaValores(idFuncao, valores);
+					
+				} else if (idFuncao.equals("=") || idFuncao.equals(">") || idFuncao.equals(">=") || idFuncao.equals("<") || idFuncao.equals("<=")) {
+					List<Object> valores = new ArrayList<Object>();
+					for (int i=1; i<expr.getCorpo().size(); i++) {
+						valores.add(eval(expr.getFilho(i)));
+					}
+					if (valores.size() < 2) {
+						System.out.println("ERRO de quantidade de parâmetros!");
+						System.exit(0);
+					}
+					return avaliaCondicoes(idFuncao, valores);
+					
+				} else if (idFuncao.equals("se")) {
+					System.out.println("Seeeee");
+				} else {
+					Funcao funcaoBuscada = funcoes.get(idFuncao);
+					if(funcaoBuscada == null) {
+						System.out.println("ERRO de função não encontrada!");
+						System.exit(0);
+					}
+					Integer nArgs = funcaoBuscada.getArgumentos().size();
+					Integer nParams = expr.getCorpo().size() - 1;
+					if(nArgs != nParams) {
+						System.out.println("ERRO de número incorreto de parametros passados!");
+						System.exit(0);
+					}
+					Expressao exprNova = substituir(funcaoBuscada, expr);
+					//System.out.println(exprNova);
+					return eval(exprNova);
+					
+				}
+	
+			default:
+				break;
+		}
+		return null;
+	}
 
+	private Expressao substituir(Funcao funcaoBuscada, Expressao expr) {
+		List<String> argsFormal = funcaoBuscada.getArgumentos();
+		Expressao exprNova = cloneExpressao(funcaoBuscada.getExpressao());
+		
+		for(int i=0; i<argsFormal.size(); i++) {
+			String arg = argsFormal.get(i);
+			substuirArg(arg, exprNova, expr.getFilho(i+1).getAtom());
+		}
+		
+		return exprNova;
+	}
+
+	private void substuirArg(String arg, Expressao exprNova, String valor) {
+		for(Expressao exprItem : exprNova.getCorpo()) {
+			if(exprItem.getTipo() == TipoExpressao.ATOM) {
+				if (arg.equals(exprItem.getAtom())) {
+					exprItem.setAtom(valor);
+				}
+			} else if (exprItem.getTipo() == TipoExpressao.EXPRESSAO) {
+				substuirArg(arg, exprItem, valor);
+			}
+		}
+	}
+
+	private Expressao cloneExpressao(Expressao expressao) {
+		Expressao clone = new Expressao(expressao.getTipo());
+		clone.setAtom(expressao.getAtom());
+		clone.setIdFuncao(expressao.getIdFuncao());
+		for(Expressao exprItem : expressao.getCorpo()) {
+			clone.addExpressao(cloneExpressao(exprItem));
+		}
+
+		return clone;
+	}
+
+	private Object avaliaCondicoes(String condicao, List<Object> valores) {
+		Double valorAtual = (Double) valores.get(0);
+		Boolean resultado = true;
+		if (condicao.equals("=")) {
+			for(int i=1; i<valores.size(); i++){
+				resultado = resultado && valorAtual.doubleValue() == ((Double)valores.get(i)).doubleValue();
+			}
+		} else if (condicao.equals(">=")) {
+			for(int i=1; i<valores.size(); i++){
+				resultado = resultado && valorAtual.doubleValue() >= ((Double) valores.get(i)).doubleValue();
+			}
+		} else if (condicao.equals("<=")) {
+			for(int i=1; i<valores.size(); i++){
+				resultado = resultado && valorAtual.doubleValue() <= ((Double) valores.get(i)).doubleValue();
+			}
+		} else if (condicao.equals(">")) {
+			for(int i=1; i<valores.size(); i++){
+				resultado = resultado && valorAtual.doubleValue() > ((Double) valores.get(i)).doubleValue();
+			}
+		} else if (condicao.equals("<")) {
+			for(int i=1; i<valores.size(); i++){
+				resultado = resultado && valorAtual.doubleValue() < ((Double) valores.get(i)).doubleValue();
+			}
+		}     
+		return resultado;
+		
+	}
+
+	private Object calculaValores(String operacao, List<Object> valores) {
+		Double resultado = (Double) valores.get(0) ;
+		if (operacao.equals("+")) {
+			for(int i=1; i<valores.size(); i++){
+				resultado = resultado + (Double) valores.get(i);
+			}
+		} else if (operacao.equals("-")) {
+			for(int i=1; i<valores.size(); i++){
+				resultado = resultado - (Double) valores.get(i);
+			}
+		} else if (operacao.equals("*")) {
+			for(int i=1; i<valores.size(); i++){
+				resultado = resultado * (Double) valores.get(i);
+			}
+		} else if (operacao.equals("/")) {
+			for(int i=1; i<valores.size(); i++){
+				resultado = resultado + (Double) valores.get(i);
+			}
+		}
+		return resultado;
 	}
 
 	private void mostraRun() {
