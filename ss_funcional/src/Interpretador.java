@@ -20,7 +20,7 @@ public class Interpretador {
 	public static void main(String[] args) throws Exception {
 
 		Interpretador interpretador = new Interpretador();
-		interpretador.leArquivo("prog04.func");
+		interpretador.leArquivo("prog05.func");
 		interpretador.parse();
 		interpretador.mostraDefs();
 		interpretador.mostraRun();
