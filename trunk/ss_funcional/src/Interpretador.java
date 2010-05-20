@@ -22,8 +22,8 @@ public class Interpretador {
 		Interpretador interpretador = new Interpretador();
 		interpretador.leArquivo("prog05.func");
 		interpretador.parse();
-		interpretador.mostraDefs();
-		interpretador.mostraRun();
+		//interpretador.mostraDefs();
+		//interpretador.mostraRun();
 
 		Object valor = interpretador.eval(interpretador.exprRun);
 
@@ -224,7 +224,7 @@ public class Interpretador {
 			System.out.println("ERRO de parser do comando run!");
 			System.exit(0);
 		}
-		System.out.println(run);
+		//System.out.println(run);
 	}
 
 	private void leDefs() throws IOException {
