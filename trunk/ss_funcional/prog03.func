@@ -1,0 +1,12 @@
+:defs
+soma =  a b . ( + a b ) 
+subt =  x y . ( - x y ) 
+id = x . x
+zero = x . 0
+inc = x . ( + x 1 )
+teste = x y . ( + ( - x y ) y )
+sefunc = v w . ( se ( = v w ) v w )
+fat = n . ( se ( = n 0 ) 1 ( * n ( fat ( - n 1 ) ) ) )
+
+:run
+( se ( = 2 3 ) 1 0 )

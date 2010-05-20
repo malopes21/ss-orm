@@ -20,7 +20,7 @@ public class Interpretador {
 	public static void main(String[] args) throws Exception {
 
 		Interpretador interpretador = new Interpretador();
-		interpretador.leArquivo("prog02.func");
+		interpretador.leArquivo("prog04.func");
 		interpretador.parse();
 		interpretador.mostraDefs();
 		interpretador.mostraRun();
@@ -62,7 +62,17 @@ public class Interpretador {
 					return avaliaCondicoes(idFuncao, valores);
 					
 				} else if (idFuncao.equals("se")) {
-					System.out.println("Seeeee");
+					if (expr.getCorpo().size() != 4) {
+						System.out.println("ERRO de quantidade de expressoes para função 'se'!");
+						System.exit(0);
+					}
+					Boolean condicao = (Boolean) eval(expr.getFilho(1));
+					if (condicao) {
+						return eval(expr.getFilho(2));
+					} else {
+						return eval(expr.getFilho(3));
+					}
+					
 				} else {
 					Funcao funcaoBuscada = funcoes.get(idFuncao);
 					if(funcaoBuscada == null) {
@@ -93,7 +103,8 @@ public class Interpretador {
 		
 		for(int i=0; i<argsFormal.size(); i++) {
 			String arg = argsFormal.get(i);
-			substuirArg(arg, exprNova, expr.getFilho(i+1).getAtom());
+			Double valor = (Double) eval(expr.getFilho(i+1));
+			substuirArg(arg, exprNova, valor.toString());
 		}
 		
 		return exprNova;
