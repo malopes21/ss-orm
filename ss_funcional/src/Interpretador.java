@@ -45,7 +45,7 @@ public class Interpretador {
 						valores.add(eval(expr.getFilho(i)));
 					}
 					if (valores.size() < 2) {
-						System.out.println("ERRO de quantidade de parâmetros!");
+						System.out.println("ERRO de quantidade de parametros!");
 						System.exit(0);
 					}
 					return calculaValores(idFuncao, valores);
@@ -56,14 +56,14 @@ public class Interpretador {
 						valores.add(eval(expr.getFilho(i)));
 					}
 					if (valores.size() < 2) {
-						System.out.println("ERRO de quantidade de parâmetros!");
+						System.out.println("ERRO de quantidade de parametros!");
 						System.exit(0);
 					}
 					return avaliaCondicoes(idFuncao, valores);
 					
 				} else if (idFuncao.equals("se")) {
 					if (expr.getCorpo().size() != 4) {
-						System.out.println("ERRO de quantidade de expressoes para função 'se'!");
+						System.out.println("ERRO de quantidade de expressoes para funcao 'se'!");
 						System.exit(0);
 					}
 					Boolean condicao = (Boolean) eval(expr.getFilho(1));
@@ -76,13 +76,13 @@ public class Interpretador {
 				} else {
 					Funcao funcaoBuscada = funcoes.get(idFuncao);
 					if(funcaoBuscada == null) {
-						System.out.println("ERRO de função não encontrada!");
+						System.out.println("ERRO de funcao nao encontrada!");
 						System.exit(0);
 					}
 					Integer nArgs = funcaoBuscada.getArgumentos().size();
 					Integer nParams = expr.getCorpo().size() - 1;
 					if(nArgs != nParams) {
-						System.out.println("ERRO de número incorreto de parametros passados!");
+						System.out.println("ERRO de numero incorreto de parametros passados!");
 						System.exit(0);
 					}
 					Expressao exprNova = substituir(funcaoBuscada, expr);

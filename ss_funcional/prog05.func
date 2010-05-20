@@ -10,5 +10,4 @@ fat = n . ( se ( = n 0 ) 1 ( * n ( fat ( - n 1 ) ) ) )
 fib = n . ( se ( < n 2 ) n ( + ( fib ( - n 1 ) ) ( fib ( - n 2 ) )  ) ) 
 
 :run
-( fib 30 )
-( subt 3 ( fib 10 ) ) 
+( subt 3 ( fib 5 ) ) 
