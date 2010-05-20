@@ -1,6 +1,5 @@
 package org.malopes.ssp;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
