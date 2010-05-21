@@ -76,7 +76,7 @@ public class Interpretador {
 				} else {
 					Funcao funcaoBuscada = funcoes.get(idFuncao);
 					if(funcaoBuscada == null) {
-						System.out.println("ERRO de funcao nao encontrada!");
+						System.out.println("ERRO de funcao nao encontrada! idFuncao: " + idFuncao);
 						System.exit(0);
 					}
 					Integer nArgs = funcaoBuscada.getArgumentos().size();
