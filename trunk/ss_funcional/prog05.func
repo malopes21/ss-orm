@@ -8,6 +8,9 @@ teste = x y . ( + ( - x y ) y )
 sefunc = v w . ( se ( = v w ) v w )
 fat = n . ( se ( = n 0 ) 1 ( * n ( fat ( - n 1 ) ) ) )
 fib = n . ( se ( < n 2 ) n ( + ( fib ( - n 1 ) ) ( fib ( - n 2 ) )  ) ) 
+somarec = m n . ( se ( = n 0 ) m ( + 1 ( somarec m ( - n 1 ) ) ) )
 
 :run
-( subt 3 ( fib 5 ) ) 
+( somarec 3 4 )
+
+// ( subt 3 ( fib 5 ) ) 
