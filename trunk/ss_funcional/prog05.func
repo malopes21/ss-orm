@@ -9,9 +9,23 @@ sefunc = v w . ( se ( = v w ) v w )
 fat = n . ( se ( = n 0 ) 1 ( * n ( fat ( - n 1 ) ) ) )
 fib = n . ( se ( < n 2 ) n ( + ( fib ( - n 1 ) ) ( fib ( - n 2 ) ) ) ) 
 somarec = m n . ( se ( = n 0 ) m ( + 1 ( somarec m ( - n 1 ) ) ) )
+funcional = f a b . ( f a b )
+soma3 = x y z . ( + ( + x y ) z )
+soma4 = x y z w . ( + x y z w )
 
 :run
-( sefunc 2 2 ) 
+( subt ( soma 3 4 ) ( fat 3 ) )
+
+//( soma4 2 3 4 3 )
+
+
+//( funcional subt 2 3 ) 
+
+
+
+//( soma3 2 3 4 )
+
+//( sefunc 2 2 ) 
 
 //( fib 20 )
 

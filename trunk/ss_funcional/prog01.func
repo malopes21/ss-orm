@@ -8,4 +8,5 @@ teste = x y . ( + ( - x y ) y )
 se = v w . ( se ( = v w ) v w )
 
 :run
-( soma 1 ( subt 2 3 ) )
+( + 2 3 4 )
+//( soma 1 ( subt 2 3 ) )

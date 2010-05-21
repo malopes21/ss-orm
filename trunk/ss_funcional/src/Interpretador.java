@@ -45,7 +45,7 @@ public class Interpretador {
 						valores.add(eval(expr.getFilho(i)));
 					}
 					if (valores.size() < 2) {
-						System.out.println("ERRO de quantidade de parametros!");
+						System.out.println("ERRO_01 de quantidade de parametros!");
 						System.exit(0);
 					}
 					return calculaValores(idFuncao, valores);
@@ -56,14 +56,14 @@ public class Interpretador {
 						valores.add(eval(expr.getFilho(i)));
 					}
 					if (valores.size() < 2) {
-						System.out.println("ERRO de quantidade de parametros!");
+						System.out.println("ERRO_02 de quantidade de parametros!");
 						System.exit(0);
 					}
 					return avaliaCondicoes(idFuncao, valores);
 					
 				} else if (idFuncao.equals("se")) {
 					if (expr.getCorpo().size() != 4) {
-						System.out.println("ERRO de quantidade de expressoes para funcao 'se'!");
+						System.out.println("ERRO_03 de quantidade de expressoes para funcao 'se'!");
 						System.exit(0);
 					}
 					Boolean condicao = (Boolean) eval(expr.getFilho(1));
@@ -76,13 +76,13 @@ public class Interpretador {
 				} else {
 					Funcao funcaoBuscada = funcoes.get(idFuncao);
 					if(funcaoBuscada == null) {
-						System.out.println("ERRO de funcao nao encontrada! idFuncao: " + idFuncao);
+						System.out.println("ERRO_04 de funcao nao encontrada! idFuncao: " + idFuncao);
 						System.exit(0);
 					}
 					Integer nArgs = funcaoBuscada.getArgumentos().size();
 					Integer nParams = expr.getCorpo().size() - 1;
 					if(nArgs != nParams) {
-						System.out.println("ERRO de numero incorreto de parametros passados!");
+						System.out.println("ERRO_05 de numero incorreto de parametros passados!");
 						System.exit(0);
 					}
 					Expressao exprNova = substituir(funcaoBuscada, expr);
@@ -103,11 +103,33 @@ public class Interpretador {
 		
 		for(int i=0; i<argsFormal.size(); i++) {
 			String arg = argsFormal.get(i);
-			Double valor = (Double) eval(expr.getFilho(i+1));
-			substuirArg(arg, exprNova, valor.toString());
+			//Double valor = (Double) eval(expr.getFilho(i+1));
+			//substuirArg(arg, exprNova, valor.toString());
+			substuirArg(arg, exprNova, expr.getFilho(i+1));
 		}
 		
 		return exprNova;
+	}
+	
+	private void substuirArg(String arg, Expressao exprNova, Expressao valor) {
+		for(Expressao exprItem : exprNova.getCorpo()) {
+			if(exprItem.getTipo() == TipoExpressao.ATOM) {
+				if (arg.equals(exprItem.getAtom())) {
+					//exprItem.setAtom(valor);
+					exprNova.getCorpo().set(exprNova.getCorpo().indexOf(exprItem), valor); 
+				}
+			} else if(exprItem.getTipo() == TipoExpressao.ID_FUNCAO) {
+				if (arg.equals(exprItem.getIdFuncao())) {
+					//exprItem.setAtom(valor);
+					valor.setIdFuncao(valor.getAtom());
+					valor.setTipo(TipoExpressao.ID_FUNCAO);
+					exprNova.getCorpo().set(exprNova.getCorpo().indexOf(exprItem), valor); 
+				}
+			
+			} else if (exprItem.getTipo() == TipoExpressao.EXPRESSAO) {
+				substuirArg(arg, exprItem, valor);
+			}
+		}
 	}
 
 	private void substuirArg(String arg, Expressao exprNova, String valor) {
@@ -221,7 +243,7 @@ public class Interpretador {
 			exprRun = leExpressao();
 
 		} catch (Exception e) {
-			System.out.println("ERRO de parser do comando run!");
+			System.out.println("ERRO_06 de parser do comando run!");
 			System.exit(0);
 		}
 		//System.out.println(run);
@@ -242,7 +264,7 @@ public class Interpretador {
 		pToken = 0;
 		nextToken();
 		Funcao funcao = new Funcao();
-		if (token.matches("\\D\\p{Alpha}*")) {
+		if (token.matches("\\D\\p{Alnum}*")) {
 			funcao.setNome(token);
 			nextToken();
 			if (token.equals("=")) {
@@ -253,7 +275,7 @@ public class Interpretador {
 				}
 				// verificao de seguranca
 				if (token.equals("$")) {
-					System.out.println("ERRO de parser!");
+					System.out.println("ERRO_07 de parser!");
 					System.exit(0);
 				}
 
@@ -262,7 +284,7 @@ public class Interpretador {
 					try {
 						funcao.setExpressao(leExpressao());
 					} catch (Exception e) {
-						System.out.println("ERRO de parser nas expressoes");
+						System.out.println("ERRO_08 de parser nas expressoes");
 						System.exit(0);
 					}
 
@@ -270,7 +292,7 @@ public class Interpretador {
 				}
 			}
 		} else {
-			System.out.println("ERRO de parser: ");
+			System.out.println("ERRO_09 de parser: ");
 			System.exit(0);
 		}
 		funcoes.put(funcao.getNome(), funcao);
@@ -279,7 +301,7 @@ public class Interpretador {
 	private Expressao leExpressao() throws Exception {
 
 		if (token.equals("$")) {
-			throw new Exception("EOF encontrado!");
+			throw new Exception("ERRO_10 EOF encontrado!");
 		}
 
 		if (token.equals("(")) {
@@ -298,7 +320,7 @@ public class Interpretador {
 				// ler o fecha parenteses
 				nextToken();
 				if (token.equals("$")) {
-					throw new Exception("EOF encontrado!");
+					throw new Exception("ERRO_11 EOF encontrado!");
 				}
 			}
 			return expressaoRetorno;
