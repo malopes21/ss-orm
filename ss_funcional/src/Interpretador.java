@@ -336,6 +336,7 @@ public class Interpretador {
 			token = tokens[pToken];
 			pToken++;
 		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
 			return false;
 		}
 		return true;
