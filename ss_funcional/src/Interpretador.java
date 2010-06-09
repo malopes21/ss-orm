@@ -132,7 +132,7 @@ public class Interpretador {
 		}
 	}
 
-	private void substuirArg(String arg, Expressao exprNova, String valor) {
+	/*private void substuirArg(String arg, Expressao exprNova, String valor) {
 		for(Expressao exprItem : exprNova.getCorpo()) {
 			if(exprItem.getTipo() == TipoExpressao.ATOM) {
 				if (arg.equals(exprItem.getAtom())) {
@@ -142,7 +142,7 @@ public class Interpretador {
 				substuirArg(arg, exprItem, valor);
 			}
 		}
-	}
+	}*/
 
 	private Expressao cloneExpressao(Expressao expressao) {
 		Expressao clone = new Expressao(expressao.getTipo());
