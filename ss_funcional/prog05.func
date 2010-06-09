@@ -12,9 +12,13 @@ somarec = m n . ( se ( = n 0 ) m ( + 1 ( somarec m ( - n 1 ) ) ) )
 funcional = f a b . ( f a b )
 soma3 = x y z . ( + ( + x y ) z )
 soma4 = x y z w . ( + x y z w )
+f = x y . ( se ( = x 0 ) 0 ( f ( - x 1 ) ( f x y ) ) )
 
 :run
-( subt ( soma 3 4 ) ( fat 3 ) )
+( f 1 0 )
+
+
+//( subt ( soma 3 4 ) ( fat 3 ) )
 
 //( soma4 2 3 4 3 )
 
