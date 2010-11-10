@@ -1,21 +1,33 @@
 package org.malopes.ssp;
 
-public class Main {
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
-	public static void main(String[] args) {
+public class Main {
+	
+	private Boolean DEBUG = false;
+
+	public static void main(String[] args) throws FileNotFoundException {
 		new Main().testa();
 		//roda(args);
 	}
 
-	private void testa() {
+	private void print(String msg) {
+		if(DEBUG) {
+			System.out.println(msg);
+		}
+	}
+	
+	private void testa() throws FileNotFoundException {
 		long inicio = System.currentTimeMillis();
 		
 		//Carga do programa a ser analisado
 		String filePath;
 		try {
 			//filePath = getClass().getResource("prog01.ssp").getFile();
-			filePath = "prog03.ssp";
-			System.out.println("Analisando arquivo: "+filePath);
+			filePath = "prog04.ssp";
+			print("Analisando arquivo: "+filePath);
 		} catch (Exception e) {
 			System.err.println("ERRO de : "+e);
 			return;
@@ -31,7 +43,7 @@ public class Main {
 			return;
 		}
 		
-		System.out.println("Analise Lexica OK!");
+		print("Analise Lexica OK!");
 
 
 		//Analise Sintatica com Geracao de arvore
@@ -44,11 +56,13 @@ public class Main {
 			return;
 		}
 		
-		System.out.println("Analise Sintatica OK!");
-		analisadorLexico.mostraTokens();
-		TabelaSimbolos.listaTabela();
+		print("Analise Sintatica OK!");
+		if(DEBUG) {
+			analisadorLexico.mostraTokens();
+			TabelaSimbolos.listaTabela();
+			analisadorSintatico.mostraArvore();
+		}
 		
-		analisadorSintatico.mostraArvore();
 		
 		//Analise Semantica 
 		AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico(analisadorSintatico.getRaiz());
@@ -59,20 +73,35 @@ public class Main {
 			return;
 		}
 		
-		System.out.println("\nAnalise Semantica OK!");
-		TabelaSimbolos.listaTabela();
+		print("\nAnalise Semantica OK!");
+		if(DEBUG) {
+			TabelaSimbolos.listaTabela();
+		}
+		
+		//Geracao de Codigo
+		String fileName = filePath.substring(0, filePath.indexOf(".")) + "asm";
+		PrintWriter out = new PrintWriter(new File(fileName));
+		GeradorCodigo geradorCodigo = new GeradorCodigo(analisadorSintatico.getRaiz(), out);
+		geradorCodigo.gerar();
+		out.flush();
+		out.close();
 		
 		//Interpretacao
+		/*
 		Interpretador interpreter = new Interpretador( analisadorSintatico.getRaiz() );
 		interpreter.interpretar();
 		
-		System.out.println("\nInterpretacao OK!");
-		TabelaSimbolos.listaTabela();
+		print("\nInterpretacao OK!");
+		if(DEBUG){
+			TabelaSimbolos.listaTabela();
+		}
+		*/
+		
 		/*
-				
 		long fim = System.currentTimeMillis();
 		System.out.println("\n\nTempo exec.: " + (fim - inicio));
-*/	}
+		*/
+	}
 
 	
 	private static void roda(String[] args) {
