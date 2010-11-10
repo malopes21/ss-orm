@@ -127,10 +127,10 @@ public class Interpretador {
 	}
 
 	private void populaStackFrame(HashMap<String, Object> stackFrame, String imagemDefId) {
-		System.out.println("STACKFRAME "+imagemDefId);
+		//System.out.println("STACKFRAME "+imagemDefId);
 		for(Simbolo simb : TabelaSimbolos.getSimbolosByEscopo(imagemDefId)) {
 			stackFrame.put(simb.getToken().getImagem(), simb.getValor());
-			System.out.println("Imagem "+ simb.getToken().getImagem() + " | Valor : " + simb.getValor());
+			//System.out.println("Imagem "+ simb.getToken().getImagem() + " | Valor : " + simb.getValor());
 		}
 	}
 
