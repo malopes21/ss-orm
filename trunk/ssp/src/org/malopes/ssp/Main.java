@@ -62,23 +62,14 @@ public class Main {
 		System.out.println("\nAnalise Semantica OK!");
 		TabelaSimbolos.listaTabela();
 		
+		//Interpretacao
 		Interpretador interpreter = new Interpretador( analisadorSintatico.getRaiz() );
 		interpreter.interpretar();
 		
 		System.out.println("\nInterpretacao OK!");
 		TabelaSimbolos.listaTabela();
 		/*
-		System.out.println("\nAnalise Sintatica OK!");
-		analisadorSintaticoGA.mostraArvore();
-		
-		
-		
-		Executor executor = new Executor(analisadorSintaticoGA.getRoot());
-		executor.eval();
-		
-		System.out.println("\nExecucao Encerrada!");
-		TabelaSimbolos.listaTabela();
-		
+				
 		long fim = System.currentTimeMillis();
 		System.out.println("\n\nTempo exec.: " + (fim - inicio));
 */	}
