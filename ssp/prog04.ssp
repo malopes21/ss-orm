@@ -1,0 +1,13 @@
+def principal ( ) : Nada { 
+
+	var a1 : Int ;
+	a1 = 35 ;
+	ver ( "a1: " ) ;
+	ver ( a1 ) ;
+	
+	var a2 : Int ;
+	a2 = a1 + 12 ;
+	ver ( "\na2: " ) ;
+	ver ( a2 ) ;
+	
+} 
