@@ -7,6 +7,10 @@ public class TabelaSimbolos {
 
 	private static List<Simbolo> tabela = new ArrayList<Simbolo>();
 
+	public static List<Simbolo> getTabela() {
+		return tabela;
+	}
+
 	public static void addSimbolo(Simbolo simbolo) {
 		if (!tabela.contains(simbolo)) {
 			tabela.add(simbolo);
@@ -54,6 +58,22 @@ public class TabelaSimbolos {
 			return null;
 		}
 	}
+	
+	/**
+	 * <Tipo>      ::= 'Int' | 'Real' | 'Str' | 'Nada'
+	 */
+	public static String getTipoCompativelASM(String tipo) {
+		if(tipo.equals("Int")) {
+			return "DD";
+		} else if(tipo.equals("Real")) {
+			return "DD";
+		} else if(tipo.equals("Str")) {
+			return "DB";
+		} else if(tipo.equals("Nada")) {
+			return "DD";
+		}
+		throw new RuntimeException("Tipo não existente!");
+	}
 
 	public static void setTipoSimbolo(Token token, String tipo) {
 		/*
@@ -82,6 +102,21 @@ public class TabelaSimbolos {
 		return null;
 	}
 
+	public static String getValorPadraoASM(String tipo) {
+		
+		if ("Int".equals(tipo)) {
+			return "0";
+		} else if ("Real".equals(tipo)) {
+			return "0";
+		} else if ("Str".equals(tipo)) {
+			return "\" \", 0";
+		} else if ("Nada".equals(tipo)) {
+			return "0";
+		} 
+
+		throw new RuntimeException("Tipo inexistente!");
+	}
+	
 	public static Object getValor(Token token) {
 		Simbolo simboloAchado = tabela.get(token.getIndiceTabSimb());
 		if (simboloAchado != null) {

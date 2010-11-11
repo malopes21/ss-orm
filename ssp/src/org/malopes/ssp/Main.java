@@ -79,7 +79,7 @@ public class Main {
 		}
 		
 		//Geracao de Codigo
-		String fileName = filePath.substring(0, filePath.indexOf(".")) + "asm";
+		String fileName = filePath.substring(0, filePath.indexOf(".")) + ".asm";
 		PrintWriter out = new PrintWriter(new File(fileName));
 		GeradorCodigo geradorCodigo = new GeradorCodigo(analisadorSintatico.getRaiz(), out);
 		geradorCodigo.gerar();

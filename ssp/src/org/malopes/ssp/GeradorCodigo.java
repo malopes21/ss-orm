@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -27,27 +28,59 @@ public class GeradorCodigo {
 		Node defPrincipal = mapDefs.get("principal");
 				
 		gerarCabecalho();
-		/*gerar(defPrincipal);
-		
+		gerarSecaoData();
+		gerarInicioSecaoCode();
+		gerar(defPrincipal);
+		/*
 		for(Entry<String, Node> entrada : mapDefs.entrySet()) {
 			if(!entrada.getKey().equals("principal")) {
 				gerar(entrada.getValue());
 			}
 		}
-		gerarRodape();*/
+		*/
+		gerarFimSecaoCode();
 
 	}
 
+	private void gerarFimSecaoCode() {
+		out.write("\n");
+		out.write("\tpush 0\n");
+		out.write("\tcall ExitProcess\n");
+		out.write("end start\n");
+	}
+
+	private void gerarInicioSecaoCode() {
+		out.write("\n");
+		out.write(".code\n");
+		out.write("\n");
+		out.write("start: \n");
+	}
 
 	private void gerarCabecalho() {
 		out.write(".486 \n");
 		out.write(".model flat, stdcall \n");		
+		out.write("\n");
+		out.write("option casemap: none \n");
+		out.write("\n");
+		out.write("include \\masm32\\include\\masm32.inc \n");
+		out.write("include \\masm32\\include\\kernel32.inc \n");
+		out.write("\n");
+		out.write("includelib \\masm32\\lib\\masm32.lib \n");
+		out.write("includelib \\masm32\\lib\\kernel32.lib \n");
 	}
 
-	private void gerarRodape() {
-		// TODO Auto-generated method stub
-		
+	private void gerarSecaoData() {
+		out.write("\n");
+		out.write(".data \n");
+		for(Simbolo simbolo : TabelaSimbolos.getTabela()) {
+			if(simbolo.getEscopo().equals("principal")) {
+				out.write("\t" + simbolo.getToken().getImagem() + " " 
+						+ TabelaSimbolos.getTipoCompativelASM(simbolo.getTipo()) + " " 
+						+ TabelaSimbolos.getValorPadraoASM(simbolo.getTipo()) + "\n");
+			}
+		}
 	}
+
 
 	private Object gerar(Node node) {
 		switch (node.getTipo()) {
@@ -77,6 +110,9 @@ public class GeradorCodigo {
 			
 		case Operan:
 			return operan(node);
+			
+		case OpArit:
+			return opArit(node);
 			
 		case Ver:
 			ver(node);
@@ -121,11 +157,18 @@ public class GeradorCodigo {
 	}
 
 	/**
+	 * <OpArit>    ::= '+' | '-' | '*' | '/'
+	 */
+	private Object opArit(Node node) {
+		return node.getFilho(0).getToken();
+	}
+
+	/**
 	 * <def> ::= 'def' Identifier '(' <ListArg> ')' ':' <Tipo> '{' <ListComand>
 	 * '}'
 	 */
 	private Object def(Node node) {
-		
+		gerar(node.getFilho(8));
 		return null;
 	}
 
@@ -190,9 +233,23 @@ public class GeradorCodigo {
 	 * <Atrib> ::= Identifier '=' <ExpAtrib>
 	 */
 	private Object atrib(Node node) {
-		Object exprAtrib = gerar(node.getFilho(2));
-		//TabelaSimbolos.setValor(node.getFilho(0).getToken(), exprAtrib);
-		setValor(node.getFilho(0).getToken().getImagem(), exprAtrib);
+		Token id = node.getFilho(0).getToken();
+		List<Token> exprAtrib = (List<Token>) gerar(node.getFilho(2));
+		Collections.reverse(exprAtrib);
+		
+		Iterator<Token> it = exprAtrib.iterator();
+		out.write("\tmov eax, " + it.next().getImagem() + "\n");
+		while(it.hasNext()) {
+			String opArit = it.next().getImagem();
+			String operan = it.next().getImagem();
+			if(opArit.equals("+")) {
+				out.write("\tadd eax, " + operan + "\n");
+			} else if(opArit.equals("-")) {
+				out.write("\tsub eax, " + operan + "\n");
+			}
+		}
+		out.write("\tmov " + id.getImagem() + ", eax \n");
+		
 		return null;
 	}
 
@@ -200,80 +257,30 @@ public class GeradorCodigo {
 	 * <ExpAtrib> ::= <Operan> <ExpAtrib2>
 	 */
 	private Object exprAtrib(Node node) {
-		Object operan = gerar(node.getFilho(0));
-		if (node.getFilho(1).getFilhos().size() > 0) {
-			String operador = node.getFilho(1).getFilho(0).getFilho(0).getToken().getImagem();
-			Object exprAtrib2 = gerar(node.getFilho(1));
-			return calcula(operan, exprAtrib2, operador);
-		}
-		return operan;
-	}
-
-	private Object calcula(Object operan, Object exprAtrib2, String operador) {
-		if ("+".equals(operador)) {
-			return soma(operan, exprAtrib2);
-		} else if ("-".equals(operador)) {
-			return subt(operan, exprAtrib2);
-		} else if ("*".equals(operador)) {
-			return mult(operan, exprAtrib2);
-		} else if ("/".equals(operador)) {
-			return divi(operan, exprAtrib2);
-		}
-		return null;
-	}
-
-	private Object soma(Object operan, Object exprAtrib2) {
-
-		if (operan instanceof Integer) {
-			return (Integer) operan + (Integer) exprAtrib2;
-		} else if(operan instanceof Double) {
-			return (Double) operan + (Double) exprAtrib2;
-		}
-		return null;
-	}
-
-	private Object subt(Object operan, Object exprAtrib2) {
-
-		if (operan instanceof Integer) {
-			return (Integer) operan - (Integer) exprAtrib2;
-		} else if(operan instanceof Double) {
-			return (Double) operan - (Double) exprAtrib2;
-		}
-		return null;
+		Token operan = (Token) gerar(node.getFilho(0));
+		List<Token> expAtrib2 = (List<Token>) gerar(node.getFilho(1));
+		expAtrib2.add(operan);
+		return expAtrib2;
 	}
 	
-	private Object mult(Object operan, Object exprAtrib2) {
-
-		if (operan instanceof Integer) {
-			return (Integer) operan * (Integer) exprAtrib2;
-		} else if(operan instanceof Double) {
-			return (Double) operan * (Double) exprAtrib2;
-		}
-		return null;
-	}
-
-	private Object divi(Object operan, Object exprAtrib2) {
-
-		if (operan instanceof Integer) {
-			return (Integer) operan / (Integer) exprAtrib2;
-		} else if(operan instanceof Double) {
-			return (Double) operan / (Double) exprAtrib2;
-		}
-		return null;
-	}
-
 	
 	/**
 	 * <ExpAtrib2> ::= <OpArit> <Operan> <ExpAtrib2> |
 	 */
 	private Object exprAtrib2(Node node) {
-		Object operan = gerar(node.getFilho(1));
-		if (node.getFilho(2).getFilhos().size() > 0) {
-			String operador = node.getFilho(2).getFilho(0).getFilho(0).getToken().getImagem();
-			Object exprAtrib2 = gerar(node.getFilho(2));
-			return calcula(operan, exprAtrib2, operador);
+		List<Token> expAtrib2 = null;
+		if (node.getFilhos().size() > 0) {
+			expAtrib2 = (List<Token>) gerar(node.getFilho(2));
+			Token opArit = (Token) gerar(node.getFilho(0));
+			Token operan = (Token) gerar(node.getFilho(1));
+			
+			expAtrib2.add(operan);
+			expAtrib2.add(opArit);
+		} else {
+			expAtrib2 = new ArrayList<Token>();
 		}
-		return operan;
+		
+		return expAtrib2;
 	}
 	
 
@@ -283,12 +290,7 @@ public class GeradorCodigo {
 	private Object operan(Node node) {
 		if(node.getFilho(0).getTipo() != TipoOfNode.Call) {
 			Token operan = node.getFilho(0).getToken();
-			if (operan.getClasse() == Classe.Identificador) {
-				//return TabelaSimbolos.getValor(operan);
-				return getValor(operan.getImagem());
-			} else {
-				return imagemToValor(operan);
-			}
+			return operan;
 		} else {
 			return gerar(node.getFilho(0));
 		}
