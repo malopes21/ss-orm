@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
-import java.util.Map.Entry;
 
 public class GeradorCodigo {
 
@@ -366,11 +365,14 @@ public class GeradorCodigo {
 	 * <While>     ::= 'enquanto' '(' <ExpCond> ')' <Comand>
 	 */
 	private void enquanto(Node node) {
-		Boolean expCond = (Boolean) gerar(node.getFilho(2));
-		while(expCond) {
-			gerar(node.getFilho(4));
-			expCond = (Boolean) gerar(node.getFilho(2));
-		}
+		out.write("\n\t;comando laço enquanto\n");
+		String rotuloVolta = GeradorRotulo.getNextRotulo();
+		out.write(rotuloVolta+":\n");
+		String rotulo = (String)gerar(node.getFilho(2));
+		
+		gerar(node.getFilho(4));
+		out.write("\tjmp " + rotuloVolta + "\n");
+		out.write(rotulo+":\n");
 	}
 	
 	/**
