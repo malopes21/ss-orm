@@ -21,4 +21,11 @@ def principal ( ) : Nada {
 		a3 = 100 ;
 	}
 	
+	var a4 : Int ;
+	
+	enquanto ( a4 < 10 ) {
+		a3 = a3 + 2 ;		
+		a4 = a4 + 1 ;
+	}
+	
 } 
