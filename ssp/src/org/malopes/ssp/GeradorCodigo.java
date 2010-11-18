@@ -233,6 +233,7 @@ public class GeradorCodigo {
 	 * <Atrib> ::= Identifier '=' <ExpAtrib>
 	 */
 	private Object atrib(Node node) {
+		out.write("\n\t;comando de atrib\n");
 		Token id = node.getFilho(0).getToken();
 		List<Token> exprAtrib = (List<Token>) gerar(node.getFilho(2));
 		Collections.reverse(exprAtrib);
