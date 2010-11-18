@@ -293,6 +293,7 @@ public class GeradorCodigo {
 			Token operan = node.getFilho(0).getToken();
 			return operan;
 		} else {
+			//node tipo Call
 			return gerar(node.getFilho(0));
 		}
 	}
@@ -376,23 +377,31 @@ public class GeradorCodigo {
 	 * <ExpCond>   ::= <Operan> <OpCond> <Operan>
 	 */
 	private Object expCond(Node node) {
-		Object valorOp1 = gerar(node.getFilho(0));
-		Object valorOp2 = gerar(node.getFilho(2));
+		Token op1 = (Token) gerar(node.getFilho(0));
+		Token op2 = (Token) gerar(node.getFilho(2));
 		String opCond = node.getFilho(1).getFilho(0).getToken().getImagem();
+		
+		out.write("\tmov eax, " + op1 + "\n");
+		out.write("\tmov ebx, " + op2 + "\n");
+		out.write("\tcmp eax, ebx\n");
+		
+		String rotulo = GeradorRotulo.getNextRotulo();
+		
+		//gerando o complemento do operador - simplificar a geração do comando  
 		if (opCond.equals(">")) {
-			return maior(valorOp1, valorOp2);
+			out.write("\tjle " + rotulo + "\n");
 		} else if (opCond.equals("<")) {
-			return menor(valorOp1, valorOp2);
+			out.write("\tjge " + rotulo + "\n");
 		} else if (opCond.equals(">=")) {
-			return maiorIgual(valorOp1, valorOp2);
+			out.write("\tjl " + rotulo + "\n");
 		} else if (opCond.equals("<=")) {
-			return menorIgual(valorOp1, valorOp2);
+			out.write("\tjg " + rotulo + "\n");
 		} else if (opCond.equals("==")) {
-			return igual(valorOp1, valorOp2);
+			out.write("\tne " + rotulo + "\n");
 		} else if (opCond.equals("!=")) {
-			return diferente(valorOp1, valorOp2);
+			out.write("\tje " + rotulo + "\n");
 		} 
-		return null;
+		return rotulo ;
 	}
 
 	private Object maior(Object valorOp1, Object valorOp2) {
@@ -466,12 +475,14 @@ public class GeradorCodigo {
 	 * <If>        ::= 'se' '(' <ExpCond> ')' <Comand> <Else>
 	 */
 	private void se(Node node) {
-		Boolean expCond = (Boolean) gerar(node.getFilho(2));
-		if (expCond) {
-			gerar(node.getFilho(4));
-		} else {
-			gerar(node.getFilho(5));
-		}
+		out.write("\n\t;comando condicional\n");
+		String rotulo = (String)gerar(node.getFilho(2));
+
+		gerar(node.getFilho(4));
+		out.write("\tjmp sai_"+rotulo+"\n");
+		out.write(rotulo+":\n");
+		gerar(node.getFilho(5));
+		out.write("sai_"+rotulo+":\n");
 	}
 	
 	/**
