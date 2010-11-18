@@ -10,4 +10,15 @@ def principal ( ) : Nada {
 	// ver ( "\na2: " ) ;
 	// ver ( a2 ) ;
 	
+	var a3 : Int ;
+	se ( a2 > 50 ) {
+		a3 = 10 ;
+	} senao {
+		a3 = 20 ;
+	}
+	
+	se ( a1 < 30 ) {
+		a3 = 100 ;
+	}
+	
 } 
