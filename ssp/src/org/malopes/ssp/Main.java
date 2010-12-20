@@ -86,6 +86,8 @@ public class Main {
 		out.flush();
 		out.close();
 		
+		System.out.println("OK, COPILAÇAO ENCERRADA de " + fileName + "!");
+		
 		//Interpretacao
 		/*
 		Interpretador interpreter = new Interpretador( analisadorSintatico.getRaiz() );
