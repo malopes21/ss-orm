@@ -1,5 +1,9 @@
 def principal ( ) : Nada { 
 
+	var s1 : Str ;
+	ver ( s1 ) ;
+	
+
 	var a1 : Int ;
 	a1 = 35 ;
 	// ver ( "a1: " ) ;
