@@ -11,6 +11,7 @@ includelib \masm32\lib\kernel32.lib
 
 .data 
 	principal DD 0
+	s1 DB 256 DUP(0)
 	a1 DD 0
 	a2 DD 0
 	a3 DD 0
@@ -20,11 +21,15 @@ includelib \masm32\lib\kernel32.lib
 
 start: 
 
-	;comando de atrib
+	;comando ver
+	push offset s1
+	call StdOut
+
+	;comando atrib
 	mov eax, 35
 	mov a1, eax 
 
-	;comando de atrib
+	;comando atrib
 	mov eax, a1
 	add eax, 12
 	sub eax, a2
@@ -36,13 +41,13 @@ start:
 	cmp eax, ebx
 	jle rotulo1
 
-	;comando de atrib
+	;comando atrib
 	mov eax, 10
 	mov a3, eax 
 	jmp sai_rotulo1
 rotulo1:
 
-	;comando de atrib
+	;comando atrib
 	mov eax, 20
 	mov a3, eax 
 sai_rotulo1:
@@ -53,7 +58,7 @@ sai_rotulo1:
 	cmp eax, ebx
 	jge rotulo2
 
-	;comando de atrib
+	;comando atrib
 	mov eax, 100
 	mov a3, eax 
 	jmp sai_rotulo2
@@ -67,12 +72,12 @@ rotulo3:
 	cmp eax, ebx
 	jge rotulo4
 
-	;comando de atrib
+	;comando atrib
 	mov eax, a3
 	add eax, 2
 	mov a3, eax 
 
-	;comando de atrib
+	;comando atrib
 	mov eax, a4
 	add eax, 1
 	mov a4, eax 
