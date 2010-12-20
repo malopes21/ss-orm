@@ -109,7 +109,7 @@ public class TabelaSimbolos {
 		} else if ("Real".equals(tipo)) {
 			return "0";
 		} else if ("Str".equals(tipo)) {
-			return "\" \", 0";
+			return "256 DUP(0)";
 		} else if ("Nada".equals(tipo)) {
 			return "0";
 		} 
