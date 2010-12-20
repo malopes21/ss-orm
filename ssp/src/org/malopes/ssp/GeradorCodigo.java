@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Stack;
 
 public class GeradorCodigo {
@@ -195,14 +194,6 @@ public class GeradorCodigo {
 		}
 	}
 	
-	private Object getValor(String imagem) {
-		return pilha.peek().get(imagem);
-	}
-	
-	private void setValor(String imagem, Object valor) {
-		pilha.peek().put(imagem, valor);
-	}
-
 	/**
 	 * <ListComand> ::= <Comand> <ListComand> |
 	 */
@@ -232,7 +223,7 @@ public class GeradorCodigo {
 	 * <Atrib> ::= Identifier '=' <ExpAtrib>
 	 */
 	private Object atrib(Node node) {
-		out.write("\n\t;comando de atrib\n");
+		out.write("\n\t;comando atrib\n");
 		Token id = node.getFilho(0).getToken();
 		List<Token> exprAtrib = (List<Token>) gerar(node.getFilho(2));
 		Collections.reverse(exprAtrib);
@@ -315,49 +306,19 @@ public class GeradorCodigo {
 	 * <Ver>       ::= 'ver' '(' <Operan> ')'
 	 */
 	private void ver(Node node) {
-		Node nodeOperan = node.getFilho(2);
-		Object valorOut = null;
-		if (nodeOperan.getFilho(0).getTipo() == TipoOfNode.Call) {
-			valorOut = gerar(nodeOperan);
-		} else {
-			if (nodeOperan.getFilho(0).getToken().getClasse() == Classe.Identificador) {
-				//valorOut = TabelaSimbolos.getValor(nodeOperan.getFilho(0).getToken());
-				valorOut = getValor(nodeOperan.getFilho(0).getToken().getImagem());
-			} else if (nodeOperan.getFilho(0).getToken().getClasse() == Classe.ConstanteLiteralString) { 
-				//o replaceALL serve consertar a impressao do \n
-				valorOut = nodeOperan.getFilho(0).getToken().getImagem().replaceAll("\\\\n", "\n");
-			} else {
-				valorOut = nodeOperan.getFilho(0).getToken().getImagem();
-			}
-		} 
-		
-		System.out.print(valorOut);
+		out.write("\n\t;comando ver");
+		Token operan = (Token) gerar(node.getFilho(2));
+		//System.out.println(operan);
+		out.write("\n\tpush offset " + operan.getImagem());
+		out.write("\n\tcall StdOut");
+		out.write("\n");
 	}
 	
 	/**
 	 * <Ler>       ::= 'ler' '(' Identifier ')'
 	 */
 	private void ler(Node node) {
-		try {
-			Token id = node.getFilho(2).getToken();
-			Scanner sc = new Scanner(System.in);
-			String entrada = sc.nextLine();
-			String tipoId = TabelaSimbolos.getTipoSimbolo(id);
-			if (tipoId.equals("Int")) {
-				//TabelaSimbolos.setValor(id, Integer.parseInt(entrada));
-				setValor(id.getImagem(), Integer.parseInt(entrada));
-			} else if (tipoId.equals("Real")) {
-				//TabelaSimbolos.setValor(id, Double.parseDouble(entrada));
-				setValor(id.getImagem(), Double.parseDouble(entrada));
-			} else if (tipoId.equals("Str")) {
-				//TabelaSimbolos.setValor(id, entrada);
-				setValor(id.getImagem(), entrada);
-			} else if (tipoId.equals("Nada")) {
-				System.err.println("Excecao: variavel do tipo Nada não pode receber valor!");
-			} 
-		} catch (Exception e) {
-			System.err.println("Excecao: entrada com formato invalido para conversao!");
-		}
+		
 	}
 	
 
@@ -500,26 +461,7 @@ public class GeradorCodigo {
 	 * <Call>      ::= Identifier '(' <ListParam> ')'
 	 */
 	private Object call(Node node) {
-		Token defId = node.getFilho(0).getToken();
-
-		HashMap<String, Object> stackFrame = new HashMap<String, Object>();
-		populaStackFrame(stackFrame, defId.getImagem());
-				
-		Node nodeDefId = mapDefs.get(defId.getImagem());
-		List<Token> listParamFormal = TabelaSimbolos.getParamsBySimbolo(defId);
-		List<Object> listParamAtual = (List<Object>) gerar(node.getFilho(2));
-		Collections.reverse(listParamAtual);
-		
-		pilha.push(stackFrame);
-		for(int i=0; i < listParamFormal.size(); i++) {
-			Token paramFormal = listParamFormal.get(i);
-			Object valorParamAtual = listParamAtual.get(i);
-						
-			//TabelaSimbolos.setValor(paramFormal, valorParamAtual);
-			setValor(paramFormal.getImagem(), valorParamAtual);
-		}
-		
-		return gerar(nodeDefId);
+		return null;
 	}
 
 	/*
