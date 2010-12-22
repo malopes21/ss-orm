@@ -506,6 +506,5 @@ public class GeradorCodigo {
         Object retorno = gerar(node.getFilho(1));
         throw new RetCommandException(retorno);
     }
-    
 
 }
