@@ -42,10 +42,10 @@ public class AnalisadorSemantico {
 	/**
 	 * <Query_List> ::=  <Query> ';' <Query_List> | 
 	 */
-	private Object queryList(Node node) {
-		if(node.getFilhos().size() > 0) {
-			analisar(node.getFilho(0));
-			analisar(node.getFilho(2));
+	private Object queryList(Node no) {
+		if(no.getFilhos().size() > 0) {
+			analisar(no.getFilho(0));
+			analisar(no.getFilho(2));
 		}
 		return null;
 	}
@@ -54,11 +54,18 @@ public class AnalisadorSemantico {
 	/**
 	 * <Query>       ::= <Alter Stm>   | <Create Stm>
 	 */
-	private Object query(Node node) {
-		analisar(node.getFilho(0));
+	private Object query(Node no) {
+		analisar(no.getFilho(0));
 		return null;
 	}
 
+	/**
+	 * <Create Stm>  ::= create table Id '(' <Field Def List> ')' 
+	 */
+	public Object createStm(Node no) {
+		
+		return null;
+	}
 	
 	
 	public void mostraErros() {
