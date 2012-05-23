@@ -1,0 +1,70 @@
+! -----------------------------------------------------------------------------------
+! -----------------------------------------------------------------------------------
+
+"Name"         = 'SQL 89'
+"Version"      = '1989'
+"About"        = 'This is the ANSI 89 version of SQL. Variations are used by'
+               | 'Oracle, Microsoft and most other database developers'
+
+"Start Symbol" = <Query_List>
+
+! =============================================================================
+! Comments
+! =============================================================================
+
+Comment Start = '/*'
+Comment End   = '*/'
+Comment Line  = '--'
+
+! =============================================================================
+! Terminals
+! =============================================================================
+
+{String Ch 1}      = {Printable} - ["]
+{String Ch 2}      = {Printable} - ['']
+{Id Ch Standard}   = {Alphanumeric} + [_]
+{Id Ch Extended}   = {Printable} - ['['] - [']']
+
+StringLiteral   = '"'{String Ch 1}*'"' | ''{String Ch 2}*''
+IntegerLiteral  = {Digit}+
+RealLiteral     = {Digit}+'.'{Digit}+
+
+!----- Identifiers in SQL are very complex.
+
+Id             = ({Letter}{Id Ch Standard}* | '['{Id Ch Extended}+']')  ('.'({Letter}{Id Ch Standard}* | '['{Id Ch Extended}+']'))?
+
+! =============================================================================
+! Rules
+! =============================================================================
+
+<Query_List> ::=  <Query> ';' <Query_List> | 
+              
+<Query>       ::= <Alter Stm>   | <Create Stm>
+          
+<Alter Stm>   ::= alter table Id add  <Constraint>
+
+<Create Stm>  ::= create table Id '(' <Field Def List> ')' 
+
+<Field Def List> ::= <Field Def> <Field Def List 2>
+                  
+<Field Def List 2> ::= ',' <Field Def> <Field Def List 2> | <Constraint List>
+                  
+<Field Def>   ::= Id <Type> <Not Null>
+
+<Not Null> ::= not null |
+
+<Type>  ::=  bit  | date  |  time | timestamp |  decimal  |  real |  float
+          |  smallint |  integer | int  |  interval |  character |  varchar <Tamanho>
+         
+<Tamanho> ::= '(' IntegerLiteral ')'
+
+<Constraint List> ::= ',' <Constraint Type> <Constraint List> |  
+
+<Constraint>      ::= constraint Id <Constraint Type>  | <Constraint Type>
+
+<Constraint Type> ::= primary key '(' <Id List> ')'
+                    | foreign key '(' <Id List> ')' references Id '(' <Id List> ')'
+
+<Id List>     ::= Id <Id List 2>
+
+<Id List 2> ::= ',' Id <Id List 2> |
