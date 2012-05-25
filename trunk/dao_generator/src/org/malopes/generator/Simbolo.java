@@ -8,6 +8,7 @@ public class Simbolo {
 	private Token token;
 	private String escopo;
 	private String tipo;
+	private String tipoChave;
 	private Object valor;
 	private List<Token> params = new ArrayList<Token>();
 
@@ -24,7 +25,7 @@ public class Simbolo {
 		this.tipo = tipo;
 		this.valor = value;
 	}
-	
+
 	public void addParam(Token param) {
 		params.add(param);
 	}
@@ -60,14 +61,25 @@ public class Simbolo {
 	public void setEscopo(String escopo) {
 		this.escopo = escopo;
 	}
-	
+
 	public List<Token> getParams() {
 		return params;
 	}
 
+	public String getTipoChave() {
+		return tipoChave;
+	}
+
+	public void setTipoChave(String tipoChave) {
+		this.tipoChave = tipoChave;
+	}
+
 	public void debug() {
-		String params[] = { token.getImagem(), escopo, token.getIndiceTabSimb() + "", tipo, valor + "", this.params.toString() };
-		System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s\n", (Object[]) params);
+		String params[] = { token.getImagem(), escopo,
+				token.getIndiceTabSimb() + "", tipo, tipoChave + "",
+				this.params.toString() };
+		System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s\n",
+				(Object[]) params);
 	}
 
 	@Override

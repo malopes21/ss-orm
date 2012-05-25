@@ -65,7 +65,7 @@ public class Main {
 			analisadorSintatico.mostraArvore();
 		}
 		
-		/*
+		
 		// Analise Semantica
 		AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico(analisadorSintatico.getRaiz());
 		boolean analiseSemanticaOk = analisadorSemantico.analisar();
@@ -80,6 +80,7 @@ public class Main {
 			TabelaSimbolos.listaTabela();
 		}
 
+		/*
 		if (COMPILER) {
 			// Geracao de Codigo
 
