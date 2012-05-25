@@ -60,6 +60,23 @@ public class TabelaSimbolos {
 	}
 	
 	/**
+	 * <Type>  ::=  bit  | date  |  time | timestamp |  decimal  |  real |  float
+          |  smallint |  integer | int  |  interval |  character |  varchar <Tamanho>
+	 */
+	public static String getTipoJavaEquivalente(String tipoSQL) {
+		if(tipoSQL.equals("bit") || tipoSQL.equals("smallint") || tipoSQL.equals("integer") || tipoSQL.equals("int") ) {
+			return "Integer";
+		} else if(tipoSQL.equals("date") || tipoSQL.equals("time") || tipoSQL.equals("timestamp") || tipoSQL.equals("interval")) {
+			return "Date";
+		} else if(tipoSQL.equals("decimal") || tipoSQL.equals("real") || tipoSQL.equals("float") || tipoSQL.equals("double") ) {
+			return "Double";
+		} else if(tipoSQL.equals("character") || tipoSQL.equals("varchar")) {
+			return "String";
+		}
+		return null;
+	}
+	
+	/**
 	 * <Tipo>      ::= 'Int' | 'Real' | 'Str' | 'Nada'
 	 */
 	public static String getTipoCompativelASM(String tipo) {
