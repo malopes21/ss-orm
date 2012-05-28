@@ -8,9 +8,9 @@ public class Simbolo {
 	private Token token;
 	private String escopo;
 	private String tipo;
-	private String tipoChave;
+	private List<Chave> chaves = new ArrayList<Chave>();
 	private Object valor;
-	private List<Token> params = new ArrayList<Token>();
+	//private List<Token> params = new ArrayList<Token>();
 
 	public Simbolo() {
 	}
@@ -26,9 +26,9 @@ public class Simbolo {
 		this.valor = value;
 	}
 
-	public void addParam(Token param) {
+	/*public void addParam(Token param) {
 		params.add(param);
-	}
+	}*/
 
 	public Object getValor() {
 		return valor;
@@ -62,23 +62,27 @@ public class Simbolo {
 		this.escopo = escopo;
 	}
 
-	public List<Token> getParams() {
+	/*public List<Token> getParams() {
 		return params;
+	}*/
+
+	public List<Chave> getChaves() {
+		return chaves;
 	}
 
-	public String getTipoChave() {
-		return tipoChave;
+	public void setChaves(List<Chave> chaves) {
+		this.chaves = chaves;
 	}
 
-	public void setTipoChave(String tipoChave) {
-		this.tipoChave = tipoChave;
-	}
+	/*public void setParams(List<Token> params) {
+		this.params = params;
+	}*/
 
 	public void debug() {
 		String params[] = { token.getImagem(), escopo,
-				token.getIndiceTabSimb() + "", tipo, tipoChave + "",
-				this.params.toString() };
-		System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s\n",
+				token.getIndiceTabSimb() + "", tipo, chaves + ""};
+				//,this.params.toString() };
+		System.out.printf("%-20s %-20s %-20s %-20s %-20s \n",
 				(Object[]) params);
 	}
 

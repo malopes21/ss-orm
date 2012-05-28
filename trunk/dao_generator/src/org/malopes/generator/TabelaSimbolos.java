@@ -164,20 +164,52 @@ public class TabelaSimbolos {
 		return null;
 	}
 
-	public static void addParamToSimbolo(Token arg, Token token) {
+	/*public static void addParamToSimbolo(Token arg, Token token) {
 		Simbolo simboloAchado = tabela.get(token.getIndiceTabSimb());
 		if (simboloAchado != null) {
 			simboloAchado.addParam(arg);
 		}
+	}*/
+	
+	public static void addChaveToSimbolo(List<Token> args, Token token, TipoOfKey tipoChave, Token reference) {
+		Simbolo simboloAchado = tabela.get(token.getIndiceTabSimb());
+		if (simboloAchado != null) {
+			Chave chave = new Chave();
+			chave.setTipo(tipoChave);
+			chave.setIds(args);
+			chave.setReference(reference);
+			simboloAchado.getChaves().add(chave);
+		}
 	}
 
-	public static List<Token> getParamsBySimbolo(Token token) {
+	public static Chave getPrimaryKeyBySimbolo(Token token) {
 		Simbolo simboloLocal = new Simbolo();
 		simboloLocal.setToken(token);
 		simboloLocal.setEscopo(token.getImagem());
 		Simbolo simboloAchado = tabela.get( tabela.indexOf(simboloLocal) );
 		if (simboloAchado != null) {
-			return simboloAchado.getParams();
+			for(Chave key : simboloAchado.getChaves()) {
+				if(key.getTipo() == TipoOfKey.Primary) {
+					return key;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public static List<Chave> getForeignKeysBySimbolo(Token token) {
+		Simbolo simboloLocal = new Simbolo();
+		simboloLocal.setToken(token);
+		simboloLocal.setEscopo(token.getImagem());
+		Simbolo simboloAchado = tabela.get( tabela.indexOf(simboloLocal) );
+		if (simboloAchado != null) {
+			List<Chave> foreignKeys = new ArrayList<Chave>();
+			for(Chave key : simboloAchado.getChaves()) {
+				if(key.getTipo() == TipoOfKey.Foreign) {
+					foreignKeys.add(key);
+				}
+			}
+			return foreignKeys;
 		}
 		return null;
 	}

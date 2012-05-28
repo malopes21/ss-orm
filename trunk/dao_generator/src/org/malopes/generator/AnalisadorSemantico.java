@@ -1,5 +1,6 @@
 package org.malopes.generator;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +9,7 @@ public class AnalisadorSemantico {
 
 	private Node raiz;
 	private List<String> erros = new ArrayList<String>();
+	private Token tableId;
 	
 	public AnalisadorSemantico(Node raiz) {
 		this.raiz = raiz;
@@ -51,6 +53,20 @@ public class AnalisadorSemantico {
 		case Type:
 			return type(no);
 			
+		case Constraint_List:
+			constraintList(no);
+			break;
+			
+		case Constraint_Type:
+			constraintType(no);
+			break;
+			
+		case Id_List:
+			return idList(no);
+			
+		case Id_List_2:
+			return idList2(no);
+			
 		default:
 			System.out.println("Tipo de node desconhecido: " + no.getTipo().name());
 			break;
@@ -82,7 +98,7 @@ public class AnalisadorSemantico {
 	 * <Create Stm>  ::= create table Id '(' <Field Def List> ')' 
 	 */
 	public Object createStm(Node no) {
-		Token tableId = no.getFilho(2).getToken();
+		tableId = no.getFilho(2).getToken();
 		String tipoIdTable = TabelaSimbolos.getTipoSimbolo(tableId);
 		if(tipoIdTable != null) {
 			erros.add("Erro semântico: identificador de tabela redeclarado: " + tableId);
@@ -115,6 +131,61 @@ public class AnalisadorSemantico {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * <Constraint List> ::= ',' <Constraint Type> <Constraint List> |  
+	 */
+	public Object constraintList(Node no){
+		if(no.getFilhos().size() > 0) {
+			analisar(no.getFilho(1));
+			analisar(no.getFilho(2));
+		}
+		return null;
+	}
+
+	/**
+	 * <Constraint Type> ::= primary key '(' <Id List> ')'
+                    | foreign key '(' <Id List> ')' references Id '(' <Id List> ')'
+	 */
+	public Object constraintType(Node no){
+		if(no.getFilho(0).getToken().getImagem().equals("primary")) {
+			Chave key = TabelaSimbolos.getPrimaryKeyBySimbolo(tableId);
+			if(key != null) {
+				erros.add("Erro semântico: redeclaração de primary key para a tabela: " + tableId.getImagem() + ". Linha: "+ no.getFilho(0).getToken() );
+			} else {
+				List<Token> keyIds = (List<Token>) analisar(no.getFilho(3));
+				TabelaSimbolos.addChaveToSimbolo(keyIds, tableId, TipoOfKey.Primary, null);
+			}
+		} else if(no.getFilho(0).getToken().getImagem().equals("foreign")) {
+			//List<Chave> chaves = TabelaSimbolos.getForeignKeysBySimbolo(tableId);
+			List<Token> keyIds = (List<Token>) analisar(no.getFilho(3));
+			Token reference = no.getFilho(6).getToken();
+			TabelaSimbolos.addChaveToSimbolo(keyIds, tableId, TipoOfKey.Foreign, reference);
+		}
+		return null;
+	}
+	
+	/**
+	 * <Id List>     ::= Id <Id List 2>
+	 */
+	private Object idList(Node no){
+		List<Token> idList2 = (List<Token>) analisar(no.getFilho(1));
+		idList2.add(no.getFilho(0).getToken());
+		return idList2;
+	}
+	
+	/**
+	 * <Id List 2> ::= ',' Id <Id List 2> |
+	 */
+	private Object idList2(Node no){
+		if(no.getFilhos().size() == 0) {
+			return new ArrayList<Token>();
+		} else {
+			List<Token> idList2 = (List<Token>) analisar(no.getFilho(2));
+			idList2.add(no.getFilho(1).getToken());
+			return idList2;
+		}
 	}
 	
 	/**

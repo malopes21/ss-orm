@@ -9,7 +9,8 @@ create table Cliente (
 create table Telefone (
     id int not null ,
     id_cliente int not null ,
-    numero varchar ( 40 )
+    numero varchar ( 40 ) ,
+    primary key ( id )
 ) ;
 
 alter table Cliente add constraint Cliente_PK primary key ( id ) ;
