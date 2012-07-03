@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-import org.malopes.generator.TabelaSimbolos;
-import org.malopes.generator.TabelasEstaticas;
-import org.malopes.generator.Token;
 import org.malopes.generator.consts.Classe;
+import org.malopes.generator.defs.TabelaSimbolos;
+import org.malopes.generator.defs.TabelasEstaticas;
+import org.malopes.generator.defs.Token;
 
 public class AnalisadorLexico {
 	

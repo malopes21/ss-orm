@@ -1,4 +1,4 @@
-package org.malopes.generator;
+package org.malopes.generator.defs;
 
 import org.malopes.generator.consts.Classe;
 

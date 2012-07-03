@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.malopes.generator.Node;
-import org.malopes.generator.Simbolo;
-import org.malopes.generator.TabelaSimbolos;
-import org.malopes.generator.Token;
 import org.malopes.generator.consts.Classe;
 import org.malopes.generator.consts.TipoOfNode;
+import org.malopes.generator.defs.Node;
+import org.malopes.generator.defs.Simbolo;
+import org.malopes.generator.defs.TabelaSimbolos;
+import org.malopes.generator.defs.Token;
 
 public class AnalisadorSintaticoGA {
 

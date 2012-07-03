@@ -1,5 +1,7 @@
 package org.malopes.generator;
 
+import org.malopes.generator.defs.Token;
+
 public class Utils {
 	
 	public static String formatErro(String nomeMetodo, Token token) {
