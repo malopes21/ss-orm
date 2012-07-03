@@ -1,4 +1,4 @@
-package org.malopes.generator;
+package org.malopes.generator.fases;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
+import org.malopes.generator.TabelaSimbolos;
+import org.malopes.generator.TabelasEstaticas;
+import org.malopes.generator.Token;
 import org.malopes.generator.consts.Classe;
 
 public class AnalisadorLexico {

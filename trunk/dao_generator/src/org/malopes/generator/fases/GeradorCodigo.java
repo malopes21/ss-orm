@@ -1,6 +1,8 @@
-package org.malopes.generator;
+package org.malopes.generator.fases;
 
 import java.io.PrintWriter;
+
+import org.malopes.generator.Node;
 
 public class GeradorCodigo {
 	
