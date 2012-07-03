@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.malopes.generator.consts.Classe;
+
 public class AnalisadorSintatico {
 
 	private int pToken;

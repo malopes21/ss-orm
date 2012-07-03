@@ -3,6 +3,8 @@ package org.malopes.generator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.malopes.generator.consts.TipoOfNode;
+
 public class Node {
 
 	private Node pai;
