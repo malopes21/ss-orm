@@ -61,7 +61,7 @@ public class AnalisadorLexico {
 							erros.add("simbolo desconhecido: "+linha.substring(inicio, linha.length()-1));
 							break;
 						}
-					} else if (token.length() > 1 && token.charAt(0) == '/' && token.charAt(1) == '/'  ) {
+					} else if (token.length() > 1 && token.charAt(0) == '-' && token.charAt(1) == '-'  ) {
 						break;
 					} else if (TabelasEstaticas.containPReservada(token)) {
 						//System.out.println("P. reserv.: "+token);
