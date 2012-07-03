@@ -1,4 +1,4 @@
-package org.malopes.generator;
+package org.malopes.generator.consts;
 
 public enum Classe {
 	PalavraReservada, 

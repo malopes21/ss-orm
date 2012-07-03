@@ -1,5 +1,7 @@
 package org.malopes.generator;
 
+import org.malopes.generator.consts.Classe;
+
 public class Token {
 
 	private String imagem;

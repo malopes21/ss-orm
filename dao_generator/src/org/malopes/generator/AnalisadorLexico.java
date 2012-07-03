@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
+import org.malopes.generator.consts.Classe;
+
 public class AnalisadorLexico {
 	
 	private List<Token> tokens = new ArrayList<Token>();

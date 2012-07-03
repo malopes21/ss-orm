@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.malopes.generator.consts.Classe;
+import org.malopes.generator.consts.TipoOfNode;
+
 public class AnalisadorSintaticoGA {
 
 	private int pToken;

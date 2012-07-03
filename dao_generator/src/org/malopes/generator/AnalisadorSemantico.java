@@ -3,6 +3,8 @@ package org.malopes.generator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.malopes.generator.consts.TipoOfKey;
+
 public class AnalisadorSemantico {
 
 	private Node raiz;

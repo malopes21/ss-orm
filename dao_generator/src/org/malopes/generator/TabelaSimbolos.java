@@ -3,6 +3,9 @@ package org.malopes.generator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.malopes.generator.consts.Classe;
+import org.malopes.generator.consts.TipoOfKey;
+
 public class TabelaSimbolos {
 
 	private static List<Simbolo> tabela = new ArrayList<Simbolo>();
