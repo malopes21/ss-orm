@@ -1,4 +1,4 @@
-package org.malopes.generator.fases;
+package org.malopes.generator.lixo;
 
 import java.util.ArrayList;
 import java.util.Arrays;

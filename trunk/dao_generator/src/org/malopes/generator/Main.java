@@ -1,8 +1,6 @@
 package org.malopes.generator;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 
 import org.malopes.generator.defs.TabelaSimbolos;
 import org.malopes.generator.fases.AnalisadorLexico;
