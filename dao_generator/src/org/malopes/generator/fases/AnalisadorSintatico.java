@@ -1,10 +1,13 @@
-package org.malopes.generator;
+package org.malopes.generator.fases;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.malopes.generator.Simbolo;
+import org.malopes.generator.TabelaSimbolos;
+import org.malopes.generator.Token;
 import org.malopes.generator.consts.Classe;
 
 public class AnalisadorSintatico {

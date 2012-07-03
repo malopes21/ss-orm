@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
+import org.malopes.generator.fases.AnalisadorLexico;
+import org.malopes.generator.fases.AnalisadorSemantico;
+import org.malopes.generator.fases.AnalisadorSintaticoGA;
+
 public class Main {
 
 	private Boolean DEBUG = true;

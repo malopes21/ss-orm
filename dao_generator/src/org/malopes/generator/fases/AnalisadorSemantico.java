@@ -1,8 +1,12 @@
-package org.malopes.generator;
+package org.malopes.generator.fases;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.malopes.generator.Chave;
+import org.malopes.generator.Node;
+import org.malopes.generator.TabelaSimbolos;
+import org.malopes.generator.Token;
 import org.malopes.generator.consts.TipoOfKey;
 
 public class AnalisadorSemantico {
