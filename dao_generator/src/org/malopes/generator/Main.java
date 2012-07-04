@@ -1,16 +1,19 @@
 package org.malopes.generator;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 import org.malopes.generator.defs.TabelaSimbolos;
 import org.malopes.generator.fases.AnalisadorLexico;
 import org.malopes.generator.fases.AnalisadorSemantico;
 import org.malopes.generator.fases.AnalisadorSintaticoGA;
+import org.malopes.generator.fases.GeradorCodigo;
 
 public class Main {
 
 	private Boolean DEBUG = true;
-	private Boolean COMPILER = false;
+	private Boolean COMPILER = true;
 
 	public static void main(String[] args) throws FileNotFoundException {
 		new Main().testa();
@@ -50,9 +53,9 @@ public class Main {
 		print("Analise Lexica OK!");
 		analisadorLexico.mostraTokens();
 
-		
 		// Analise Sintatica com Geracao de arvore
-		AnalisadorSintaticoGA analisadorSintatico = new AnalisadorSintaticoGA(analisadorLexico.getTokens());
+		AnalisadorSintaticoGA analisadorSintatico = new AnalisadorSintaticoGA(
+				analisadorLexico.getTokens());
 		boolean analisesintaticaOk = analisadorSintatico.analisa();
 
 		if (!analisesintaticaOk) {
@@ -67,10 +70,10 @@ public class Main {
 			TabelaSimbolos.listaTabela();
 			analisadorSintatico.mostraArvore();
 		}
-		
-		
+
 		// Analise Semantica
-		AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico(analisadorSintatico.getRaiz());
+		AnalisadorSemantico analisadorSemantico = new AnalisadorSemantico(
+				analisadorSintatico.getRaiz());
 		boolean analiseSemanticaOk = analisadorSemantico.analisar();
 		if (!analiseSemanticaOk) {
 			System.err.println("Erro de analise semantica!");
@@ -83,33 +86,13 @@ public class Main {
 			TabelaSimbolos.listaTabela();
 		}
 
-		/*
-		if (COMPILER) {
-			// Geracao de Codigo
 
-			String fileName = filePath.substring(0, filePath.indexOf(".")) + ".asm";
-			PrintWriter out = new PrintWriter(new File(fileName));
-			GeradorCodigo geradorCodigo = new GeradorCodigo(analisadorSintatico.getRaiz(), out);
-			geradorCodigo.gerar();
-			out.flush();
-			out.close();
+		GeradorCodigo geradorCodigo = new GeradorCodigo(
+				analisadorSintatico.getRaiz());
+		geradorCodigo.gerar();
 
-			System.out.println("OK, COPILAÇAO ENCERRADA de " + fileName + "!");
-		} else {
-			// Interpretacao
+		System.out.println("OK, GERAÇÃO ENCERRADA!");
 
-			Interpretador interpreter = new Interpretador(analisadorSintatico.getRaiz());
-			interpreter.interpretar();
-
-			print("\nInterpretacao OK!");
-			if (DEBUG) {
-				TabelaSimbolos.listaTabela();
-			}
-
-			long fim = System.currentTimeMillis();
-			System.out.println("\n\nTempo exec.: " + (fim - inicio) + " ms");
-		}
-		*/
 	}
 
 	private static void roda(String[] args) {
