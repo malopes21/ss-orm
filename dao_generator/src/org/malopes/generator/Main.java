@@ -86,9 +86,7 @@ public class Main {
 			TabelaSimbolos.listaTabela();
 		}
 
-
-		GeradorCodigo geradorCodigo = new GeradorCodigo(
-				analisadorSintatico.getRaiz());
+		GeradorCodigo geradorCodigo = new GeradorCodigo(analisadorSintatico.getRaiz());
 		geradorCodigo.gerar();
 
 		System.out.println("OK, GERAÇÃO ENCERRADA!");
