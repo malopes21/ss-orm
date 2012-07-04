@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 
 import org.malopes.generator.consts.TipoOfNode;
 import org.malopes.generator.defs.Node;
+import org.malopes.generator.defs.TabelaSimbolos;
 import org.malopes.generator.defs.Token;
 
 public class GeradorCodigo {
@@ -44,6 +45,9 @@ public class GeradorCodigo {
 			case Field_Def_List:
 				return fieldDefList(no);
 				
+			case Field_Def_List_2:
+				return fieldDefList2(no);
+				
 			case Field_Def:
 				return fieldDef(no);
 				
@@ -54,8 +58,6 @@ public class GeradorCodigo {
 		
 		return null;
 	}
-
-
 
 
 	/**
@@ -115,10 +117,26 @@ public class GeradorCodigo {
 	}
 
 	/**
+	 *  <Field Def List 2> ::= ',' <Field Def> <Field Def List 2> | <Constraint List>
+	 */
+	private Object fieldDefList2(Node no) {
+		if(no.getFilhos().size() > 1) {
+			gerar(no.getFilho(1));
+			gerar(no.getFilho(2));
+		} else {
+			gerar(no.getFilho(0));
+		}
+		return null;
+	}
+
+	
+	/**
 	 * <Field Def>   ::= Id <Type> <Not Null>
 	 */
 	private Object fieldDef(Node no) {
-		
+		Token id = no.getFilho(0).getToken();
+		String tipo = (String) gerar(no.getFilho(1));
+		out.write("\n\tprivate "+tipo+" "+id.getImagem()+";");
 		return null;
 	}
 	
@@ -128,7 +146,6 @@ public class GeradorCodigo {
           |  smallint |  integer | int  |  interval |  character |  varchar <Tamanho> 
 	 */
 	private Object type(Node no) {
-		
-		return null;
+		return TabelaSimbolos.getTipoJavaEquivalente(no.getFilho(0).getToken().getImagem());
 	}
 }
