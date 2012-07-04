@@ -41,10 +41,22 @@ public class GeradorCodigo {
 			case Create_Stm:
 				return createStm(no);
 			
+			case Field_Def_List:
+				return fieldDefList(no);
+				
+			case Field_Def:
+				return fieldDef(no);
+				
+			case Type:
+				return type(no);
+			
 		}
 		
 		return null;
 	}
+
+
+
 
 	/**
 	 * <Query_List> ::=  <Query> ';' <Query_List> | 
@@ -93,20 +105,30 @@ public class GeradorCodigo {
 		return null;
 	}
 	
-	
-	
-	
-	// Não Usado!!! 
-	
-	private void gerarRodape() {
-		out.write("\n}");
+	/**
+	 * <Field Def List> ::= <Field Def> <Field Def List 2>
+	 */
+	private Object fieldDefList(Node no) {
+		gerar(no.getFilho(0));
+		gerar(no.getFilho(1));
+		return null;
 	}
 
-	private void gerarCabecalho() {
+	/**
+	 * <Field Def>   ::= Id <Type> <Not Null>
+	 */
+	private Object fieldDef(Node no) {
 		
-		out.write("public class fileName  {");
-		out.write("\n\n\tpublic static void main(String args[]) {");
-		out.write("\n\t\tprincipal();");
-		out.write("\n\t}");
+		return null;
+	}
+	
+	
+	/**
+	 * <Type>  ::=  bit  | date  |  time | timestamp |  decimal  |  real |  float
+          |  smallint |  integer | int  |  interval |  character |  varchar <Tamanho> 
+	 */
+	private Object type(Node no) {
+		
+		return null;
 	}
 }
