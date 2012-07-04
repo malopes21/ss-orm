@@ -10,7 +10,7 @@ create table Telefone (
     id_cliente int not null ,
     numero varchar ( 40 ) ,
     primary key ( id ) ,
-    foreign key ( id_cliente ) references Cliente ( id )
+    foreign key ( id_cliente ) references Cliente ( id )  -- 1:1
 ) ;
 
 -- alter table Cliente add constraint Cliente_PK primary key ( id ) ;
