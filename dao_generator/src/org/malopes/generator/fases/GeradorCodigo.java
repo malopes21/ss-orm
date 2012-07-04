@@ -87,9 +87,16 @@ public class GeradorCodigo {
 			Token id = no.getFilho(2).getToken();
 			String fileName = id.getImagem();
 			out = new PrintWriter(new File("saida\\" + fileName + ".java"));
+			out.write("public class " + fileName + " {\n");
 			
-			out.write("public class " + fileName + " {");
+			//gera os atributos
 			gerar(no.getFilho(4));
+			
+			//gera construtor
+
+			out.write("\n\n\tpublic "+ fileName + "() {");
+			out.write("\n\t}\n");
+			
 			out.write("\n}");
 			
 			out.flush();
