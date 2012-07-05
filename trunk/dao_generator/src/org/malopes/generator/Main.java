@@ -89,6 +89,7 @@ public class Main {
 		GeradorCodigo geradorCodigo = new GeradorCodigo(analisadorSintatico.getRaiz());
 		geradorCodigo.gerar();
 
+		
 		System.out.println("OK, GERAÇÃO ENCERRADA!");
 
 	}

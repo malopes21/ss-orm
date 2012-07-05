@@ -117,15 +117,31 @@ public class GeradorCodigo {
 	}
 
 	private void geraDAO(String fileName) {
-		// TODO Auto-generated method stub
+		try {
+			out = new PrintWriter(new File("saida\\" + fileName + "DAO.java"));
+			
+			out.write("import java.sql.*;\n");
+			out.write("\npublic class " + fileName + "DAO {\n");
+			
+			//gera ref. para conexão
+			out.write("\n\tprivate Connection conexao;\n");
+			
+			//gera construtor
+			out.write("\n\tpublic "+ fileName + "DAO(Connection conexao) {");
+			out.write("\n\t\tthis.conexao = conexao;");
+			out.write("\n\t}");
+			
+			out.write("\n}");
+			
+			out.flush();
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 		
 	}
 
-	private String toUpperCaseFirstChar(String idImagem) {
-		String firstUpper = idImagem.substring(0, 1).toUpperCase();
-		String tail = idImagem.substring(1, idImagem.length());
-		return firstUpper+tail;
-	}
 
 	/**
 	 * <Alter Stm>   ::= alter table Id add  <Constraint>
@@ -181,6 +197,12 @@ public class GeradorCodigo {
 		return null;
 	}
 	
+	private String toUpperCaseFirstChar(String idImagem) {
+		String firstUpper = idImagem.substring(0, 1).toUpperCase();
+		String tail = idImagem.substring(1, idImagem.length());
+		return firstUpper+tail;
+	}
+
 	
 	/**
 	 * <Type>  ::=  bit  | date  |  time | timestamp |  decimal  |  real |  float
