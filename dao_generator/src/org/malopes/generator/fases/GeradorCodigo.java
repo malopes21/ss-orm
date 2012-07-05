@@ -15,6 +15,7 @@ public class GeradorCodigo {
 	
 	private Node raiz;
 	private PrintWriter out;
+	private boolean gerarAtribs;
 	
 	public GeradorCodigo(Node raiz) {
 		this.raiz = raiz;
@@ -92,6 +93,7 @@ public class GeradorCodigo {
 			out.write("public class " + fileName + " {\n");
 			
 			//gera os atributos
+			gerarAtribs = true;
 			gerar(no.getFilho(4));
 			
 			//gera construtor
@@ -99,29 +101,24 @@ public class GeradorCodigo {
 			out.write("\n\t}");
 			
 			//gera gets e sets
-			List<Simbolo> simbolos = TabelaSimbolos.getSimbolosByEscopo(fileName);
-			for(Simbolo simb : simbolos) {
-				if(simb.getTipo() != null && !simb.getTipo().equals("table")) {
-					String idImagem = simb.getToken().getImagem();
-					String idTipoJava = simb.getTipo();
-					out.write("\n\n\tpublic "+idTipoJava+" get"+ toUpperCaseFirstChar(idImagem) + "() {");
-					out.write("\n\t\treturn "+idImagem+";");
-					out.write("\n\t}");
-					
-					out.write("\n\n\tpublic void set"+ toUpperCaseFirstChar(idImagem) + "(" + idTipoJava + " " + idImagem + ") {");
-					out.write("\n\t\tthis."+ idImagem+" = " + idImagem+ ";");
-					out.write("\n\t}");
-				}
-			}
+			gerarAtribs = false;
+			gerar(no.getFilho(4));
 			
 			out.write("\n}");
 			
 			out.flush();
 			out.close();
+			
+			geraDAO(fileName);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private void geraDAO(String fileName) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private String toUpperCaseFirstChar(String idImagem) {
@@ -166,7 +163,21 @@ public class GeradorCodigo {
 	private Object fieldDef(Node no) {
 		Token id = no.getFilho(0).getToken();
 		String tipo = (String) gerar(no.getFilho(1));
-		out.write("\n\tprivate "+tipo+" "+id.getImagem()+";");
+
+		if(gerarAtribs) {
+			out.write("\n\tprivate "+tipo+" "+id.getImagem()+";");
+		
+		} else { //gerar gets e sets
+
+			out.write("\n\n\tpublic "+id.getImagem()+" get"+ toUpperCaseFirstChar(id.getImagem()) + "() {");
+			out.write("\n\t\treturn "+id.getImagem()+";");
+			out.write("\n\t}");
+			
+			out.write("\n\n\tpublic void set"+ toUpperCaseFirstChar(id.getImagem()) + "(" + tipo + " " + id.getImagem() + ") {");
+			out.write("\n\t\tthis."+ id.getImagem()+" = " + id.getImagem()+ ";");
+			out.write("\n\t}");
+		}
+		
 		return null;
 	}
 	

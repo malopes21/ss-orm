@@ -7,7 +7,7 @@ public class Cliente {
 	public Cliente() {
 	}
 
-	public Integer getId() {
+	public id getId() {
 		return id;
 	}
 
@@ -15,7 +15,7 @@ public class Cliente {
 		this.id = id;
 	}
 
-	public String getNome() {
+	public nome getNome() {
 		return nome;
 	}
 
@@ -23,7 +23,7 @@ public class Cliente {
 		this.nome = nome;
 	}
 
-	public String getEndereco() {
+	public endereco getEndereco() {
 		return endereco;
 	}
 
