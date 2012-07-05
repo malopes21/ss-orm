@@ -112,7 +112,6 @@ public class GeradorCodigo {
 					out.write("\n\t\tthis."+ idImagem+" = " + idImagem+ ";");
 					out.write("\n\t}");
 				}
-				
 			}
 			
 			out.write("\n}");
