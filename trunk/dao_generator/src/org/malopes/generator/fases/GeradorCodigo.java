@@ -121,6 +121,8 @@ public class GeradorCodigo {
 			out = new PrintWriter(new File("saida\\" + fileName + "DAO.java"));
 			
 			out.write("import java.sql.*;\n");
+			out.write("import java.io.*;\n");
+			out.write("import java.util.*;\n");
 			out.write("\npublic class " + fileName + "DAO {\n");
 			
 			//gera ref. para conexão
@@ -130,6 +132,12 @@ public class GeradorCodigo {
 			out.write("\n\tpublic "+ fileName + "DAO(Connection conexao) {");
 			out.write("\n\t\tthis.conexao = conexao;");
 			out.write("\n\t}");
+			
+			geraInsert(fileName, out);
+			geraUpdate(fileName, out);
+			geraDelete(fileName, out);
+			geraListAll(fileName, out);
+			geraGetById(fileName, out);
 			
 			out.write("\n}");
 			
@@ -142,6 +150,43 @@ public class GeradorCodigo {
 		
 	}
 
+
+	private void geraGetById(String fileName, PrintWriter out2) {
+		out.write("\n\n\tpublic " + fileName + " getById(Serializable id) {");
+		out.write("\n");
+		out.write("\n\t}");
+	}
+
+	private void geraListAll(String fileName, PrintWriter out2) {
+		out.write("\n\n\tpublic List<" + fileName + "> listAll() {");
+		out.write("\n");
+		out.write("\n\t}");
+	}
+
+	private void geraDelete(String fileName, PrintWriter out2) {
+		out.write("\n\n\tpublic void delete("+fileName+ " " + toLowerCaseFirstChar(fileName) + ") {");
+		out.write("\n");
+		out.write("\n\t}");
+	}
+
+
+	private void geraUpdate(String fileName, PrintWriter out2) {
+		out.write("\n\n\tpublic void update("+fileName+ " " + toLowerCaseFirstChar(fileName) + ") {");
+		out.write("\n");
+		out.write("\n\t}");
+	}
+
+	private void geraInsert(String fileName, PrintWriter out2) {
+		out.write("\n\n\tpublic void insert("+fileName+ " " + toLowerCaseFirstChar(fileName) + ") {");
+		out.write("\n");
+		out.write("\n\t}");
+	}
+	
+	private String toLowerCaseFirstChar(String idImagem) {
+		String firstLower = idImagem.substring(0, 1).toLowerCase();
+		String tail = idImagem.substring(1, idImagem.length());
+		return firstLower+tail;
+	}
 
 	/**
 	 * <Alter Stm>   ::= alter table Id add  <Constraint>
