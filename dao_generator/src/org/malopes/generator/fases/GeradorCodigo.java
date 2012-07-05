@@ -3,9 +3,11 @@ package org.malopes.generator.fases;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import org.malopes.generator.consts.TipoOfNode;
 import org.malopes.generator.defs.Node;
+import org.malopes.generator.defs.Simbolo;
 import org.malopes.generator.defs.TabelaSimbolos;
 import org.malopes.generator.defs.Token;
 
@@ -93,9 +95,25 @@ public class GeradorCodigo {
 			gerar(no.getFilho(4));
 			
 			//gera construtor
-
 			out.write("\n\n\tpublic "+ fileName + "() {");
-			out.write("\n\t}\n");
+			out.write("\n\t}");
+			
+			//gera gets e sets
+			List<Simbolo> simbolos = TabelaSimbolos.getSimbolosByEscopo(fileName);
+			for(Simbolo simb : simbolos) {
+				if(simb.getTipo() != null && !simb.getTipo().equals("table")) {
+					String idImagem = simb.getToken().getImagem();
+					String idTipoJava = simb.getTipo();
+					out.write("\n\n\tpublic "+idTipoJava+" get"+ toUpperCaseFirstChar(idImagem) + "() {");
+					out.write("\n\t\treturn "+idImagem+";");
+					out.write("\n\t}");
+					
+					out.write("\n\n\tpublic void set"+ toUpperCaseFirstChar(idImagem) + "(" + idTipoJava + " " + idImagem + ") {");
+					out.write("\n\t\tthis."+ idImagem+" = " + idImagem+ ";");
+					out.write("\n\t}");
+				}
+				
+			}
 			
 			out.write("\n}");
 			
@@ -105,6 +123,12 @@ public class GeradorCodigo {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private String toUpperCaseFirstChar(String idImagem) {
+		String firstUpper = idImagem.substring(0, 1).toUpperCase();
+		String tail = idImagem.substring(1, idImagem.length());
+		return firstUpper+tail;
 	}
 
 	/**
