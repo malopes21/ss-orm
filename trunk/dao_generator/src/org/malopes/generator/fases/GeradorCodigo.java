@@ -133,11 +133,11 @@ public class GeradorCodigo {
 			out.write("\n\t\tthis.conexao = conexao;");
 			out.write("\n\t}");
 			
-			geraInsert(fileName, out);
-			geraUpdate(fileName, out);
-			geraDelete(fileName, out);
-			geraListAll(fileName, out);
-			geraGetById(fileName, out);
+			geraInsert(fileName);
+			geraUpdate(fileName);
+			geraDelete(fileName);
+			geraListAll(fileName);
+			geraGetById(fileName);
 			
 			out.write("\n}");
 			
@@ -151,37 +151,95 @@ public class GeradorCodigo {
 	}
 
 
-	private void geraGetById(String fileName, PrintWriter out2) {
+	private void geraGetById(String fileName) {
 		out.write("\n\n\tpublic " + fileName + " getById(Serializable id) {");
 		out.write("\n");
 		out.write("\n\t}");
 	}
 
-	private void geraListAll(String fileName, PrintWriter out2) {
+	private void geraListAll(String fileName) {
 		out.write("\n\n\tpublic List<" + fileName + "> listAll() {");
 		out.write("\n");
 		out.write("\n\t}");
 	}
 
-	private void geraDelete(String fileName, PrintWriter out2) {
-		out.write("\n\n\tpublic void delete("+fileName+ " " + toLowerCaseFirstChar(fileName) + ") {");
+	private void geraDelete(String fileName) {
+		out.write("\n\n\tpublic boolean delete("+fileName+ " " + toLowerCaseFirstChar(fileName) + ") {");
 		out.write("\n");
 		out.write("\n\t}");
 	}
 
 
-	private void geraUpdate(String fileName, PrintWriter out2) {
-		out.write("\n\n\tpublic void update("+fileName+ " " + toLowerCaseFirstChar(fileName) + ") {");
+	private void geraUpdate(String fileName) {
+		out.write("\n\n\tpublic boolean update("+fileName+ " " + toLowerCaseFirstChar(fileName) + ") {");
 		out.write("\n");
 		out.write("\n\t}");
 	}
 
-	private void geraInsert(String fileName, PrintWriter out2) {
-		out.write("\n\n\tpublic void insert("+fileName+ " " + toLowerCaseFirstChar(fileName) + ") {");
+	private void geraInsert(String entidade) {
+		String instancia = toLowerCaseFirstChar(entidade);
+		out.write("\n\n\tpublic boolean insert("+entidade+ " " + instancia + ") {");
+		out.write("\n");
+		
+		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
+		String sql = geraSqlInsert(entidade, atribSimbs);
+		out.write("\n\t\tPreparedStatement stmt = conexao.prepareStatement(\"" + sql + " \", Statement.RETURN_GENERATED_KEYS);");
+		int pos = 1;
+		for(Simbolo atrib : atribSimbs) {
+			String atribName = atrib.getToken().getImagem();
+			String atribTipo = atrib.getTipo();
+			out.write("\n\t\tstmt.set" + atribTipo + "("+pos+", "+instancia+".get"+toUpperCaseFirstChar(atribName)+"());");
+			pos++;
+		}
+		out.write("\n\t\tint linhas = stmt.executeUpdate();");
+		out.write("\n");
+		out.write("\n\t\tResultSet rs = stmt.getGeneratedKeys();");
+		out.write("\n\t\tif(rs != null && rs.next()) {");
+		out.write("\n\t\t\t"+instancia+".set"+toUpperCaseFirstChar(atribSimbs.get(0).getToken().getImagem())+"(rs.get"+atribSimbs.get(0).getTipo()+"(1));");
+		out.write("\n\t\t}");
+		out.write("\n");
+		out.write("\n\t\trs.close();");
+		out.write("\n\t\tstmt.close();");
+		out.write("\n\t\treturn linhas > 0;");
+		
+		/*
+        PreparedStatement stmt = conexao.prepareStatement("insert into Cliente (cpf, nome, endereco) values (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        stmt.setString(1, cliente.getCpf()); 
+        stmt.setString(2, cliente.getNome());
+        stmt.setString(3, cliente.getEndereco());
+
+	    int linhas = stmt.executeUpdate();
+        
+        ResultSet rs = stmt.getGeneratedKeys();
+        if(rs != null && rs.next()) {
+            cliente.setId(rs.getInt(1));
+        }
+
+		rs.close();
+        stmt.close();
+        return linhas > 0;
+		*/
+		
 		out.write("\n");
 		out.write("\n\t}");
 	}
 	
+	private String geraSqlInsert(String entidade, List<Simbolo> atribSimbs) {
+		
+		StringBuilder sql = new StringBuilder(); 
+		sql.append("insert into " + entidade + " ("+atribSimbs.get(0).getToken().getImagem());
+		for(int i = 1; i<atribSimbs.size(); i++) {
+			Simbolo atrib = atribSimbs.get(i);
+			sql.append("," + atrib.getToken().getImagem());
+		}
+		sql.append(") values (?");
+		for(int i = 1; i<atribSimbs.size(); i++) {
+			sql.append(", ?");
+		}
+		sql.append(")");
+		return sql.toString();
+	}
+
 	private String toLowerCaseFirstChar(String idImagem) {
 		String firstLower = idImagem.substring(0, 1).toLowerCase();
 		String tail = idImagem.substring(1, idImagem.length());

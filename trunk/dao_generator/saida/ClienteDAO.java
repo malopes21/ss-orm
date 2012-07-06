@@ -10,15 +10,30 @@ public class ClienteDAO {
 		this.conexao = conexao;
 	}
 
-	public void insert(Cliente cliente) {
+	public boolean insert(Cliente cliente) {
+
+		PreparedStatement stmt = conexao.prepareStatement("insert into Cliente (id,nome,endereco) values (?, ?, ?) ", Statement.RETURN_GENERATED_KEYS);
+		stmt.setInteger(1, cliente.getId());
+		stmt.setString(2, cliente.getNome());
+		stmt.setString(3, cliente.getEndereco());
+		int linhas = stmt.executeUpdate();
+
+		ResultSet rs = stmt.getGeneratedKeys();
+		if(rs != null && rs.next()) {
+			cliente.setId(rs.getInteger(1));
+		}
+
+		rs.close();
+		stmt.close();
+		return linhas > 0;
 
 	}
 
-	public void update(Cliente cliente) {
+	public boolean update(Cliente cliente) {
 
 	}
 
-	public void delete(Cliente cliente) {
+	public boolean delete(Cliente cliente) {
 
 	}
 

@@ -3,14 +3,18 @@ package org.malopes.generator.defs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.malopes.generator.consts.TipoCategoria;
+
 public class Simbolo {
 
 	private Token token;
 	private String escopo;
 	private String tipo;
+	private TipoCategoria categoria;
 	private List<Chave> chaves = new ArrayList<Chave>();
 	private Object valor;
-	//private List<Token> params = new ArrayList<Token>();
+
+	// private List<Token> params = new ArrayList<Token>();
 
 	public Simbolo() {
 	}
@@ -26,9 +30,9 @@ public class Simbolo {
 		this.valor = value;
 	}
 
-	/*public void addParam(Token param) {
-		params.add(param);
-	}*/
+	/*
+	 * public void addParam(Token param) { params.add(param); }
+	 */
 
 	public Object getValor() {
 		return valor;
@@ -62,28 +66,36 @@ public class Simbolo {
 		this.escopo = escopo;
 	}
 
-	/*public List<Token> getParams() {
-		return params;
-	}*/
+	/*
+	 * public List<Token> getParams() { return params; }
+	 */
 
 	public List<Chave> getChaves() {
 		return chaves;
+	}
+
+	public TipoCategoria getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(TipoCategoria categoria) {
+		this.categoria = categoria;
 	}
 
 	public void setChaves(List<Chave> chaves) {
 		this.chaves = chaves;
 	}
 
-	/*public void setParams(List<Token> params) {
-		this.params = params;
-	}*/
+	/*
+	 * public void setParams(List<Token> params) { this.params = params; }
+	 */
 
 	public void debug() {
-		String params[] = { token.getImagem(), escopo,
-				token.getIndiceTabSimb() + "", tipo, chaves + ""};
-				//,this.params.toString() };
-		System.out.printf("%-20s %-20s %-20s %-20s %-20s \n",
-				(Object[]) params);
+		String params[] = { token.getImagem(), escopo, String.valueOf(categoria),
+				token.getIndiceTabSimb() + "", tipo, chaves + "" };
+		// ,this.params.toString() };
+		System.out
+				.printf("%-20s %-20s %-20s %-20s %-20s %-20s \n", (Object[]) params);
 	}
 
 	@Override
