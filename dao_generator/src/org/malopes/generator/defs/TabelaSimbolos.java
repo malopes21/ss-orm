@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.malopes.generator.consts.Classe;
+import org.malopes.generator.consts.TipoCategoria;
 import org.malopes.generator.consts.TipoOfKey;
 
 public class TabelaSimbolos {
@@ -33,6 +34,17 @@ public class TabelaSimbolos {
 		List<Simbolo> simbolosByEscopo = new ArrayList<Simbolo>();
 		for (Simbolo simb : tabela) {
 			if (simb.getEscopo().equals(escopo)) {
+				simbolosByEscopo.add(simb);
+			}
+		}
+		return simbolosByEscopo;
+	}
+	
+	public static List<Simbolo> getSimbolosAtribByEscopo(String escopo) {
+
+		List<Simbolo> simbolosByEscopo = new ArrayList<Simbolo>();
+		for (Simbolo simb : tabela) {
+			if (simb.getEscopo().equals(escopo) && simb.getCategoria() == TipoCategoria.Atrib) {
 				simbolosByEscopo.add(simb);
 			}
 		}
@@ -225,4 +237,11 @@ public class TabelaSimbolos {
 		}
 	}
 
+	public static void setCategoria(Token token, TipoCategoria categoria) {
+		Simbolo simboloAchado = tabela.get(token.getIndiceTabSimb());
+		if (simboloAchado != null) {
+			simboloAchado.setCategoria(categoria);
+		}
+	}
+	
 }

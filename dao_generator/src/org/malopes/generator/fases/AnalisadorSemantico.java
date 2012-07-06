@@ -3,6 +3,7 @@ package org.malopes.generator.fases;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.malopes.generator.consts.TipoCategoria;
 import org.malopes.generator.consts.TipoOfKey;
 import org.malopes.generator.defs.Chave;
 import org.malopes.generator.defs.Node;
@@ -103,6 +104,7 @@ public class AnalisadorSemantico {
 	 */
 	public Object createStm(Node no) {
 		tableId = no.getFilho(2).getToken();
+		TabelaSimbolos.setCategoria(tableId, TipoCategoria.Table);
 		String tipoIdTable = TabelaSimbolos.getTipoSimbolo(tableId);
 		if(tipoIdTable != null) {
 			erros.add("Erro semântico: identificador de tabela redeclarado: " + tableId);
@@ -197,6 +199,7 @@ public class AnalisadorSemantico {
 	 */
 	public Object fieldDef(Node no){
 		Token id = no.getFilho(0).getToken();
+		TabelaSimbolos.setCategoria(id, TipoCategoria.Atrib);
 		Token type = (Token) analisar(no.getFilho(1));
 		
 		String tipoId = TabelaSimbolos.getTipoSimbolo(id);
