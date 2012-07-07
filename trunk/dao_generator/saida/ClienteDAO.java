@@ -56,15 +56,14 @@ public class ClienteDAO {
 	public List<Cliente> listAll() {
 
 		PreparedStatement stmt = conexao.prepareStatement("select * from Cliente ");
-
 		ResultSet rs = stmt.executeQuery();
+
 		while(rs.next()) {
-	Cliente cliente = new Cliente();
+			Cliente cliente = new Cliente();
 			cliente.setId(rs.getInteger(1));
+			cliente.setNome(rs.getString(2));
+			cliente.setEndereco(rs.getString(3));
 		}
-		stmt.setInteger(1, cliente.getId());
-		stmt.setString(2, cliente.getNome());
-		stmt.setString(3, cliente.getEndereco());
 
 		rs.close();
 		stmt.close();
@@ -72,7 +71,23 @@ public class ClienteDAO {
 
 	}
 
-	public List<Cliente> listAll() {
+	public Cliente getById(Integer id) {
+
+		PreparedStatement stmt = conexao.prepareStatement("select * from Cliente where id = ?");
+		stmt.setInteger(1, cliente.getId());
+		ResultSet rs = stmt.executeQuery();
+
+		Cliente cliente = null;
+		if(rs.next()) {
+			cliente = new Cliente();
+			cliente.setId(rs.getInteger(1));
+			cliente.setNome(rs.getString(2));
+			cliente.setEndereco(rs.getString(3));
+		}
+
+		rs.close();
+		stmt.close();
+		return linhas > 0;
 
 	}
 }
