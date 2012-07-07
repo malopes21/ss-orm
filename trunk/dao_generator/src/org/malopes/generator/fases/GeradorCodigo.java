@@ -117,7 +117,7 @@ public class GeradorCodigo {
 			out = new PrintWriter(new File("saida\\" + fileName + "DAO.java"));
 
 			out.write("import java.sql.*;\n");
-			out.write("import java.io.*;\n");
+			//out.write("import java.io.*;\n");
 			out.write("import java.util.*;\n");
 			out.write("\npublic class " + fileName + "DAO {\n");
 
@@ -157,14 +157,14 @@ public class GeradorCodigo {
 		out.write("\n\t\tResultSet rs = stmt.executeQuery();");
 		out.write("\n");
 		out.write("\n\t\tList<"+entidade+"> " + instancia + "s = null;");
-		out.write("\n\t\twhile(rs.next()) {");
+		out.write("\n\t\twhile (rs.next()) {");
 		out.write("\n\t\t\t" + instancia + "s = new ArrayList<"+entidade+">();" );
 		out.write("\n\t\t\t"+entidade + " " + instancia + " = new "+ entidade + "();");
 		int pos = 1;
 		for (Simbolo atrib : atribSimbs) {
 			String atribName = atrib.getToken().getImagem();
 			String atribTipo = atrib.getTipo();
-			if(atribTipo.equals("Integer")) {
+			if (atribTipo.equals("Integer")) {
 				atribTipo = "Int";
 			}
 			out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribName) + "(rs.get" + atribTipo + "("+pos+"));");
@@ -193,21 +193,21 @@ public class GeradorCodigo {
 
 		String sql = "select * from " + entidade + " where "+ idName + " = ?";
 		out.write("\n\t\tPreparedStatement stmt = conexao.prepareStatement(\"" + sql + "\");");
-		if(idTipo.equals("Integer")) {
+		if (idTipo.equals("Integer")) {
 			idTipo = "Int";
 		}
 		out.write("\n\t\tstmt.set" + idTipo + "(1, id);");
 		out.write("\n\t\tResultSet rs = stmt.executeQuery();");
 		out.write("\n");
 		out.write("\n\t\t"+entidade + " " + instancia + " = null;");
-		out.write("\n\t\tif(rs.next()) {");
+		out.write("\n\t\tif (rs.next()) {");
 		
 		out.write("\n\t\t\t"+instancia + " = new "+ entidade + "();");
 		int pos = 1;
 		for (Simbolo atrib : atribSimbs) {
 			String atribName = atrib.getToken().getImagem();
 			String atribTipo = atrib.getTipo();
-			if(atribTipo.equals("Integer")) {
+			if (atribTipo.equals("Integer")) {
 				atribTipo = "Int";
 			}
 			out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribName) + "(rs.get" + atribTipo + "("+pos+"));");
@@ -236,7 +236,7 @@ public class GeradorCodigo {
 		Simbolo atrib = atribSimbs.get(0);
 		String atribName = atrib.getToken().getImagem();
 		String atribTipo = atrib.getTipo();
-		if(atribTipo.equals("Integer")) {
+		if (atribTipo.equals("Integer")) {
 			atribTipo = "Int";
 		}
 		out.write("\n\t\tstmt.set" + atribTipo + "(1, " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
@@ -269,7 +269,7 @@ public class GeradorCodigo {
 			Simbolo atrib = atribSimbs.get(i);
 			String atribName = atrib.getToken().getImagem();
 			String atribTipo = atrib.getTipo();
-			if(atribTipo.equals("Integer")) {
+			if (atribTipo.equals("Integer")) {
 				atribTipo = "Int";
 			}
 			out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
@@ -278,7 +278,7 @@ public class GeradorCodigo {
 		Simbolo atrib = atribSimbs.get(0);
 		String atribName = atrib.getToken().getImagem();
 		String atribTipo = atrib.getTipo();
-		if(atribTipo.equals("Integer")) {
+		if (atribTipo.equals("Integer")) {
 			atribTipo = "Int";
 		}
 
@@ -316,7 +316,7 @@ public class GeradorCodigo {
 		for (Simbolo atrib : atribSimbs) {
 			String atribName = atrib.getToken().getImagem();
 			String atribTipo = atrib.getTipo();
-			if(atribTipo.equals("Integer")) {
+			if (atribTipo.equals("Integer")) {
 				atribTipo = "Int";
 			}
 			out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
@@ -325,9 +325,9 @@ public class GeradorCodigo {
 		out.write("\n\t\tint linhas = stmt.executeUpdate();");
 		out.write("\n");
 		out.write("\n\t\tResultSet rs = stmt.getGeneratedKeys();");
-		out.write("\n\t\tif(rs != null && rs.next()) {");
+		out.write("\n\t\tif (rs != null && rs.next()) {");
 		String atribTipo = atribSimbs.get(0).getTipo();
-		if(atribTipo.equals("Integer")) {
+		if (atribTipo.equals("Integer")) {
 			atribTipo = "Int";
 		}
 		out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribSimbs.get(0).getToken().getImagem()) + "(rs.get" + atribTipo + "(1));");

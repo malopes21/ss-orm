@@ -1,5 +1,4 @@
 import java.sql.*;
-import java.io.*;
 import java.util.*;
 
 public class ClienteDAO {
@@ -19,7 +18,7 @@ public class ClienteDAO {
 		int linhas = stmt.executeUpdate();
 
 		ResultSet rs = stmt.getGeneratedKeys();
-		if(rs != null && rs.next()) {
+		if (rs != null && rs.next()) {
 			cliente.setId(rs.getInt(1));
 		}
 
@@ -81,7 +80,7 @@ public class ClienteDAO {
 		ResultSet rs = stmt.executeQuery();
 
 		Cliente cliente = null;
-		if(rs.next()) {
+		if (rs.next()) {
 			cliente = new Cliente();
 			cliente.setId(rs.getInt(1));
 			cliente.setNome(rs.getString(2));
