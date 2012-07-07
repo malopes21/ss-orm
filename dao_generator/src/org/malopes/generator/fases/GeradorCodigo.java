@@ -156,21 +156,19 @@ public class GeradorCodigo {
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
 		String sql = "select * from " + entidade;
 		out.write("\n\t\tPreparedStatement stmt = conexao.prepareStatement(\"" + sql + " \");");
-		
-		out.write("\n");
 		out.write("\n\t\tResultSet rs = stmt.executeQuery();");
+		out.write("\n");
 		out.write("\n\t\twhile(rs.next()) {");
-		out.write("\n\t"+entidade + " " + instancia + " = new "+ entidade + "();");
-		out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribSimbs.get(0).getToken().getImagem()) + "(rs.get" + atribSimbs.get(0).getTipo() + "(1));");
-		out.write("\n\t\t}");
 		
+		out.write("\n\t\t\t"+entidade + " " + instancia + " = new "+ entidade + "();");
 		int pos = 1;
 		for (Simbolo atrib : atribSimbs) {
 			String atribName = atrib.getToken().getImagem();
 			String atribTipo = atrib.getTipo();
-			out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
+			out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribName) + "(rs.get" + atribTipo + "("+pos+"));");
 			pos++;
 		}
+		out.write("\n\t\t}");
 		
 		out.write("\n");
 		out.write("\n\t\trs.close();");
@@ -181,8 +179,38 @@ public class GeradorCodigo {
 		out.write("\n\t}");
 	}
 
-	private void geraGetById(String fileName) {
-		out.write("\n\n\tpublic List<" + fileName + "> listAll() {");
+	private void geraGetById(String entidade) {
+		String instancia = toLowerCaseFirstChar(entidade);
+		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
+		String idTipo = atribSimbs.get(0).getTipo();
+		String idName = atribSimbs.get(0).getToken().getImagem();
+		
+		out.write("\n\n\tpublic "+entidade+" getById("+ idTipo + " id"  +") {");
+		out.write("\n");
+
+		String sql = "select * from " + entidade + " where "+ idName + " = ?";
+		out.write("\n\t\tPreparedStatement stmt = conexao.prepareStatement(\"" + sql + "\");");
+		out.write("\n\t\tstmt.set" + idTipo + "(1, " + instancia + ".get" + toUpperCaseFirstChar(idName) + "());");
+		out.write("\n\t\tResultSet rs = stmt.executeQuery();");
+		out.write("\n");
+		out.write("\n\t\t"+entidade + " " + instancia + " = null;");
+		out.write("\n\t\tif(rs.next()) {");
+		
+		out.write("\n\t\t\t"+instancia + " = new "+ entidade + "();");
+		int pos = 1;
+		for (Simbolo atrib : atribSimbs) {
+			String atribName = atrib.getToken().getImagem();
+			String atribTipo = atrib.getTipo();
+			out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribName) + "(rs.get" + atribTipo + "("+pos+"));");
+			pos++;
+		}
+		out.write("\n\t\t}");
+		
+		out.write("\n");
+		out.write("\n\t\trs.close();");
+		out.write("\n\t\tstmt.close();");
+		out.write("\n\t\treturn linhas > 0;");
+
 		out.write("\n");
 		out.write("\n\t}");
 	}

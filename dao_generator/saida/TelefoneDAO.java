@@ -56,15 +56,14 @@ public class TelefoneDAO {
 	public List<Telefone> listAll() {
 
 		PreparedStatement stmt = conexao.prepareStatement("select * from Telefone ");
-
 		ResultSet rs = stmt.executeQuery();
+
 		while(rs.next()) {
-	Telefone telefone = new Telefone();
+			Telefone telefone = new Telefone();
 			telefone.setId(rs.getInteger(1));
+			telefone.setId_cliente(rs.getInteger(2));
+			telefone.setNumero(rs.getString(3));
 		}
-		stmt.setInteger(1, telefone.getId());
-		stmt.setInteger(2, telefone.getId_cliente());
-		stmt.setString(3, telefone.getNumero());
 
 		rs.close();
 		stmt.close();
@@ -72,7 +71,23 @@ public class TelefoneDAO {
 
 	}
 
-	public List<Telefone> listAll() {
+	public Telefone getById(Integer id) {
+
+		PreparedStatement stmt = conexao.prepareStatement("select * from Telefone where id = ?");
+		stmt.setInteger(1, telefone.getId());
+		ResultSet rs = stmt.executeQuery();
+
+		Telefone telefone = null;
+		if(rs.next()) {
+			telefone = new Telefone();
+			telefone.setId(rs.getInteger(1));
+			telefone.setId_cliente(rs.getInteger(2));
+			telefone.setNumero(rs.getString(3));
+		}
+
+		rs.close();
+		stmt.close();
+		return linhas > 0;
 
 	}
 }
