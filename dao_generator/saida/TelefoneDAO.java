@@ -1,5 +1,4 @@
 import java.sql.*;
-import java.io.*;
 import java.util.*;
 
 public class TelefoneDAO {
@@ -19,7 +18,7 @@ public class TelefoneDAO {
 		int linhas = stmt.executeUpdate();
 
 		ResultSet rs = stmt.getGeneratedKeys();
-		if(rs != null && rs.next()) {
+		if (rs != null && rs.next()) {
 			telefone.setId(rs.getInt(1));
 		}
 
@@ -81,7 +80,7 @@ public class TelefoneDAO {
 		ResultSet rs = stmt.executeQuery();
 
 		Telefone telefone = null;
-		if(rs.next()) {
+		if (rs.next()) {
 			telefone = new Telefone();
 			telefone.setId(rs.getInt(1));
 			telefone.setId_cliente(rs.getInt(2));
