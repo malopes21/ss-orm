@@ -57,7 +57,22 @@ public class TelefoneDAO {
 
 	}
 
-	public Telefone getById(Serializable id) {
+	public List<Telefone> listAll() {
+
+		PreparedStatement stmt = conexao.prepareStatement("select * from Telefone ");
+
+		ResultSet rs = stmt.executeQuery();
+		while(rs.next()) {
+	Telefone telefone = new Telefone();
+			telefone.setId(rs.getInteger(1));
+		}
+		stmt.setInteger(1, telefone.getId());
+		stmt.setInteger(2, telefone.getId_cliente());
+		stmt.setString(3, telefone.getNumero());
+
+		rs.close();
+		stmt.close();
+		return linhas > 0;
 
 	}
 }

@@ -57,7 +57,22 @@ public class ClienteDAO {
 
 	}
 
-	public Cliente getById(Serializable id) {
+	public List<Cliente> listAll() {
+
+		PreparedStatement stmt = conexao.prepareStatement("select * from Cliente ");
+
+		ResultSet rs = stmt.executeQuery();
+		while(rs.next()) {
+	Cliente cliente = new Cliente();
+			cliente.setId(rs.getInteger(1));
+		}
+		stmt.setInteger(1, cliente.getId());
+		stmt.setString(2, cliente.getNome());
+		stmt.setString(3, cliente.getEndereco());
+
+		rs.close();
+		stmt.close();
+		return linhas > 0;
 
 	}
 }
