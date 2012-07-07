@@ -29,11 +29,27 @@ public class TelefoneDAO {
 
 	}
 
-	public boolean update(Telefone telefone) {
+	public boolean insert(Telefone telefone) {
+
+		PreparedStatement stmt = conexao.prepareStatement("update Telefone set id_cliente = ?, numero = ? where id = ? ");
+		stmt.setInteger(1, telefone.getId_cliente());
+		stmt.setString(2, telefone.getNumero());
+		stmt.setInteger(3, telefone.getId());
+		int linhas = stmt.executeUpdate();
+
+		stmt.close();
+		return linhas > 0;
 
 	}
 
 	public boolean delete(Telefone telefone) {
+
+		PreparedStatement stmt = conexao.prepareStatement("delete from Telefone where id = ? ");
+		stmt.setInteger(1, telefone.getId());
+		int linhas = stmt.executeUpdate();
+
+		stmt.close();
+		return linhas > 0;
 
 	}
 
