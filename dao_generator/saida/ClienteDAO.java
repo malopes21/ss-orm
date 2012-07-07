@@ -29,11 +29,27 @@ public class ClienteDAO {
 
 	}
 
-	public boolean update(Cliente cliente) {
+	public boolean insert(Cliente cliente) {
+
+		PreparedStatement stmt = conexao.prepareStatement("update Cliente set nome = ?, endereco = ? where id = ? ");
+		stmt.setString(1, cliente.getNome());
+		stmt.setString(2, cliente.getEndereco());
+		stmt.setInteger(3, cliente.getId());
+		int linhas = stmt.executeUpdate();
+
+		stmt.close();
+		return linhas > 0;
 
 	}
 
 	public boolean delete(Cliente cliente) {
+
+		PreparedStatement stmt = conexao.prepareStatement("delete from Cliente where id = ? ");
+		stmt.setInteger(1, cliente.getId());
+		int linhas = stmt.executeUpdate();
+
+		stmt.close();
+		return linhas > 0;
 
 	}
 
