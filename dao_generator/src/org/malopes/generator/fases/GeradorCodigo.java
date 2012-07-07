@@ -146,8 +146,9 @@ public class GeradorCodigo {
 		}
 
 	}
-
-	private void geraGetById(String entidade) {
+	
+	
+	private void geraListAll(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
 		out.write("\n\n\tpublic List<"+entidade+"> listAll() {");
 		out.write("\n");
@@ -180,7 +181,7 @@ public class GeradorCodigo {
 		out.write("\n\t}");
 	}
 
-	private void geraListAll(String fileName) {
+	private void geraGetById(String fileName) {
 		out.write("\n\n\tpublic List<" + fileName + "> listAll() {");
 		out.write("\n");
 		out.write("\n\t}");
@@ -217,7 +218,7 @@ public class GeradorCodigo {
 
 	private void geraUpdate(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
-		out.write("\n\n\tpublic boolean insert(" + entidade + " " + instancia + ") {");
+		out.write("\n\n\tpublic boolean update(" + entidade + " " + instancia + ") {");
 		out.write("\n");
 
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);

@@ -29,7 +29,7 @@ public class TelefoneDAO {
 
 	}
 
-	public boolean insert(Telefone telefone) {
+	public boolean update(Telefone telefone) {
 
 		PreparedStatement stmt = conexao.prepareStatement("update Telefone set id_cliente = ?, numero = ? where id = ? ");
 		stmt.setInteger(1, telefone.getId_cliente());
@@ -55,10 +55,6 @@ public class TelefoneDAO {
 
 	public List<Telefone> listAll() {
 
-	}
-
-	public List<Telefone> listAll() {
-
 		PreparedStatement stmt = conexao.prepareStatement("select * from Telefone ");
 
 		ResultSet rs = stmt.executeQuery();
@@ -73,6 +69,10 @@ public class TelefoneDAO {
 		rs.close();
 		stmt.close();
 		return linhas > 0;
+
+	}
+
+	public List<Telefone> listAll() {
 
 	}
 }

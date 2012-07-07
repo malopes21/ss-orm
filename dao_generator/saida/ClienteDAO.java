@@ -29,7 +29,7 @@ public class ClienteDAO {
 
 	}
 
-	public boolean insert(Cliente cliente) {
+	public boolean update(Cliente cliente) {
 
 		PreparedStatement stmt = conexao.prepareStatement("update Cliente set nome = ?, endereco = ? where id = ? ");
 		stmt.setString(1, cliente.getNome());
@@ -55,10 +55,6 @@ public class ClienteDAO {
 
 	public List<Cliente> listAll() {
 
-	}
-
-	public List<Cliente> listAll() {
-
 		PreparedStatement stmt = conexao.prepareStatement("select * from Cliente ");
 
 		ResultSet rs = stmt.executeQuery();
@@ -73,6 +69,10 @@ public class ClienteDAO {
 		rs.close();
 		stmt.close();
 		return linhas > 0;
+
+	}
+
+	public List<Cliente> listAll() {
 
 	}
 }
