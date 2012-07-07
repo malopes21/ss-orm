@@ -7,7 +7,7 @@ public class Telefone {
 	public Telefone() {
 	}
 
-	public id getId() {
+	public Integer getId() {
 		return id;
 	}
 
@@ -15,7 +15,7 @@ public class Telefone {
 		this.id = id;
 	}
 
-	public id_cliente getId_cliente() {
+	public Integer getId_cliente() {
 		return id_cliente;
 	}
 
@@ -23,7 +23,7 @@ public class Telefone {
 		this.id_cliente = id_cliente;
 	}
 
-	public numero getNumero() {
+	public String getNumero() {
 		return numero;
 	}
 

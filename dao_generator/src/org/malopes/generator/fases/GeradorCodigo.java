@@ -5,12 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.malopes.generator.consts.TipoOfNode;
 import org.malopes.generator.defs.Node;
 import org.malopes.generator.defs.Simbolo;
 import org.malopes.generator.defs.TabelaSimbolos;
 import org.malopes.generator.defs.Token;
-import org.omg.CORBA.Environment;
 
 public class GeradorCodigo {
 
@@ -150,7 +148,7 @@ public class GeradorCodigo {
 	
 	private void geraListAll(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
-		out.write("\n\n\tpublic List<"+entidade+"> listAll() {");
+		out.write("\n\n\tpublic List<"+entidade+"> listAll() throws SQLException {");
 		out.write("\n");
 
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
@@ -158,22 +156,27 @@ public class GeradorCodigo {
 		out.write("\n\t\tPreparedStatement stmt = conexao.prepareStatement(\"" + sql + " \");");
 		out.write("\n\t\tResultSet rs = stmt.executeQuery();");
 		out.write("\n");
+		out.write("\n\t\tList<"+entidade+"> " + instancia + "s = null;");
 		out.write("\n\t\twhile(rs.next()) {");
-		
+		out.write("\n\t\t\t" + instancia + "s = new ArrayList<"+entidade+">();" );
 		out.write("\n\t\t\t"+entidade + " " + instancia + " = new "+ entidade + "();");
 		int pos = 1;
 		for (Simbolo atrib : atribSimbs) {
 			String atribName = atrib.getToken().getImagem();
 			String atribTipo = atrib.getTipo();
+			if(atribTipo.equals("Integer")) {
+				atribTipo = "Int";
+			}
 			out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribName) + "(rs.get" + atribTipo + "("+pos+"));");
 			pos++;
 		}
+		out.write("\n\t\t\t"+instancia+"s.add("+ instancia+");");
 		out.write("\n\t\t}");
 		
 		out.write("\n");
 		out.write("\n\t\trs.close();");
 		out.write("\n\t\tstmt.close();");
-		out.write("\n\t\treturn linhas > 0;");
+		out.write("\n\t\treturn "+ instancia + "s;");
 
 		out.write("\n");
 		out.write("\n\t}");
@@ -185,12 +188,15 @@ public class GeradorCodigo {
 		String idTipo = atribSimbs.get(0).getTipo();
 		String idName = atribSimbs.get(0).getToken().getImagem();
 		
-		out.write("\n\n\tpublic "+entidade+" getById("+ idTipo + " id"  +") {");
+		out.write("\n\n\tpublic "+entidade+" getById("+ idTipo + " id"  +") throws SQLException {");
 		out.write("\n");
 
 		String sql = "select * from " + entidade + " where "+ idName + " = ?";
 		out.write("\n\t\tPreparedStatement stmt = conexao.prepareStatement(\"" + sql + "\");");
-		out.write("\n\t\tstmt.set" + idTipo + "(1, " + instancia + ".get" + toUpperCaseFirstChar(idName) + "());");
+		if(idTipo.equals("Integer")) {
+			idTipo = "Int";
+		}
+		out.write("\n\t\tstmt.set" + idTipo + "(1, id);");
 		out.write("\n\t\tResultSet rs = stmt.executeQuery();");
 		out.write("\n");
 		out.write("\n\t\t"+entidade + " " + instancia + " = null;");
@@ -201,6 +207,9 @@ public class GeradorCodigo {
 		for (Simbolo atrib : atribSimbs) {
 			String atribName = atrib.getToken().getImagem();
 			String atribTipo = atrib.getTipo();
+			if(atribTipo.equals("Integer")) {
+				atribTipo = "Int";
+			}
 			out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribName) + "(rs.get" + atribTipo + "("+pos+"));");
 			pos++;
 		}
@@ -209,7 +218,7 @@ public class GeradorCodigo {
 		out.write("\n");
 		out.write("\n\t\trs.close();");
 		out.write("\n\t\tstmt.close();");
-		out.write("\n\t\treturn linhas > 0;");
+		out.write("\n\t\treturn " + instancia+ ";");
 
 		out.write("\n");
 		out.write("\n\t}");
@@ -217,7 +226,7 @@ public class GeradorCodigo {
 
 	private void geraDelete(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
-		out.write("\n\n\tpublic boolean delete(" + entidade + " " + instancia + ") {");
+		out.write("\n\n\tpublic boolean delete(" + entidade + " " + instancia + ") throws SQLException {");
 		out.write("\n");
 
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
@@ -227,6 +236,9 @@ public class GeradorCodigo {
 		Simbolo atrib = atribSimbs.get(0);
 		String atribName = atrib.getToken().getImagem();
 		String atribTipo = atrib.getTipo();
+		if(atribTipo.equals("Integer")) {
+			atribTipo = "Int";
+		}
 		out.write("\n\t\tstmt.set" + atribTipo + "(1, " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
 		out.write("\n\t\tint linhas = stmt.executeUpdate();");
 		out.write("\n");
@@ -246,7 +258,7 @@ public class GeradorCodigo {
 
 	private void geraUpdate(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
-		out.write("\n\n\tpublic boolean update(" + entidade + " " + instancia + ") {");
+		out.write("\n\n\tpublic boolean update(" + entidade + " " + instancia + ") throws SQLException {");
 		out.write("\n");
 
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
@@ -257,12 +269,19 @@ public class GeradorCodigo {
 			Simbolo atrib = atribSimbs.get(i);
 			String atribName = atrib.getToken().getImagem();
 			String atribTipo = atrib.getTipo();
+			if(atribTipo.equals("Integer")) {
+				atribTipo = "Int";
+			}
 			out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
 			pos++;
 		}
 		Simbolo atrib = atribSimbs.get(0);
 		String atribName = atrib.getToken().getImagem();
 		String atribTipo = atrib.getTipo();
+		if(atribTipo.equals("Integer")) {
+			atribTipo = "Int";
+		}
+
 		out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
 		out.write("\n\t\tint linhas = stmt.executeUpdate();");
 		out.write("\n");
@@ -287,7 +306,7 @@ public class GeradorCodigo {
 
 	private void geraInsert(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
-		out.write("\n\n\tpublic boolean insert(" + entidade + " " + instancia + ") {");
+		out.write("\n\n\tpublic boolean insert(" + entidade + " " + instancia + ") throws SQLException {");
 		out.write("\n");
 
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
@@ -297,6 +316,9 @@ public class GeradorCodigo {
 		for (Simbolo atrib : atribSimbs) {
 			String atribName = atrib.getToken().getImagem();
 			String atribTipo = atrib.getTipo();
+			if(atribTipo.equals("Integer")) {
+				atribTipo = "Int";
+			}
 			out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
 			pos++;
 		}
@@ -304,7 +326,11 @@ public class GeradorCodigo {
 		out.write("\n");
 		out.write("\n\t\tResultSet rs = stmt.getGeneratedKeys();");
 		out.write("\n\t\tif(rs != null && rs.next()) {");
-		out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribSimbs.get(0).getToken().getImagem()) + "(rs.get" + atribSimbs.get(0).getTipo() + "(1));");
+		String atribTipo = atribSimbs.get(0).getTipo();
+		if(atribTipo.equals("Integer")) {
+			atribTipo = "Int";
+		}
+		out.write("\n\t\t\t" + instancia + ".set" + toUpperCaseFirstChar(atribSimbs.get(0).getToken().getImagem()) + "(rs.get" + atribTipo + "(1));");
 		out.write("\n\t\t}");
 		out.write("\n");
 		out.write("\n\t\trs.close();");
@@ -379,7 +405,7 @@ public class GeradorCodigo {
 
 		} else { // gerar gets e sets
 
-			out.write("\n\n\tpublic " + id.getImagem() + " get" + toUpperCaseFirstChar(id.getImagem()) + "() {");
+			out.write("\n\n\tpublic " + tipo + " get" + toUpperCaseFirstChar(id.getImagem()) + "() {");
 			out.write("\n\t\treturn " + id.getImagem() + ";");
 			out.write("\n\t}");
 
