@@ -92,12 +92,14 @@ public class GeradorCodigo {
 		try {
 			Token id = no.getFilho(2).getToken();
 			String fileName = id.getImagem();
-			out = new PrintWriter(new File("saida\\" + fileName + ".java"));
-			out.write("public class " + fileName + " {\n");
+			out = new PrintWriter(new File("saida\\" + toUpperCaseFirstChar(fileName) + ".java"));
+			out.write("import java.util.*;\n\n");
+			out.write("public class " + toUpperCaseFirstChar(fileName) + " {\n");
 
 			// gera os atributos
 			gerarAtribs = true;
 			gerar(no.getFilho(4));
+			out.write("\n");
 			
 			// gera campos de relacionamentos
 			List<Chave> chavesEstrangeiras = TabelaSimbolos.getForeignKeysBySimbolo(id);
@@ -107,7 +109,7 @@ public class GeradorCodigo {
 			geraColecoes(tabelasReferenciadas);
 
 			// gera construtor
-			out.write("\n\tpublic " + fileName + "() {");
+			out.write("\n\tpublic " + toUpperCaseFirstChar(fileName) + "() {");
 			out.write("\n\t}");
 			
 			// gera gets e sets
@@ -124,7 +126,9 @@ public class GeradorCodigo {
 			out.flush();
 			out.close();
 
+			//gera todos os DAOs
 			geraDAO(fileName);
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -171,34 +175,36 @@ public class GeradorCodigo {
 	private void geraEntidades(List<Chave> chavesEstrangeiras) {
 		for(Chave chave : chavesEstrangeiras) {
 			String nomeEntidade = chave.getReference().getImagem();
-			out.write("\n\tprivate " + toUpperCaseFirstChar(nomeEntidade) +" " + toLowerCaseFirstChar(nomeEntidade) +" = new "+toUpperCaseFirstChar(nomeEntidade)+"();  \n");
+			out.write("\tprivate " + toUpperCaseFirstChar(nomeEntidade) +" " + toLowerCaseFirstChar(nomeEntidade) +" = new "+toUpperCaseFirstChar(nomeEntidade)+"();  \n");
 		}
 	}
 
 	private void geraColecoes(List<Token> tabelasReferenciadas) {
 		for(Token tokTab: tabelasReferenciadas) {
 			String nomeEntidade = tokTab.getImagem();
-			out.write("\n\tprivate List<"+ toUpperCaseFirstChar(nomeEntidade) +"> " + toLowerCaseFirstChar(nomeEntidade) +"s = new ArrayList<"+toUpperCaseFirstChar(nomeEntidade)+">;  \n");
+			out.write("\tprivate List<"+ toUpperCaseFirstChar(nomeEntidade) +"> " + toLowerCaseFirstChar(nomeEntidade) +"s = new ArrayList<"+toUpperCaseFirstChar(nomeEntidade)+">();  \n");
 		}
 	}
 
 	private void geraDAO(String fileName) {
 		try {
-			out = new PrintWriter(new File("saida\\" + fileName + "DAO.java"));
+			String entidade = toUpperCaseFirstChar(fileName);
+			out = new PrintWriter(new File("saida\\" + entidade + "DAO.java"));
 
 			out.write("import java.sql.*;\n");
 			//out.write("import java.io.*;\n");
 			out.write("import java.util.*;\n");
-			out.write("\npublic class " + fileName + "DAO {\n");
+			out.write("\npublic class " + entidade + "DAO {\n");
 
 			// gera ref. para conexão
 			out.write("\n\tprivate Connection conexao;\n");
 
 			// gera construtor
-			out.write("\n\tpublic " + fileName + "DAO(Connection conexao) {");
+			out.write("\n\tpublic " + entidade + "DAO(Connection conexao) {");
 			out.write("\n\t\tthis.conexao = conexao;");
 			out.write("\n\t}");
 
+			
 			geraInsert(fileName);
 			geraUpdate(fileName);
 			geraDelete(fileName);
@@ -218,7 +224,7 @@ public class GeradorCodigo {
 	
 	private void geraListAll(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
-		out.write("\n\n\tpublic List<"+entidade+"> listAll() throws SQLException {");
+		out.write("\n\n\tpublic List<"+ toUpperCaseFirstChar(entidade) +"> listAll() throws SQLException {");
 		out.write("\n");
 
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
@@ -226,10 +232,10 @@ public class GeradorCodigo {
 		out.write("\n\t\tPreparedStatement stmt = conexao.prepareStatement(\"" + sql + " \");");
 		out.write("\n\t\tResultSet rs = stmt.executeQuery();");
 		out.write("\n");
-		out.write("\n\t\tList<"+entidade+"> " + instancia + "s = null;");
+		out.write("\n\t\tList<"+toUpperCaseFirstChar(entidade)+"> " + instancia + "s = null;");
 		out.write("\n\t\twhile (rs.next()) {");
-		out.write("\n\t\t\t" + instancia + "s = new ArrayList<"+entidade+">();" );
-		out.write("\n\t\t\t"+entidade + " " + instancia + " = new "+ entidade + "();");
+		out.write("\n\t\t\t" + instancia + "s = new ArrayList<"+toUpperCaseFirstChar(entidade)+">();" );
+		out.write("\n\t\t\t"+toUpperCaseFirstChar(entidade) + " " + instancia + " = new "+ toUpperCaseFirstChar(entidade) + "();");
 		int pos = 1;
 		for (Simbolo atrib : atribSimbs) {
 			String atribName = atrib.getToken().getImagem();
@@ -258,7 +264,7 @@ public class GeradorCodigo {
 		String idTipo = atribSimbs.get(0).getTipo();
 		String idName = atribSimbs.get(0).getToken().getImagem();
 		
-		out.write("\n\n\tpublic "+entidade+" getById("+ idTipo + " id"  +") throws SQLException {");
+		out.write("\n\n\tpublic "+toUpperCaseFirstChar(entidade)+" getById("+ idTipo + " id"  +") throws SQLException {");
 		out.write("\n");
 
 		String sql = "select * from " + entidade + " where "+ idName + " = ?";
@@ -269,10 +275,10 @@ public class GeradorCodigo {
 		out.write("\n\t\tstmt.set" + idTipo + "(1, id);");
 		out.write("\n\t\tResultSet rs = stmt.executeQuery();");
 		out.write("\n");
-		out.write("\n\t\t"+entidade + " " + instancia + " = null;");
+		out.write("\n\t\t"+toUpperCaseFirstChar(entidade) + " " + instancia + " = null;");
 		out.write("\n\t\tif (rs.next()) {");
 		
-		out.write("\n\t\t\t"+instancia + " = new "+ entidade + "();");
+		out.write("\n\t\t\t"+instancia + " = new "+ toUpperCaseFirstChar(entidade) + "();");
 		int pos = 1;
 		for (Simbolo atrib : atribSimbs) {
 			String atribName = atrib.getToken().getImagem();
@@ -296,7 +302,7 @@ public class GeradorCodigo {
 
 	private void geraDelete(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
-		out.write("\n\n\tpublic boolean delete(" + entidade + " " + instancia + ") throws SQLException {");
+		out.write("\n\n\tpublic boolean delete(" + toUpperCaseFirstChar(entidade) + " " + instancia + ") throws SQLException {");
 		out.write("\n");
 
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
@@ -328,7 +334,7 @@ public class GeradorCodigo {
 
 	private void geraUpdate(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
-		out.write("\n\n\tpublic boolean update(" + entidade + " " + instancia + ") throws SQLException {");
+		out.write("\n\n\tpublic boolean update(" + toUpperCaseFirstChar(entidade) + " " + instancia + ") throws SQLException {");
 		out.write("\n");
 
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
@@ -342,7 +348,11 @@ public class GeradorCodigo {
 			if (atribTipo.equals("Integer")) {
 				atribTipo = "Int";
 			}
-			out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
+			if(atribTipo.equals("Date")) {
+				out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", new java.sql.Date(" + instancia + ".get" + toUpperCaseFirstChar(atribName) + "().getTime()));");
+			} else {
+				out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
+			}
 			pos++;
 		}
 		Simbolo atrib = atribSimbs.get(0);
@@ -376,7 +386,7 @@ public class GeradorCodigo {
 
 	private void geraInsert(String entidade) {
 		String instancia = toLowerCaseFirstChar(entidade);
-		out.write("\n\n\tpublic boolean insert(" + entidade + " " + instancia + ") throws SQLException {");
+		out.write("\n\n\tpublic boolean insert(" + toUpperCaseFirstChar(entidade) + " " + instancia + ") throws SQLException {");
 		out.write("\n");
 
 		List<Simbolo> atribSimbs = TabelaSimbolos.getSimbolosAtribByEscopo(entidade);
@@ -389,7 +399,11 @@ public class GeradorCodigo {
 			if (atribTipo.equals("Integer")) {
 				atribTipo = "Int";
 			}
-			out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
+			if(atribTipo.equals("Date")) {
+				out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", new java.sql.Date(" + instancia + ".get" + toUpperCaseFirstChar(atribName) + "().getTime()));");
+			} else {
+				out.write("\n\t\tstmt.set" + atribTipo + "(" + pos + ", " + instancia + ".get" + toUpperCaseFirstChar(atribName) + "());");
+			}
 			pos++;
 		}
 		out.write("\n\t\tint linhas = stmt.executeUpdate();");
