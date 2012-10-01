@@ -33,7 +33,7 @@ public class Main {
 		String filePath;
 		try {
 			// filePath = getClass().getResource("prog01.ssp").getFile();
-			filePath = "script01.sql";
+			filePath = "script02.sql";
 			print("Analisando arquivo: " + filePath);
 		} catch (Exception e) {
 			System.err.println("ERRO de : " + e);
