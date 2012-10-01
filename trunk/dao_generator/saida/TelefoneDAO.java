@@ -11,10 +11,11 @@ public class TelefoneDAO {
 
 	public boolean insert(Telefone telefone) throws SQLException {
 
-		PreparedStatement stmt = conexao.prepareStatement("insert into Telefone (id,id_cliente,numero) values (?, ?, ?) ", Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement stmt = conexao.prepareStatement("insert into Telefone (id,id_cliente,numero,operadora) values (?, ?, ?, ?) ", Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, telefone.getId());
 		stmt.setInt(2, telefone.getId_cliente());
 		stmt.setString(3, telefone.getNumero());
+		stmt.setInt(4, telefone.getOperadora());
 		int linhas = stmt.executeUpdate();
 
 		ResultSet rs = stmt.getGeneratedKeys();
@@ -30,10 +31,11 @@ public class TelefoneDAO {
 
 	public boolean update(Telefone telefone) throws SQLException {
 
-		PreparedStatement stmt = conexao.prepareStatement("update Telefone set id_cliente = ?, numero = ? where id = ? ");
+		PreparedStatement stmt = conexao.prepareStatement("update Telefone set id_cliente = ?, numero = ?, operadora = ? where id = ? ");
 		stmt.setInt(1, telefone.getId_cliente());
 		stmt.setString(2, telefone.getNumero());
-		stmt.setInt(3, telefone.getId());
+		stmt.setInt(3, telefone.getOperadora());
+		stmt.setInt(4, telefone.getId());
 		int linhas = stmt.executeUpdate();
 
 		stmt.close();
@@ -58,12 +60,13 @@ public class TelefoneDAO {
 		ResultSet rs = stmt.executeQuery();
 
 		List<Telefone> telefones = null;
-		while(rs.next()) {
+		while (rs.next()) {
 			telefones = new ArrayList<Telefone>();
 			Telefone telefone = new Telefone();
 			telefone.setId(rs.getInt(1));
 			telefone.setId_cliente(rs.getInt(2));
 			telefone.setNumero(rs.getString(3));
+			telefone.setOperadora(rs.getInt(4));
 			telefones.add(telefone);
 		}
 
@@ -85,6 +88,7 @@ public class TelefoneDAO {
 			telefone.setId(rs.getInt(1));
 			telefone.setId_cliente(rs.getInt(2));
 			telefone.setNumero(rs.getString(3));
+			telefone.setOperadora(rs.getInt(4));
 		}
 
 		rs.close();

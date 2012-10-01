@@ -228,6 +228,29 @@ public class TabelaSimbolos {
 		}
 		return null;
 	}
+	
+	public static List<Token> getReferencedTablesBySimbolo(Token token){
+		Simbolo simboloLocal = new Simbolo();
+		simboloLocal.setToken(token);
+		simboloLocal.setEscopo(token.getImagem());
+		Simbolo simboloAchado = tabela.get( tabela.indexOf(simboloLocal) );
+		if(simboloAchado != null) {
+			List<Token> referencedTables = new ArrayList<Token>();
+			for(Simbolo simb: tabela) {
+				if(simb.getCategoria() == TipoCategoria.Table) {
+					List<Chave> chaves = simb.getChaves();
+					for(Chave chave: chaves) {
+						if(chave != null && chave.getReference() != null && chave.getReference().getImagem().equals(token.getImagem())) {
+							referencedTables.add(simb.getToken());
+						}
+					}
+				}
+				
+			}
+			return referencedTables;
+		}
+		return null;
+	}
 
 	public static String getTipoToken(Token token) {
 		if(token.getClasse() == Classe.Identificador) {

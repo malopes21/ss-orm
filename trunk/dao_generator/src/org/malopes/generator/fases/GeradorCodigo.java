@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import org.malopes.generator.defs.Chave;
 import org.malopes.generator.defs.Node;
 import org.malopes.generator.defs.Simbolo;
 import org.malopes.generator.defs.TabelaSimbolos;
@@ -53,6 +54,12 @@ public class GeradorCodigo {
 
 		case Type:
 			return type(no);
+			
+		/*case Constraint_List:
+			return constraintList(no);
+			
+		case Constraint_Type:
+			return constraintType(no);*/
 
 		}
 
@@ -91,15 +98,27 @@ public class GeradorCodigo {
 			// gera os atributos
 			gerarAtribs = true;
 			gerar(no.getFilho(4));
+			
+			// gera campos de relacionamentos
+			List<Chave> chavesEstrangeiras = TabelaSimbolos.getForeignKeysBySimbolo(id);
+			geraEntidades(chavesEstrangeiras);
+			
+			List<Token> tabelasReferenciadas = TabelaSimbolos.getReferencedTablesBySimbolo(id);
+			geraColecoes(tabelasReferenciadas);
 
 			// gera construtor
-			out.write("\n\n\tpublic " + fileName + "() {");
+			out.write("\n\tpublic " + fileName + "() {");
 			out.write("\n\t}");
-
+			
 			// gera gets e sets
 			gerarAtribs = false;
 			gerar(no.getFilho(4));
-
+			
+			// gera gets e sets dos campos de relacionamentos
+			// gera campos de relacionamentos
+			geraGetSetEntidades(chavesEstrangeiras);			
+			geraGetSetColecoes(tabelasReferenciadas);
+			
 			out.write("\n}");
 
 			out.flush();
@@ -110,6 +129,57 @@ public class GeradorCodigo {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	
+	/**
+	 * 	public Cliente getCliente() {
+		return cliente;
+	}
+	
+	public void setCliente(Cliente cliente){
+		this.cliente = cliente;
+	}
+	 */
+	private void geraGetSetEntidades(List<Chave> chavesEstrangeiras) {
+		for(Chave chave : chavesEstrangeiras) {
+			String nomeEntidade = chave.getReference().getImagem();
+			out.write("\n\n\tpublic " + toUpperCaseFirstChar(nomeEntidade) +" get" + toUpperCaseFirstChar(nomeEntidade) +"() {  \n");
+			out.write("\t\treturn "+toLowerCaseFirstChar(nomeEntidade)+";  \n");
+			out.write("\t}\n");
+			
+			out.write("\n\tpublic void set" + toUpperCaseFirstChar(nomeEntidade) +"("+toUpperCaseFirstChar(nomeEntidade)+" "+ toLowerCaseFirstChar(nomeEntidade)+") {  \n");
+			out.write("\t\tthis."+toLowerCaseFirstChar(nomeEntidade)+" = " + toLowerCaseFirstChar(nomeEntidade)+ ";  \n");
+			out.write("\t}\n");
+		}
+	}
+	
+	private void geraGetSetColecoes(List<Token> tabelasReferenciadas) {
+		for(Token tokTab: tabelasReferenciadas) {
+			String nomeEntidade = tokTab.getImagem();
+			
+			out.write("\n\n\tpublic List<" + toUpperCaseFirstChar(nomeEntidade) +"> get" + toUpperCaseFirstChar(nomeEntidade) +"s() {  \n");
+			out.write("\t\treturn "+toLowerCaseFirstChar(nomeEntidade)+"s;  \n");
+			out.write("\t}\n");
+			
+			out.write("\n\tpublic void set" + toUpperCaseFirstChar(nomeEntidade) +"(List<"+toUpperCaseFirstChar(nomeEntidade)+"> "+ toLowerCaseFirstChar(nomeEntidade)+"s) {  \n");
+			out.write("\t\tthis."+toLowerCaseFirstChar(nomeEntidade)+"s = " + toLowerCaseFirstChar(nomeEntidade)+ "s;  \n");
+			out.write("\t}\n");
+		}
+	}
+
+	private void geraEntidades(List<Chave> chavesEstrangeiras) {
+		for(Chave chave : chavesEstrangeiras) {
+			String nomeEntidade = chave.getReference().getImagem();
+			out.write("\n\tprivate " + toUpperCaseFirstChar(nomeEntidade) +" " + toLowerCaseFirstChar(nomeEntidade) +" = new "+toUpperCaseFirstChar(nomeEntidade)+"();  \n");
+		}
+	}
+
+	private void geraColecoes(List<Token> tabelasReferenciadas) {
+		for(Token tokTab: tabelasReferenciadas) {
+			String nomeEntidade = tokTab.getImagem();
+			out.write("\n\tprivate List<"+ toUpperCaseFirstChar(nomeEntidade) +"> " + toLowerCaseFirstChar(nomeEntidade) +"s = new ArrayList<"+toUpperCaseFirstChar(nomeEntidade)+">;  \n");
+		}
 	}
 
 	private void geraDAO(String fileName) {
@@ -430,4 +500,27 @@ public class GeradorCodigo {
 	private Object type(Node no) {
 		return TabelaSimbolos.getTipoJavaEquivalente(no.getFilho(0).getToken().getImagem());
 	}
+	
+	/**
+	 * <Constraint List> ::= ',' <Constraint Type> <Constraint List> |   
+	 
+	private Object constraintList(Node no){
+		if(no.getFilhos().size() > 0) {
+			gerar(no.getFilho(1));
+			gerar(no.getFilho(2));
+		}
+		return null;
+	}
+	*/
+	
+	/**
+	 * <Constraint Type> ::= primary key '(' <Id List> ')'
+                    | foreign key '(' <Id List> ')' references Id '(' <Id List> ')'
+	 
+	private Object constraintType(Node no){
+		
+		return null;
+	}
+	*/
+	
 }

@@ -98,9 +98,18 @@ public class Simbolo {
 				.printf("%-20s %-20s %-20s %-20s %-20s %-20s \n", (Object[]) params);
 	}
 
+	/*
+	 private Token token;
+	private String escopo;
+	private String tipo;
+	private TipoCategoria categoria;
+	private List<Chave> chaves = new ArrayList<Chave>();
+	private Object valor;
+	 */
+	
 	@Override
 	public String toString() {
-		return token + " : " + escopo + " : " + tipo + " : " + valor;
+		return token + " : " + escopo + " : " + tipo + " : " + categoria + " : " + chaves + " : " + valor;
 	}
 
 	@Override

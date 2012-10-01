@@ -11,10 +11,11 @@ public class ClienteDAO {
 
 	public boolean insert(Cliente cliente) throws SQLException {
 
-		PreparedStatement stmt = conexao.prepareStatement("insert into Cliente (id,nome,endereco) values (?, ?, ?) ", Statement.RETURN_GENERATED_KEYS);
+		PreparedStatement stmt = conexao.prepareStatement("insert into Cliente (id,nome,endereco,cpf) values (?, ?, ?, ?) ", Statement.RETURN_GENERATED_KEYS);
 		stmt.setInt(1, cliente.getId());
 		stmt.setString(2, cliente.getNome());
 		stmt.setString(3, cliente.getEndereco());
+		stmt.setString(4, cliente.getCpf());
 		int linhas = stmt.executeUpdate();
 
 		ResultSet rs = stmt.getGeneratedKeys();
@@ -30,10 +31,11 @@ public class ClienteDAO {
 
 	public boolean update(Cliente cliente) throws SQLException {
 
-		PreparedStatement stmt = conexao.prepareStatement("update Cliente set nome = ?, endereco = ? where id = ? ");
+		PreparedStatement stmt = conexao.prepareStatement("update Cliente set nome = ?, endereco = ?, cpf = ? where id = ? ");
 		stmt.setString(1, cliente.getNome());
 		stmt.setString(2, cliente.getEndereco());
-		stmt.setInt(3, cliente.getId());
+		stmt.setString(3, cliente.getCpf());
+		stmt.setInt(4, cliente.getId());
 		int linhas = stmt.executeUpdate();
 
 		stmt.close();
@@ -58,12 +60,13 @@ public class ClienteDAO {
 		ResultSet rs = stmt.executeQuery();
 
 		List<Cliente> clientes = null;
-		while(rs.next()) {
+		while (rs.next()) {
 			clientes = new ArrayList<Cliente>();
 			Cliente cliente = new Cliente();
 			cliente.setId(rs.getInt(1));
 			cliente.setNome(rs.getString(2));
 			cliente.setEndereco(rs.getString(3));
+			cliente.setCpf(rs.getString(4));
 			clientes.add(cliente);
 		}
 
@@ -85,6 +88,7 @@ public class ClienteDAO {
 			cliente.setId(rs.getInt(1));
 			cliente.setNome(rs.getString(2));
 			cliente.setEndereco(rs.getString(3));
+			cliente.setCpf(rs.getString(4));
 		}
 
 		rs.close();
