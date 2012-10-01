@@ -3,6 +3,8 @@ public class Cliente {
 	private Integer id;
 	private String nome;
 	private String endereco;
+	private String cpf;
+	private List<Telefone> telefones = new ArrayList<Telefone>;  
 
 	public Cliente() {
 	}
@@ -30,4 +32,21 @@ public class Cliente {
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
 	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public List<Telefone> getTelefones() {  
+		return telefones;  
+	}
+
+	public void setTelefone(List<Telefone> telefones) {  
+		this.telefones = telefones;  
+	}
+
 }
