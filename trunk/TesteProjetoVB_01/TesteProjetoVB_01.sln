@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TesteProjetoVB_01", "TesteProjetoVB_01\TesteProjetoVB_01.vbproj", "{628EC7EF-27E6-4BE2-A885-FF02927C9498}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
