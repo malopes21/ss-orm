@@ -232,9 +232,8 @@ public class GeradorCodigo {
 		out.write("\n\t\tPreparedStatement stmt = conexao.prepareStatement(\"" + sql + " \");");
 		out.write("\n\t\tResultSet rs = stmt.executeQuery();");
 		out.write("\n");
-		out.write("\n\t\tList<"+toUpperCaseFirstChar(entidade)+"> " + instancia + "s = null;");
+		out.write("\n\t\tList<"+toUpperCaseFirstChar(entidade)+"> " + instancia + "s = new ArrayList<"+toUpperCaseFirstChar(entidade)+">();");
 		out.write("\n\t\twhile (rs.next()) {");
-		out.write("\n\t\t\t" + instancia + "s = new ArrayList<"+toUpperCaseFirstChar(entidade)+">();" );
 		out.write("\n\t\t\t"+toUpperCaseFirstChar(entidade) + " " + instancia + " = new "+ toUpperCaseFirstChar(entidade) + "();");
 		int pos = 1;
 		for (Simbolo atrib : atribSimbs) {

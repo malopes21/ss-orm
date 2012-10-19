@@ -55,9 +55,8 @@ public class DepartamentoDAO {
 		PreparedStatement stmt = conexao.prepareStatement("select * from departamento ");
 		ResultSet rs = stmt.executeQuery();
 
-		List<Departamento> departamentos = null;
+		List<Departamento> departamentos = new ArrayList<Departamento>();
 		while (rs.next()) {
-			departamentos = new ArrayList<Departamento>();
 			Departamento departamento = new Departamento();
 			departamento.setNum_dept(rs.getInt(1));
 			departamento.setNome_dept(rs.getString(2));

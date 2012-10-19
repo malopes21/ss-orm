@@ -63,9 +63,8 @@ public class DependenteDAO {
 		PreparedStatement stmt = conexao.prepareStatement("select * from dependente ");
 		ResultSet rs = stmt.executeQuery();
 
-		List<Dependente> dependentes = null;
+		List<Dependente> dependentes = new ArrayList<Dependente>();
 		while (rs.next()) {
-			dependentes = new ArrayList<Dependente>();
 			Dependente dependente = new Dependente();
 			dependente.setCod_emp(rs.getInt(1));
 			dependente.setCod_depend(rs.getInt(2));

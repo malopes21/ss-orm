@@ -57,9 +57,8 @@ public class GerenciaDAO {
 		PreparedStatement stmt = conexao.prepareStatement("select * from gerencia ");
 		ResultSet rs = stmt.executeQuery();
 
-		List<Gerencia> gerencias = null;
+		List<Gerencia> gerencias = new ArrayList<Gerencia>();
 		while (rs.next()) {
-			gerencias = new ArrayList<Gerencia>();
 			Gerencia gerencia = new Gerencia();
 			gerencia.setCod_emp(rs.getInt(1));
 			gerencia.setNum_dept(rs.getInt(2));

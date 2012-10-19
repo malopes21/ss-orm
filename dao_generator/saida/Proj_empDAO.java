@@ -57,9 +57,8 @@ public class Proj_empDAO {
 		PreparedStatement stmt = conexao.prepareStatement("select * from proj_emp ");
 		ResultSet rs = stmt.executeQuery();
 
-		List<Proj_emp> proj_emps = null;
+		List<Proj_emp> proj_emps = new ArrayList<Proj_emp>();
 		while (rs.next()) {
-			proj_emps = new ArrayList<Proj_emp>();
 			Proj_emp proj_emp = new Proj_emp();
 			proj_emp.setNum_proj(rs.getInt(1));
 			proj_emp.setCod_emp(rs.getInt(2));

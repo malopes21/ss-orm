@@ -59,9 +59,8 @@ public class ProjetoDAO {
 		PreparedStatement stmt = conexao.prepareStatement("select * from projeto ");
 		ResultSet rs = stmt.executeQuery();
 
-		List<Projeto> projetos = null;
+		List<Projeto> projetos = new ArrayList<Projeto>();
 		while (rs.next()) {
-			projetos = new ArrayList<Projeto>();
 			Projeto projeto = new Projeto();
 			projeto.setNum_proj(rs.getInt(1));
 			projeto.setCod_local(rs.getInt(2));

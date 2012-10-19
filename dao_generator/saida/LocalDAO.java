@@ -55,9 +55,8 @@ public class LocalDAO {
 		PreparedStatement stmt = conexao.prepareStatement("select * from local ");
 		ResultSet rs = stmt.executeQuery();
 
-		List<Local> locals = null;
+		List<Local> locals = new ArrayList<Local>();
 		while (rs.next()) {
-			locals = new ArrayList<Local>();
 			Local local = new Local();
 			local.setCod_local(rs.getInt(1));
 			local.setDesc_local(rs.getString(2));
