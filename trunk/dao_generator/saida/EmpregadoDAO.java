@@ -65,9 +65,8 @@ public class EmpregadoDAO {
 		PreparedStatement stmt = conexao.prepareStatement("select * from empregado ");
 		ResultSet rs = stmt.executeQuery();
 
-		List<Empregado> empregados = null;
+		List<Empregado> empregados = new ArrayList<Empregado>();
 		while (rs.next()) {
-			empregados = new ArrayList<Empregado>();
 			Empregado empregado = new Empregado();
 			empregado.setCod_emp(rs.getInt(1));
 			empregado.setNome_emp(rs.getString(2));

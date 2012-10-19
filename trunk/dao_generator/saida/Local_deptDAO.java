@@ -55,9 +55,8 @@ public class Local_deptDAO {
 		PreparedStatement stmt = conexao.prepareStatement("select * from local_dept ");
 		ResultSet rs = stmt.executeQuery();
 
-		List<Local_dept> local_depts = null;
+		List<Local_dept> local_depts = new ArrayList<Local_dept>();
 		while (rs.next()) {
-			local_depts = new ArrayList<Local_dept>();
 			Local_dept local_dept = new Local_dept();
 			local_dept.setNum_dept(rs.getInt(1));
 			local_dept.setCod_local(rs.getInt(2));

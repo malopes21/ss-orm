@@ -1,3 +1,11 @@
+create table Pessoa (
+	id integer not null ,
+	nome varchar ( 50 ) ,
+	telefone varchar ( 50 ) ,
+	primary key ( id )
+) ;
+
+
 create table departamento (
 	num_dept integer not null ,
 	nome_dept varchar ( 50 ) ,
