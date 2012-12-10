@@ -5,11 +5,13 @@ import java.lang.reflect.Method;
 
 public class Instruction {
 	
-	public static byte EXIT = 0b00_000_000;		//pára o processamento
+	
 	
 	/* todas instruções têm 3 bytes e 1 byte de OPCODE */
 	
 	/* instruções COPY's para os 8 registradores R0 - R7 irão iniciar com 0b00_ */
+	
+	public static byte COPY_IMED = 0b00_000_000;
 	
 	public static byte COPY_R0_R1 = 0b00_000_001;
 	public static byte COPY_R0_R2 = 0b00_000_010;
@@ -56,7 +58,20 @@ public class Instruction {
 	public static byte MUL = 0b01_011_010;
 	public static byte DIV = 0b01_011_011;
 	
-	/* COPY imediato 	*/
+	/* stack instructions begin at 0b01_100_ */
+	
+	public static byte PUSH_R0 = 0b01_100_000;
+	public static byte PUSH_R1 = 0b01_100_001;
+	public static byte PUSH_R2 = 0b01_100_010;
+	public static byte PUSH_R3 = 0b01_100_011;
+	
+	public static byte POP_R0 = 0b01_101_000;
+	public static byte POP_R1 = 0b01_101_001;
+	public static byte POP_R2 = 0b01_101_010;
+	public static byte POP_R3 = 0b01_101_011;
+	
+	public static byte EXIT = -0b01_111_111;		//pára o processamento
+	
 	/* PUSH e POP		*/
 	
 	public static void main(String args[]) {  
