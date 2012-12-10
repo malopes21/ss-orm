@@ -14,11 +14,6 @@ public class Processor {
 	
 	public short[] R = new short[8];
 	
-	//public short R0;
-	//public short R1;
-	//public short R2;
-	//public short R3;
-
 	public short IP;
 	public short BP;
 	public short SP;
