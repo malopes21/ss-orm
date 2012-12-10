@@ -113,7 +113,7 @@ public class Run {
 		
 		try {
 			p.IP = 0;
-			while(p.IR_OPCODE != 0) {
+			while(p.IR_OPCODE != Instruction.EXIT) {
 				p.fetch();
 				p.decode_exec();
 				p.IP += 3;

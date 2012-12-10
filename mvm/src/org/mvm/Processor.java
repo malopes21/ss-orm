@@ -34,9 +34,7 @@ public class Processor {
 	
 	public void decode_exec() {
 		
-		if(IR_OPCODE == Instruction.EXIT) {
-			
-			return;  //useless
+		if(IR_OPCODE == Instruction.COPY_IMED) {
 			
 		} else if(IR_OPCODE == Instruction.COPY_R0_R1) {
 			
@@ -109,6 +107,10 @@ public class Processor {
 		} else if(IR_OPCODE == Instruction.MUL) {
 			
 		} else if(IR_OPCODE == Instruction.DIV) {
+			
+		} else if(IR_OPCODE == Instruction.EXIT) {
+			
+			return;  //useless
 			
 		} else {
 			throw new RuntimeException("Instrução inválida!");
