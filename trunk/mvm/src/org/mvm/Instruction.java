@@ -6,8 +6,6 @@ import java.lang.reflect.Method;
 public class Instruction {
 	
 
-
-	
 	/* todas instruções têm 3 bytes e 1 byte de OPCODE */
 	
 	/* instruções COPY's para os 8 registradores R0 - R7 irão iniciar com 0b00_ */
