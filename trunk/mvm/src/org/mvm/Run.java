@@ -60,6 +60,14 @@ public class Run {
 		program[position++] = Instruction.LOAD_R1;
 		program[position++] = 0;
 		program[position++] = 2;
+		
+		program[position++] = Instruction.LOAD_R2;
+		program[position++] = 0;
+		program[position++] = 0;
+
+		program[position++] = Instruction.LOAD_R3;
+		program[position++] = 0;
+		program[position++] = 2;
 
 		program[position++] = Instruction.ADD;
 		program[position++] = 0;
@@ -76,6 +84,18 @@ public class Run {
 		program[position++] = Instruction.STORE_R1;
 		program[position++] = 0;
 		program[position++] = 6;
+		
+		program[position++] = Instruction.STORE_R2;
+		program[position++] = 0;
+		program[position++] = 8;
+		
+		program[position++] = Instruction.MUL;
+		program[position++] = 3;
+		program[position++] = 2;
+		
+		program[position++] = Instruction.STORE_R3;
+		program[position++] = 0;
+		program[position++] = 10;
 
 		/*
 		program[position++] = Instruction.COPY_IMED_R0;
