@@ -5,7 +5,8 @@ import java.lang.reflect.Method;
 
 public class Instruction {
 	
-	
+
+
 	
 	/* todas instruções têm 3 bytes e 1 byte de OPCODE */
 	
