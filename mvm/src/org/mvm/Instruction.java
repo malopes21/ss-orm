@@ -2,9 +2,12 @@ package org.mvm;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 public class Instruction {
+	
 
+	
 	/* todas instruções têm 3 bytes sendo 1 byte de OPCODE */
 
 	/* instruções COPY's para os 8 registradores R0 - R7 irão iniciar com 0b00_ */
@@ -72,28 +75,31 @@ public class Instruction {
 	public static byte POP_R3 = 0b01_101_011;
 
 	public static byte EXIT = -0b01_111_111; // stop processing
+	
+	public static HashMap<Integer, String> values = new HashMap<Integer, String>();
 
 
-	public static void main(String args[]) {
+
+//	public static void main(String args[]) {
+	static {	
 		try {
-			Instruction instructions = new Instruction();
+			Instruction instruction = new Instruction();
 
-			/*
-			 * int a = instructions.COPY_R0_R1; System.out.println(a);
-			 */
-
-			Class c = instructions.getClass();
+			Class c = instruction.getClass();
 			Method m[] = c.getDeclaredMethods();
 			Field fields[] = c.getDeclaredFields();
 
-			/*
-			 * for (int i = 0; i < m.length; i++) { System.out.println(
-			 * m[i].toString() ); }
-			 */
-
 			for (Field f : fields) {
-				System.out.println(f.getName() + " -> " + f.get(instructions));
+				if(!f.getName().equals("values")) {
+					try {
+						//System.out.println(f.getName() + " -> " + f.get(instruction)); //decimal
+						//System.out.printf("%-12s ->  %02x \n", f.getName(), f.get(instruction)); //hexadecimal
+						values.put(Integer.parseInt(f.get(instruction).toString()), f.getName() );					
+					}catch (Exception e) {
+					}	
+				}
 			}
+			//System.out.println("");
 		} catch (Throwable e) {
 			System.err.println(e);
 		}

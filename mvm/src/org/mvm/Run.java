@@ -9,6 +9,8 @@ public class Run {
 		loadProgram(p0, program);
 		execProgram(p0);
 		dumpDATA(p0, 0, 20);
+		dumpCODE(p0, 0, 20);
+		dumpSTACK(p0, 0, 20);
 		dumpRegs(p0);
 	}
 
@@ -155,7 +157,7 @@ public class Run {
 		byte readByte = program[position++];
 		short offset = 0;
 		while (readByte != '$') {
-			System.out.println("CODE: " + readByte);
+			//System.out.println("CODE: " + readByte);
 			Memory.ram[p.CS + offset] = readByte;
 			readByte = program[position++];
 			offset++;
@@ -165,7 +167,7 @@ public class Run {
 		readByte = program[position++];
 		offset = 0;
 		while (readByte != '$') {
-			System.out.println("DATA: " + readByte);
+			//System.out.println("DATA: " + readByte);
 			Memory.ram[p.DS + offset] = readByte;
 			readByte = program[position++];
 			offset++;
@@ -179,13 +181,15 @@ public class Run {
 	private static void execProgram(Processor p) {
 
 		try {
+			long inicio = System.nanoTime();
 			p.IP = 0;
 			while (p.IR_OPCODE != Instruction.EXIT) {
 				p.fetch();
 				p.IP += 3;
 				p.decode_exec();
 			}
-			System.out.println("Encerrou normalmente!");
+			long fim = System.nanoTime();
+			System.out.println("STOP OK! EXEC. TIME: " + (fim - inicio) + " ns");
 		} catch (Exception e) {
 			System.out.println("Encerrou abruptamente: " + e.getMessage());
 		}
@@ -193,7 +197,7 @@ public class Run {
 	}
 
 	private static void dumpDATA(Processor p, int incio, int fim) {
-		System.out.println("DUMP DATA: " + incio + " -> " + fim + "\n");
+		System.out.println("\nDUMP DATA: " + incio + " -> " + fim + ":");
 		for (int i = incio; i <= fim; i++) {
 			System.out.println("[DS:" + i + "]: " + Memory.ram[p.DS + i]
 					+ " - " + (char) Memory.ram[p.DS + i]);
@@ -201,7 +205,7 @@ public class Run {
 	}
 	
 	private static void dumpSTACK(Processor p, int incio, int fim) {
-		System.out.println("DUMP STACK: " + incio + " -> " + fim + "\n");
+		System.out.println("\nDUMP STACK: " + incio + " -> " + fim + ":");
 		for (int i = incio; i <= fim; i++) {
 			System.out.println("[SS:" + i + "]: " + Memory.ram[p.SS + i]
 					+ " - " + (char) Memory.ram[p.SS + i]);
@@ -209,11 +213,16 @@ public class Run {
 	}
 	
 	private static void dumpCODE(Processor p, int incio, int fim) {
-		System.out.println("DUMP CODE: " + incio + " -> " + fim + "\n");
-		for (int i = incio; i <= fim; i++) {
-			System.out.println("[CS:" + i + "]: " + Memory.ram[p.CS + i]
-					+ " - " + (char) Memory.ram[p.CS + i]);
+		System.out.println("\nDUMP CODE: " + incio + " -> " + fim + ":");
+		for (int i = incio; i <= fim; i=i+3) {
+			//System.out.print("[CS:" + i + "]: " + Memory.ram[p.CS + i] + " - " + Instruction.values.get(new Integer(Memory.ram[p.CS + i])));
+			System.out.printf("[CS:%04x]: %02x %s", i, Memory.ram[p.CS + i], Instruction.values.get(new Integer(Memory.ram[p.CS + i])));
+			System.out.printf("\t%02x %02x\n", Memory.ram[p.CS + i + 1], Memory.ram[p.CS + i + 2]);
 		}
+	}
+
+	private static String showInstruction(byte b) {
+		return null;
 	}
 
 }
