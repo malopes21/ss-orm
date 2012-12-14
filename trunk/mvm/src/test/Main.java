@@ -4,6 +4,10 @@ public class Main {
 
 	public static void main(String[] args) {
 
+		for (int i = 1; i <= 30; i++) {
+			System.out.printf("%02x\n", i);
+		}
+
 		long inicio = System.nanoTime();
 
 		int pos = 3;
