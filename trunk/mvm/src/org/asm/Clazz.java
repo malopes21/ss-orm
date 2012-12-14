@@ -7,6 +7,7 @@ public enum Clazz {
 	Literal_Hexa,
 	Literal_String,
 	Delimiter,
-	Operator
+	Operator,
+	EOF
 	
 }

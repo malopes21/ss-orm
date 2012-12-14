@@ -2,10 +2,11 @@ package org.asm;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 
 public class Main {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		String fileRelPath = "prog01.asm";
 		BufferedReader in = null;
 		try {
@@ -24,7 +25,8 @@ public class Main {
 			System.exit(-1);
 		}
 		
-		System.out.println("OK!");
+		System.out.println("TOKENS: ");
+		lexer.showTokens();
 		
 		
 		
