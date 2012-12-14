@@ -6,11 +6,11 @@
 
 .CODE
 
-start:
+start :
 	COPY R0 , 10
 	COPY R1 , R0
 	COPY R2 , 12h
-pos0: 
+pos0 : 
  	ADD R1 , R2
 	SUB R1 , R0
 	EXIT 0
