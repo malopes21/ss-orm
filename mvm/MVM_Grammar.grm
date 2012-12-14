@@ -23,8 +23,11 @@
 Whitespace    = {WS}+
 NewLine       = {CR}{LF} | {CR} | {LF}
 
-Identifier    = {Letter}{AlphaNumeric}*
+Id    = {Letter}{AlphaNumeric}*
 StringLiteral = '"' {String Chars}* '"'
+DecimalLiteral = {Digit}+ 'd'?
+HexaLiteral = {Digit}+ 'h'
+CharLiteral = '''' {String Chars} ''''                           
 
 ! -------------------------------------------------
 ! Rules
@@ -41,12 +44,34 @@ StringLiteral = '"' {String Chars}* '"'
 
 ! <nl opt> removes blank lines before first statement
 
-<Start>   ::= <nl opt> <Program>
+<Start>   ::= <nl opt> <Program> <nl Opt>
 
-<Program> ::= <DATA> <CODE> 
+<Program> ::= <DATA> <CODE> '.END'  
            
 <DATA> ::= '.DATA' <nl> <Decls>
         
 <Decls> ::= <Decl> <nl> <Decls> | 
+       
+<Decl> ::= Id <Tipo> <Valor> 
+        
+<Tipo> ::= 'DB' | 'DW'
+
+<Valor> ::= StringLiteral | DecimalLiteral | HexaLiteral | CharLiteral
+        
+<CODE> ::= '.CODE' <nl> <Commands>
+        
+<Commands> ::= <Command> <nl> <Commands> |
+            
+<Command> ::= <Label> <nl Opt> <Statment> <Args>
+           
+<Label> ::= Id ':' |
+        
+<Statment> ::= 'COPY' | 'ADD' | 'SUB' | 'MUL' | 'DIV' | 'CMP' | 'JMP' | 'JG' | 'JGE' | 'JL' | 'JLE' | 'JE' | 'JNE' | 'LOAD' | 'STORE' | 'PUSH' | 'POP' | 'EXIT'
+            
+<Args> ::= <Operan> <Args2> |
+        
+<Args2> ::= ',' <Operan> |
+         
+<Operan> ::= Id | DecimalLiteral | HexaLiteral | CharLiteral  
         
 
