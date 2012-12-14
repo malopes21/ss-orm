@@ -93,7 +93,7 @@ public class Instruction {
 				if(!f.getName().equals("values")) {
 					try {
 						//System.out.println(f.getName() + " -> " + f.get(instruction)); //decimal
-						//System.out.printf("%-12s ->  %02x \n", f.getName(), f.get(instruction)); //hexadecimal
+						System.out.printf("%-12s ->  %02x \n", f.getName(), f.get(instruction)); //hexadecimal
 						values.put(Integer.parseInt(f.get(instruction).toString()), f.getName() );					
 					}catch (Exception e) {
 					}	

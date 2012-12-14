@@ -2,14 +2,14 @@ package org.mvm;
 
 public class Processor {
 
-	private short pId;
+	private short pid;
 
-	public short getpId() {
-		return pId;
+	public short getPid() {
+		return pid;
 	}
 
 	public Processor(short pId) {
-		this.pId = pId;
+		this.pid = pId;
 	}
 
 	public short[] R = new short[8];
