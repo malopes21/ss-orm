@@ -191,7 +191,7 @@ public class Run {
 			long fim = System.nanoTime();
 			System.out.println("STOP OK! EXEC. TIME: " + (fim - inicio) + " ns");
 		} catch (Exception e) {
-			System.out.println("Encerrou abruptamente: " + e.getMessage());
+			System.out.println("Encerrou abruptamente! " + e.getMessage());
 		}
 
 	}
