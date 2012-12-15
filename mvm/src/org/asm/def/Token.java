@@ -67,4 +67,35 @@ public class Token {
 		return "Token [image=" + image + ", clazz=" + clazz + ", index="
 				+ index + ", line=" + line + ", colum=" + colum + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((clazz == null) ? 0 : clazz.hashCode());
+		result = prime * result + ((image == null) ? 0 : image.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Token other = (Token) obj;
+		if (clazz != other.clazz)
+			return false;
+		if (image == null) {
+			if (other.image != null)
+				return false;
+		} else if (!image.equals(other.image))
+			return false;
+		return true;
+	}
+	
+	
+	
 }

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.asm.def.TabelaSimbolos;
 import org.asm.fase.Lexer;
 import org.asm.fase.Syntatic;
 
@@ -37,6 +38,10 @@ public class Main {
 			System.exit(-1);
 		}
 		
+		System.out.println("OK Sintaxe! Simbols:");
+		TabelaSimbolos.listaTabela();
+		System.out.println("TOKENS AGAIN: ");
+		lexer.showTokens();
 		
 		
 		
