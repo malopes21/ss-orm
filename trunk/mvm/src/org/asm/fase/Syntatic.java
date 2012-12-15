@@ -139,6 +139,7 @@ public class Syntatic {
 	//<CODE> ::= '.CODE' <nl> <Commands>
 	private void code() {
 		if(token.getImage().equalsIgnoreCase(".CODE")) {
+			nextToken();
 			nl();
 			commands();
 		} else {
@@ -254,7 +255,9 @@ public class Syntatic {
 	}
 	
 	public void showErrors() {
-
+		for(String erro : erros) {
+			System.out.println(erro);
+		}
 	}
 
 }
