@@ -84,7 +84,7 @@ public class Lexer {
 				}
 			}
 			linha = br.readLine();
-			tokens.add(new Token("\\n", Clazz.Delimiter, -1, nLinha, 0));
+			tokens.add(new Token("\\n", Clazz.Delimiter_newLine, -1, nLinha, 0));
 			nLinha++;
 		}
 		tokens.add(new Token("$", Clazz.EOF, -1, 0, 0));
