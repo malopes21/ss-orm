@@ -1,7 +1,13 @@
-package org.asm;
+package org.asm.fase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.asm.def.Clazz;
+import org.asm.def.Node;
+import org.asm.def.Simbolo;
+import org.asm.def.TabelaSimbolos;
+import org.asm.def.Token;
 
 public class Syntatic {
 	

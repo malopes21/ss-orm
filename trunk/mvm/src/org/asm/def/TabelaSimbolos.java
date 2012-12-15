@@ -1,4 +1,4 @@
-package org.asm;
+package org.asm.def;
 
 import java.util.ArrayList;
 import java.util.List;
