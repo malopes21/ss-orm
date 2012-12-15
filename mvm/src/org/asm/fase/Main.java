@@ -1,4 +1,4 @@
-package org.asm;
+package org.asm.fase;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

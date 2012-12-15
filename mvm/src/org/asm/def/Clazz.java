@@ -1,4 +1,4 @@
-package org.asm;
+package org.asm.def;
 
 public enum Clazz {
 	Identifier,

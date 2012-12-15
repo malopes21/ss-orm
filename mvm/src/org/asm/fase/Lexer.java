@@ -1,4 +1,4 @@
-package org.asm;
+package org.asm.fase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
+
+import org.asm.def.Clazz;
+import org.asm.def.TabelasEstaticas;
+import org.asm.def.Token;
 
 public class Lexer {
 
