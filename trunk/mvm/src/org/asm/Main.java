@@ -43,6 +43,7 @@ public class Main {
 		System.out.println("TOKENS AGAIN: ");
 		lexer.showTokens();
 		
+		syntatic.mostraArvore();
 		
 		
 	}
