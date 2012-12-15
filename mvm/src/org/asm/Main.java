@@ -18,7 +18,6 @@ public class Main {
 		}
 		
 		Lexer lexer = new Lexer(in);
-		
 		if(!lexer.analyze()) {
 			System.out.println("Lexical error: ");
 			lexer.showErrors();
@@ -27,6 +26,14 @@ public class Main {
 		
 		System.out.println("TOKENS: ");
 		lexer.showTokens();
+		
+		Syntatic syntatic = new Syntatic(lexer.getTokens());
+		if(!syntatic.analyze()) {
+			System.out.println("Syntatic error: ");
+			syntatic.showErrors();
+			System.exit(-1);
+		}
+		
 		
 		
 		

@@ -35,40 +35,48 @@ public class Lexer {
 					int inicio = linha.indexOf('"');
 					int fim = linha.indexOf('"', inicio + 1);
 					if (fim > 0) {
-						tokens.add(new Token(linha.substring(inicio + 1, fim), Clazz.Literal_String, -1, nLinha, 0));
-						tokenizador = new StringTokenizer(linha.substring(fim, linha.length()));
+						tokens.add(new Token(linha.substring(inicio + 1, fim),
+								Clazz.Literal_String, -1, nLinha, 0));
+						tokenizador = new StringTokenizer(linha.substring(fim,
+								linha.length()));
 						token = tokenizador.nextToken();
 					} else {
-						System.err.println("simbolo desconhecido: " + linha.substring(inicio, linha.length() - 1));
-						erros.add("simbolo desconhecido: " + linha.substring(inicio, linha.length() - 1));
+						System.err.println("simbolo desconhecido: "
+								+ linha.substring(inicio, linha.length() - 1));
+						erros.add("simbolo desconhecido: "
+								+ linha.substring(inicio, linha.length() - 1));
 						break;
 					}
 				} else if (token.length() > 1 && token.charAt(0) == ';') {
 					break;
 				} else if (TabelasEstaticas.containPReservada(token)) {
 
-					tokens.add(new Token(token, Clazz.Reserved_Word, -1, nLinha, 0));
+					tokens.add(new Token(token, Clazz.Reserved_Word, -1,
+							nLinha, 0));
 				} else if (TabelasEstaticas.containDelimitador(token)) {
 
-					tokens.add(new Token(token, Clazz.Delimiter, -1, nLinha,	0));
+					tokens.add(new Token(token, Clazz.Delimiter, -1, nLinha, 0));
 				} else if (TabelasEstaticas.containOperador(token)) {
-					
+
 					tokens.add(new Token(token, Clazz.Operator, -1, nLinha, 0));
 				} else if (cte_int_dec.matcher(token).matches()) {
-					
-					tokens.add(new Token(token, Clazz.Literal_Decimal, -1, nLinha, 0));
+
+					tokens.add(new Token(token, Clazz.Literal_Decimal, -1,
+							nLinha, 0));
 				} else if (cte_int_hex.matcher(token).matches()) {
 
-					tokens.add(new Token(token, Clazz.Literal_Hexa,	-1, nLinha, 0));
+					tokens.add(new Token(token, Clazz.Literal_Hexa, -1, nLinha,
+							0));
 				} else if (id.matcher(token).matches()) {
-					
+
 					Token tk = new Token(token, Clazz.Identifier, -1, nLinha, 0);
-					//tabela de símbolos aqui!
+					// tabela de símbolos aqui!
 					tokens.add(tk);
 
 				} else {
 					System.err.println("Erro: " + token);
-					erros.add("Simbolo '" + token + "' desconhecido: linha " + nLinha);
+					erros.add("Simbolo '" + token + "' desconhecido: linha "
+							+ nLinha);
 				}
 			}
 			linha = br.readLine();
@@ -85,10 +93,15 @@ public class Lexer {
 			System.out.println(erro);
 		}
 	}
-	
+
 	public void showTokens() {
-		for(Token token : tokens) {
+		for (Token token : tokens) {
 			System.out.println(token);
 		}
 	}
+
+	public List<Token> getTokens() {
+		return tokens;
+	}
+
 }
