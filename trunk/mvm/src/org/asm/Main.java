@@ -1,8 +1,11 @@
-package org.asm.fase;
+package org.asm;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+
+import org.asm.fase.Lexer;
+import org.asm.fase.Syntatic;
 
 public class Main {
 	
