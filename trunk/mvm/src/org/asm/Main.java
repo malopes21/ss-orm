@@ -1,10 +1,13 @@
 package org.asm;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.asm.def.TabelaSimbolos;
+import org.asm.fase.CodeGenerator;
 import org.asm.fase.Lexer;
 import org.asm.fase.Syntatic;
 
@@ -45,6 +48,12 @@ public class Main {
 		
 		syntatic.mostraArvore();
 		
+		String fileName = fileRelPath.substring(0, fileRelPath.indexOf(".")) + ".mvm";
+        PrintWriter out = new PrintWriter(new File(fileName));
+        CodeGenerator codeGenerator = new CodeGenerator(syntatic.getRaiz(), out);
+        codeGenerator.gerar();
+        out.flush();
+        out.close();
 		
 	}
 
