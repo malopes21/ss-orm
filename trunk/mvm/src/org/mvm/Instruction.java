@@ -46,11 +46,11 @@ public class Instruction {
 	public static byte STORE_R3 = 0b01_001_011;
 
 	public static byte JMP = 0b01_010_000;
-	public static byte JG = 0b01_010_001;
+	public static byte JG =  0b01_010_001;
 	public static byte JGE = 0b01_010_010;
-	public static byte JL = 0b01_010_011;
+	public static byte JL =  0b01_010_011;
 	public static byte JLE = 0b01_010_100;
-	public static byte JE = 0b01_010_101;
+	public static byte JE =  0b01_010_101;
 	public static byte JNE = 0b01_010_110;
 
 	public static byte CMP = 0b01_010_111;
