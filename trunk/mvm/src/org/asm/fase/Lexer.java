@@ -18,7 +18,8 @@ public class Lexer {
 	private List<Token> tokens = new ArrayList<Token>();
 
 	private Pattern cte_int_dec = Pattern.compile("\\d+d?");
-	private Pattern cte_int_hex = Pattern.compile("\\d+h?");
+	private Pattern cte_int_hex = Pattern.compile("\\p{XDigit}+h");
+	private Pattern cte_char = Pattern.compile("'\\p{Alpha}'");
 	private Pattern id = Pattern.compile("\\D[_\\p{Alnum}]*");
 
 	public Lexer(BufferedReader br) {
@@ -39,24 +40,19 @@ public class Lexer {
 					int inicio = linha.indexOf('"');
 					int fim = linha.indexOf('"', inicio + 1);
 					if (fim > 0) {
-						tokens.add(new Token(linha.substring(inicio + 1, fim),
-								Clazz.Literal_String, -1, nLinha, 0));
-						tokenizador = new StringTokenizer(linha.substring(fim,
-								linha.length()));
+						tokens.add(new Token(linha.substring(inicio + 1, fim), Clazz.Literal_String, -1, nLinha, 0));
+						tokenizador = new StringTokenizer(linha.substring(fim, linha.length()));
 						token = tokenizador.nextToken();
 					} else {
-						System.err.println("simbolo desconhecido: "
-								+ linha.substring(inicio, linha.length() - 1));
-						erros.add("simbolo desconhecido: "
-								+ linha.substring(inicio, linha.length() - 1));
+						System.err.println("simbolo desconhecido: " + linha.substring(inicio, linha.length() - 1));
+						erros.add("simbolo desconhecido: " + linha.substring(inicio, linha.length() - 1));
 						break;
 					}
-				} else if (token.length() > 1 && token.charAt(0) == ';') {
+				} else if (token.length() >= 1 && token.charAt(0) == ';') {
 					break;
 				} else if (TabelasEstaticas.containPReservada(token)) {
 
-					tokens.add(new Token(token, Clazz.Reserved_Word, -1,
-							nLinha, 0));
+					tokens.add(new Token(token, Clazz.Reserved_Word, -1, nLinha, 0));
 				} else if (TabelasEstaticas.containDelimitador(token)) {
 
 					tokens.add(new Token(token, Clazz.Delimiter, -1, nLinha, 0));
@@ -64,14 +60,19 @@ public class Lexer {
 
 					tokens.add(new Token(token, Clazz.Operator, -1, nLinha, 0));
 				} else if (cte_int_dec.matcher(token).matches()) {
-
-					tokens.add(new Token(token, Clazz.Literal_Decimal, -1,
-							nLinha, 0));
+					if(token.contains("d") || token.contains("d")) {
+						token = token.substring(0, token.length()-1);
+					}
+					tokens.add(new Token(token, Clazz.Literal_Decimal, -1, nLinha, 0));
 				} else if (cte_int_hex.matcher(token).matches()) {
-
-					tokens.add(new Token(token, Clazz.Literal_Hexa, -1, nLinha,
-							0));
-				} else if (id.matcher(token).matches()) {
+					
+					token = token.substring(0, token.length()-1);
+					tokens.add(new Token(token, Clazz.Literal_Hexa, -1, nLinha, 0));
+				} else if (cte_char.matcher(token).matches()) {
+					
+					token = token.substring(1, token.length()-1);
+					tokens.add(new Token(token, Clazz.Literal_Char, -1, nLinha, 0));
+				}else if (id.matcher(token).matches()) {
 
 					Token tk = new Token(token, Clazz.Identifier, -1, nLinha, 0);
 					// tabela de símbolos aqui!
@@ -79,8 +80,7 @@ public class Lexer {
 
 				} else {
 					System.err.println("Erro: " + token);
-					erros.add("Simbolo '" + token + "' desconhecido: linha "
-							+ nLinha);
+					erros.add("Simbolo '" + token + "' desconhecido: linha " + nLinha);
 				}
 			}
 			linha = br.readLine();

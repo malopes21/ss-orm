@@ -68,4 +68,11 @@ public class TabelaSimbolos {
 		return false;
 	}
 
+	public static void setMemoryPositionId(Token token, short memoryPosition) {
+		Simbolo simboloAchado = tabela.get(token.getIndex());
+		if (simboloAchado != null) {
+			simboloAchado.setMemoryPosition(memoryPosition);
+		}
+	}
+
 }
