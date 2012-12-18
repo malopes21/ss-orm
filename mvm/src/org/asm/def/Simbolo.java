@@ -6,6 +6,7 @@ public class Simbolo {
 	private String escopo;
 	private String tipo;
 	private Object valor;
+	private short memoryPosition;
 
 	public Simbolo() {
 	}
@@ -53,10 +54,17 @@ public class Simbolo {
 		this.escopo = escopo;
 	}
 
+	public short getMemoryPosition() {
+		return memoryPosition;
+	}
+
+	public void setMemoryPosition(short memoryPosition) {
+		this.memoryPosition = memoryPosition;
+	}
+
 	@Override
 	public String toString() {
-		return "Simbolo [token=" + token + ", escopo=" + escopo + ", tipo="
-				+ tipo + ", valor=" + valor + "]";
+		return "Simbolo [token=" + token + ", escopo=" + escopo + ", tipo=" + tipo + ", valor=" + valor + "], memPos: " + memoryPosition;
 	}
 
 	@Override

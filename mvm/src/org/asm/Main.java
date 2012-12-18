@@ -1,7 +1,9 @@
 package org.asm;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,11 +51,14 @@ public class Main {
 		syntatic.mostraArvore();
 		
 		String fileName = fileRelPath.substring(0, fileRelPath.indexOf(".")) + ".mvm";
-        PrintWriter out = new PrintWriter(new File(fileName));
+		DataOutputStream out = new DataOutputStream(new FileOutputStream(fileName));
         CodeGenerator codeGenerator = new CodeGenerator(syntatic.getRaiz(), out);
         codeGenerator.gerar();
         out.flush();
         out.close();
+        
+        System.out.println("OK Sintaxe! Simbols AGAIN:");
+		TabelaSimbolos.listaTabela();
 		
 	}
 
