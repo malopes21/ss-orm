@@ -249,7 +249,10 @@ public class Processor {
 	}
 
 	private void copy_imed_R0() {
+		long inicio = System.nanoTime();
 		R[0] = (short) ((IR_ARG0 << 8) + IR_ARG1);
+		long fim = System.nanoTime();
+		System.out.println("COPY TIME: " + (fim - inicio));
 	}
 
 	private void store_R0() {

@@ -123,9 +123,24 @@ public class CodeGenerator {
 			load(operans);
 		} else if ("STORE".equalsIgnoreCase(statment)) {
 			store(operans);
+		} else if("EXIT".equalsIgnoreCase(statment)) {
+			exit(operans);
 		}
 
 		return null;
+	}
+
+	private void exit(List<Token> operans) {
+		byte opcode = -0b01_111_111;
+		short value = 0;
+		
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void store(List<Token> operans) {
