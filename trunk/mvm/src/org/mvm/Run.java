@@ -1,17 +1,53 @@
 package org.mvm;
 
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class Run {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		Processor p0 = new Processor((short) 0);
 		byte[] program = createTestProgram();
+		//byte[] program = readProgram("prog01.mvm");
 		loadProgram(p0, program);
 		execProgram(p0);
 		dumpCODE(p0, 0, 40);
 		dumpDATA(p0, 0, 20);
 		dumpSTACK(p0, 0, 20);
 		dumpRegs(p0);
+	}
+
+	private static byte[] readProgram(String fileName) throws IOException {
+		DataInputStream in = new DataInputStream(new FileInputStream(fileName));
+		ArrayList<Byte> lista = new ArrayList<>();
+		byte ch = 0;
+		try {
+			while (true) { // exception deals catches EOF
+				ch = in.readByte();
+				lista.add(ch);
+			}
+		} catch (EOFException eof) {
+			// System.out.println(" >> Normal program termination.");
+		} catch (Exception noFile) {
+			System.err.println("Error: ! " + noFile);
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException ignored) {
+				}
+			}
+		}
+		byte[] saida = new byte[lista.size()];
+		for(int i = 0; i < lista.size(); i++) {
+			saida[i] = lista.get(i);
+		}
+
+		return saida;
 	}
 
 	private static void dumpRegs(Processor p) {
@@ -24,20 +60,20 @@ public class Run {
 		System.out.printf("R5: %04xh\n", p.R[5]);
 		System.out.printf("R6: %04xh\n", p.R[6]);
 		System.out.printf("R7: %04xh\n", p.R[7]);
-		
+
 		System.out.printf("\nCS: %04xh\n", p.CS);
 		System.out.printf("DS: %04xh\n", p.DS);
 		System.out.printf("SS: %04xh\n", p.SS);
-		
+
 		System.out.printf("\nIP: %04xh\n", p.IP);
-		
+
 		System.out.printf("\nIR_OPCODE: %01xh \t(%s)\n", p.IR_OPCODE, Instruction.values.get(new Integer(p.IR_OPCODE)));
 		System.out.printf("IR_ARG0: %01xh\n", p.IR_ARG0);
 		System.out.printf("IR_ARG1: %01xh\n", p.IR_ARG1);
-		
+
 		System.out.printf("\nSP: %04xh\n", p.SP);
 		System.out.printf("BP: %04xh\n", p.BP);
-		
+
 		System.out.printf("\nFLAG_Z: %01x\n", p.FLAG_Z);
 		System.out.printf("FLAG_S: %01x\n", p.FLAG_S);
 	}
@@ -58,7 +94,17 @@ public class Run {
 		// SS
 		program[position++] = 3;
 		program[position++] = 0;
-
+		
+		program[position++] = Instruction.COPY_IMED_R0;
+		program[position++] = 0;
+		program[position++] = 10;
+		
+		/*
+		
+		program[position++] = Instruction.COPY_IMED_R1;
+		program[position++] = 0;
+		program[position++] = 10;
+		
 		program[position++] = Instruction.LOAD_R0;
 		program[position++] = 0;
 		program[position++] = 0;
@@ -66,7 +112,7 @@ public class Run {
 		program[position++] = Instruction.LOAD_R1;
 		program[position++] = 0;
 		program[position++] = 2;
-		
+
 		program[position++] = Instruction.LOAD_R2;
 		program[position++] = 0;
 		program[position++] = 0;
@@ -78,11 +124,11 @@ public class Run {
 		program[position++] = Instruction.ADD;
 		program[position++] = 0;
 		program[position++] = 1;
-		
+
 		program[position++] = Instruction.STORE_R0;
 		program[position++] = 0;
 		program[position++] = 4;
-		
+
 		program[position++] = Instruction.SUB;
 		program[position++] = 0;
 		program[position++] = 1;
@@ -90,41 +136,39 @@ public class Run {
 		program[position++] = Instruction.STORE_R1;
 		program[position++] = 0;
 		program[position++] = 6;
-		
+
 		program[position++] = Instruction.STORE_R2;
 		program[position++] = 0;
 		program[position++] = 8;
-		
+
 		program[position++] = Instruction.MUL;
 		program[position++] = 3;
 		program[position++] = 2;
-		
+
 		program[position++] = Instruction.STORE_R3;
 		program[position++] = 0;
 		program[position++] = 10;
-		
+
 		program[position++] = Instruction.SUB;
 		program[position++] = 2;
 		program[position++] = 0;
+		
+		*/
 
 		/*
-		program[position++] = Instruction.COPY_IMED_R0;
-		program[position++] = 2;
-		program[position++] = 3;
+		 * program[position++] = Instruction.COPY_IMED_R0; program[position++] =
+		 * 2; program[position++] = 3;
+		 * 
+		 * program[position++] = Instruction.COPY_IMED_R1; program[position++] =
+		 * 0; program[position++] = 98;
+		 * 
+		 * program[position++] = Instruction.COPY_IMED_R2; program[position++] =
+		 * 1; program[position++] = 3;
+		 * 
+		 * program[position++] = Instruction.COPY_IMED_R3; program[position++] =
+		 * 2; program[position++] = 6;
+		 */
 
-		program[position++] = Instruction.COPY_IMED_R1;
-		program[position++] = 0;
-		program[position++] = 98;
-
-		program[position++] = Instruction.COPY_IMED_R2;
-		program[position++] = 1;
-		program[position++] = 3;
-
-		program[position++] = Instruction.COPY_IMED_R3;
-		program[position++] = 2;
-		program[position++] = 6;
-		*/
-		
 		program[position++] = Instruction.EXIT;
 		program[position++] = 0;
 		program[position++] = 0;
@@ -165,7 +209,7 @@ public class Run {
 		byte readByte = program[position++];
 		short offset = 0;
 		while (readByte != '$') {
-			//System.out.println("CODE: " + readByte);
+			// System.out.println("CODE: " + readByte);
 			Memory.ram[p.CS + offset] = readByte;
 			readByte = program[position++];
 			offset++;
@@ -175,7 +219,7 @@ public class Run {
 		readByte = program[position++];
 		offset = 0;
 		while (readByte != '$') {
-			//System.out.println("DATA: " + readByte);
+			// System.out.println("DATA: " + readByte);
 			Memory.ram[p.DS + offset] = readByte;
 			readByte = program[position++];
 			offset++;
@@ -208,22 +252,26 @@ public class Run {
 		System.out.println("\nDUMP DATA: " + incio + "d -> " + fim + "d:");
 		for (int i = incio; i <= fim; i++) {
 			System.out.printf("[DS:%04x]: %02xh \t%c\n", i, Memory.ram[p.DS + i], Memory.ram[p.DS + i]);
-			//System.out.println("[DS:" + i + "]: " + Memory.ram[p.DS + i] + " - " + (char) Memory.ram[p.DS + i]);
+			// System.out.println("[DS:" + i + "]: " + Memory.ram[p.DS + i] +
+			// " - " + (char) Memory.ram[p.DS + i]);
 		}
 	}
-	
+
 	private static void dumpSTACK(Processor p, int incio, int fim) {
 		System.out.println("\nDUMP STACK: " + incio + "d -> " + fim + "d:");
 		for (int i = incio; i <= fim; i++) {
 			System.out.printf("[SS:%04x]: %02xh \t%c\n", i, Memory.ram[p.SS + i], Memory.ram[p.SS + i]);
-			//System.out.println("[SS:" + i + "]: " + Memory.ram[p.SS + i] + " - " + (char) Memory.ram[p.SS + i]);
+			// System.out.println("[SS:" + i + "]: " + Memory.ram[p.SS + i] +
+			// " - " + (char) Memory.ram[p.SS + i]);
 		}
 	}
-	
+
 	private static void dumpCODE(Processor p, int incio, int fim) {
 		System.out.println("\nDUMP CODE: " + incio + "d -> " + fim + "d:");
-		for (int i = incio; i <= fim; i=i+3) {
-			//System.out.print("[CS:" + i + "]: " + Memory.ram[p.CS + i] + " - " + Instruction.values.get(new Integer(Memory.ram[p.CS + i])));
+		for (int i = incio; i <= fim; i = i + 3) {
+			// System.out.print("[CS:" + i + "]: " + Memory.ram[p.CS + i] +
+			// " - " + Instruction.values.get(new Integer(Memory.ram[p.CS +
+			// i])));
 			System.out.printf("[CS:%04x]: %02xh %s", i, Memory.ram[p.CS + i], Instruction.values.get(new Integer(Memory.ram[p.CS + i])));
 			System.out.printf("\t%02x|%02xh\n", Memory.ram[p.CS + i + 1], Memory.ram[p.CS + i + 2]);
 		}
