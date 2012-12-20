@@ -10,7 +10,9 @@
 start :
 	COPY R0 , -14
 	COPY R1 , 40
+	LOAD R2 , var1
 	STORE var1 , R0
+
 ;	ADD  R0 , R1
 ;	COPY R0 , 07d
 ;	COPY R1 , R0

@@ -281,29 +281,33 @@ public class Processor {
 		Memory.ram[pos++] = (byte) (R[3] >> 8);
 		Memory.ram[pos] = (byte) (R[3] % 256);		
 	}
+
+	private void load_R0() {
+		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)));
+		R[0] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
+		//R[0] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
+	}
 	
 	private void load_R1() {
 		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
 		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
-		R[1] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
+		R[1] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));  
+		//R[1] = (short)((Memory.ram[pos++] << 8) + Memory.ram[pos]);
 	}
 
 	private void load_R2() {
 		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
 		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
-		R[2] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);		
+		R[2] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
+		//R[2] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);		
 	}
 
 	private void load_R3() {
 		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
 		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
-		R[3] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
-	}
-
-	private void load_R0() {
-		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
-		R[0] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
+		R[3] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
+		//R[3] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
 	}
 
 	private void jmp() {

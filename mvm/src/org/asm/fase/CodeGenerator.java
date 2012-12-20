@@ -72,9 +72,10 @@ public class CodeGenerator {
 			return tipo(no);
 		case Valor:
 			return valor(no);
+		default:
+			throw new RuntimeException("Method not exists!");
 
 		}
-		return null;
 	}
 
 	// <Start> ::= <nl opt> <Program> <nl Opt>
