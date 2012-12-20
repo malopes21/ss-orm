@@ -118,17 +118,39 @@ public class CodeGenerator {
 		List<Token> operans = (List<Token>) gerar(no.getFilho(3));
 		Collections.reverse(operans);
 
+		// 'COPY' | 'LOAD' | 'STORE' | 'ADD' | 'SUB' | 'MUL' | 'DIV' | 'CMP' | 'JMP' |
+		// 'JG' |
+		// 'JGE' | 'JL' | 'JLE' | 'JE' | 'JNE' |  'PUSH' | 'POP' |
+		// 'EXIT'
 		if ("COPY".equalsIgnoreCase(statment)) {
 			copy(operans);
 		} else if ("LOAD".equalsIgnoreCase(statment)) {
 			load(operans);
 		} else if ("STORE".equalsIgnoreCase(statment)) {
 			store(operans);
+		} else if ("ADD".equalsIgnoreCase(statment)) {
+			add(operans);
 		} else if("EXIT".equalsIgnoreCase(statment)) {
 			exit(operans);
 		}
 
 		return null;
+	}
+
+	private void add(List<Token> operans) {
+		Token operan0 = operans.get(0);
+		Token operan1 = operans.get(1);
+		
+		byte opcode = Instruction.ADD;
+		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0));
+		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1));
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value0));
+			out.write((byte) (value1));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void exit(List<Token> operans) {
@@ -253,6 +275,8 @@ public class CodeGenerator {
 			return (short) Integer.parseInt(operan1.getImage());
 		} else if (operan1.getClazz() == Clazz.Literal_Hexa) {
 			return (short) Integer.parseInt(operan1.getImage(), 16);
+		} else if(operan1.getClazz() == Clazz.Identifier) {
+			return (short) TabelaSimbolos.getMemoryPositionId(operan1);
 		}
 		return 0;
 	}

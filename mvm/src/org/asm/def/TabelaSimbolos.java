@@ -75,4 +75,12 @@ public class TabelaSimbolos {
 		}
 	}
 
+	public static short getMemoryPositionId(Token token) {
+		Simbolo simboloAchado = tabela.get(token.getIndex());
+		if (simboloAchado != null) {
+			return simboloAchado.getMemoryPosition();
+		}
+		throw new RuntimeException("Get Memory Position Error!");
+	}
+
 }

@@ -17,7 +17,7 @@ public class Lexer {
 	private List<String> erros = new ArrayList<>();
 	private List<Token> tokens = new ArrayList<Token>();
 
-	private Pattern cte_int_dec = Pattern.compile("\\d+d?");
+	private Pattern cte_int_dec = Pattern.compile("[\\-|\\+]?\\d+d?");
 	private Pattern cte_int_hex = Pattern.compile("\\p{XDigit}+h");
 	private Pattern cte_char = Pattern.compile("'\\p{Alpha}'");
 	private Pattern id = Pattern.compile("\\D[_\\p{Alnum}]*");
