@@ -10,9 +10,10 @@ public class Run {
 
 	public static void main(String[] args) throws Exception {
 
+		Instruction.createMapValues();  //need here for instruction map values initializarion
 		Processor p0 = new Processor((short) 0);
-		byte[] program = createTestProgram();
-		//byte[] program = readProgram("prog01.mvm");
+		//byte[] program = createTestProgram();
+		byte[] program = readProgram("prog01.mvm");
 		loadProgram(p0, program);
 		execProgram(p0);
 		dumpCODE(p0, 0, 40);
@@ -44,7 +45,7 @@ public class Run {
 		}
 		byte[] saida = new byte[lista.size()];
 		for(int i = 0; i < lista.size(); i++) {
-			saida[i] = lista.get(i);
+			saida[i] = lista.get(i).byteValue();
 		}
 
 		return saida;
@@ -97,7 +98,11 @@ public class Run {
 		
 		program[position++] = Instruction.COPY_IMED_R0;
 		program[position++] = 0;
-		program[position++] = 10;
+		program[position++] = 14;
+		
+		program[position++] = Instruction.COPY_IMED_R1;
+		program[position++] = 0;
+		program[position++] = 40;
 		
 		/*
 		
@@ -169,7 +174,7 @@ public class Run {
 		 * 2; program[position++] = 6;
 		 */
 
-		program[position++] = Instruction.EXIT;
+		program[position++] = Instruction.EXIT_PROC;
 		program[position++] = 0;
 		program[position++] = 0;
 
@@ -178,7 +183,7 @@ public class Run {
 		program[position++] = 0;
 		program[position++] = 4;
 
-		program[position++] = 0;
+/*		program[position++] = 0;
 		program[position++] = 5;
 
 		program[position++] = 0;
@@ -190,7 +195,7 @@ public class Run {
 		program[position++] = 'c';
 		program[position++] = 'a';
 		program[position++] = 'x';
-		program[position++] = 'i';
+		program[position++] = 'i';*/
 
 		program[position++] = '$'; // end DATA area
 		return program;
@@ -235,7 +240,7 @@ public class Run {
 		try {
 			long inicio = System.nanoTime();
 			p.IP = 0;
-			while (p.IR_OPCODE != Instruction.EXIT) {
+			while (p.IR_OPCODE != Instruction.EXIT_PROC) {
 				p.fetch();
 				p.IP += 3;
 				p.decode_exec();

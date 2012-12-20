@@ -180,7 +180,7 @@ public class Processor {
 		} else if (IR_OPCODE == Instruction.POP_R3) {
 			pop_R3();
 
-		} else if (IR_OPCODE == Instruction.EXIT) {
+		} else if (IR_OPCODE == Instruction.EXIT_PROC) {
 			return; // useless
 
 		} else {
