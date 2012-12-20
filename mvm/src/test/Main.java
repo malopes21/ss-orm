@@ -1,5 +1,7 @@
 package test;
 
+import org.mvm.Memory;
+
 public class Main {
 
 	public static void main(String[] args) {
@@ -28,6 +30,8 @@ public class Main {
 		System.out.println((int) 'โ'); // outputs 3650, a thai symbol
 		char p = 3650;
 		System.out.println(p); // outputs the above symbol
+		
+		System.out.printf("[DS:%04x]: %02xh \t%c\n", 1, ((byte) -1), ((byte) -1));
 	}
 
 }
