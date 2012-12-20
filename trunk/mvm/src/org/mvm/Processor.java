@@ -237,65 +237,72 @@ public class Processor {
 	}
 
 	private void copy_imed_R3() {
-		R[3] = (short) ((IR_ARG0 << 8) + IR_ARG1);
+		R[3] = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF));
 	}
 
 	private void copy_imed_R2() {
-		R[2] = (short) ((IR_ARG0 << 8) + IR_ARG1);
+		R[2] = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF));
 	}
 
 	private void copy_imed_R1() {
-		R[1] = (short) ((IR_ARG0 << 8) + IR_ARG1);
+		R[1] = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF));
 	}
 
 	private void copy_imed_R0() {
-		long inicio = System.nanoTime();
-		R[0] = (short) ((IR_ARG0 << 8) + IR_ARG1);
-		long fim = System.nanoTime();
-		System.out.println("COPY TIME: " + (fim - inicio));
+		//return ((b1 << 8 ) & 0xFF00) | (b2 & 0x00FF);  http://www.guj.com.br/java/252035-resolvido-union-ou-semelhante-em-java
+		R[0] = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF));
 	}
 
 	private void store_R0() {
-		short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		//(((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))
+		//short pos = (short) (DS + ((IR_ARG0 << 8) + IR_ARG1));  //TODO:BUG HERE!!!!!
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		Memory.ram[pos++] = (byte) (R[0] >> 8);
 		Memory.ram[pos] = (byte) (R[0] % 256);
 	}
 
 	private void store_R1() {
-		short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		Memory.ram[pos++] = (byte) (R[1] >> 8);
 		Memory.ram[pos] = (byte) (R[1] % 256);
 	}
 
 	private void store_R2() {
-		short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		Memory.ram[pos++] = (byte) (R[2] >> 8);
 		Memory.ram[pos] = (byte) (R[2] % 256);		
 	}
 
 	private void store_R3() {
-		short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		Memory.ram[pos++] = (byte) (R[3] >> 8);
 		Memory.ram[pos] = (byte) (R[3] % 256);		
 	}
 	
 	private void load_R1() {
-		short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		R[1] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
 	}
 
 	private void load_R2() {
-		short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		R[2] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);		
 	}
 
 	private void load_R3() {
-		short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		R[3] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
 	}
 
 	private void load_R0() {
-		short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		R[0] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
 	}
 
