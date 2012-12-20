@@ -11,6 +11,7 @@ import org.asm.def.Clazz;
 import org.asm.def.Node;
 import org.asm.def.TabelaSimbolos;
 import org.asm.def.Token;
+import org.mvm.Instruction;
 
 public class CodeGenerator {
 
@@ -131,7 +132,7 @@ public class CodeGenerator {
 	}
 
 	private void exit(List<Token> operans) {
-		byte opcode = -0b01_111_111;
+		byte opcode = Instruction.EXIT_PROC;
 		short value = 0;
 		
 		try {
@@ -149,13 +150,13 @@ public class CodeGenerator {
 		Token operan0 = operans.get(0);
 		Token operan1 = operans.get(1);
 		if (operan1.getImage().equalsIgnoreCase("R0")) {
-			opcode = 0b01_001_000;
+			opcode = Instruction.STORE_R0;
 		} else if (operan1.getImage().equalsIgnoreCase("R1")) {
-			opcode = 0b01_001_001;
+			opcode = Instruction.STORE_R1;
 		} else if (operan1.getImage().equalsIgnoreCase("R2")) {
-			opcode = 0b01_001_010;
+			opcode = Instruction.STORE_R2;
 		} else if (operan1.getImage().equalsIgnoreCase("R3")) {
-			opcode = 0b01_001_011;
+			opcode = Instruction.STORE_R3;
 		}
 		value = getBinaryValue(operan0);
 		
@@ -174,13 +175,13 @@ public class CodeGenerator {
 		Token operan0 = operans.get(0);
 		Token operan1 = operans.get(1);
 		if (operan0.getImage().equalsIgnoreCase("R0")) {
-			opcode = 0b01_000_000;
+			opcode = Instruction.LOAD_R0;
 		} else if (operan0.getImage().equalsIgnoreCase("R1")) {
-			opcode = 0b01_000_001;
+			opcode = Instruction.LOAD_R1;
 		} else if (operan0.getImage().equalsIgnoreCase("R2")) {
-			opcode = 0b01_000_010;
+			opcode = Instruction.LOAD_R2;
 		} else if (operan0.getImage().equalsIgnoreCase("R3")) {
-			opcode = 0b01_000_011;
+			opcode = Instruction.LOAD_R3;
 		}
 		value = getBinaryValue(operan1);
 		
@@ -203,13 +204,13 @@ public class CodeGenerator {
 		if (operan1.getClazz() == Clazz.Literal_Char || operan1.getClazz() == Clazz.Literal_Decimal || operan1.getClazz() == Clazz.Literal_Hexa) {
 			// Immediate COPY
 			if (operan0.getImage().equalsIgnoreCase("R0")) {
-				opcode = -0b00_000_000;
+				opcode = Instruction.COPY_IMED_R0;
 			} else if (operan0.getImage().equalsIgnoreCase("R1")) {
-				opcode = -0b00_000_001;
+				opcode = Instruction.COPY_IMED_R1;
 			} else if (operan0.getImage().equalsIgnoreCase("R2")) {
-				opcode = -0b00_000_010;
+				opcode = Instruction.COPY_IMED_R2;
 			} else if (operan0.getImage().equalsIgnoreCase("R3")) {
-				opcode = -0b00_000_011;
+				opcode = Instruction.COPY_IMED_R3;
 			}
 			value = getBinaryValue(operan1);
 
