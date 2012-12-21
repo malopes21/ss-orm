@@ -114,7 +114,12 @@ public class CodeGenerator {
 
 	// <Command> ::= <Label> <nl Opt> <Statment> <Args>
 	private Object command(Node no) {
-		// TODO: label implementation
+		// TODO: label implementation in Semantic Analyzer
+		/*Token label = (Token) gerar(no.getFilho(0));
+		if(label != null) {
+			
+		}*/
+		
 		String statment = (String) gerar(no.getFilho(2));
 		List<Token> operans = (List<Token>) gerar(no.getFilho(3));
 		Collections.reverse(operans);
@@ -131,6 +136,16 @@ public class CodeGenerator {
 			store(operans);
 		} else if ("ADD".equalsIgnoreCase(statment)) {
 			add(operans);
+		} else if ("SUB".equalsIgnoreCase(statment)) {
+			sub(operans);
+		} else if ("MUL".equalsIgnoreCase(statment)) {
+			mul(operans);
+		} else if ("DIV".equalsIgnoreCase(statment)) {
+			div(operans);
+		} else if ("CMP".equalsIgnoreCase(statment)) {
+			cmp(operans);
+		} else if ("JMP".equalsIgnoreCase(statment)) {
+			jmp(operans);
 		} else if("EXIT".equalsIgnoreCase(statment)) {
 			exit(operans);
 		}
@@ -138,13 +153,93 @@ public class CodeGenerator {
 		return null;
 	}
 
+	private void jmp(List<Token> operans) {
+		byte opcode = Instruction.JMP;
+		
+		Token operan0 = operans.get(0);
+		short value = getBinaryValue(operan0);
+		
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+
+	private void cmp(List<Token> operans) {
+		Token operan0 = operans.get(0);
+		Token operan1 = operans.get(1);
+		
+		byte opcode = Instruction.CMP;
+		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
+		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value0));
+			out.write((byte) (value1));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}			
+	}
+
+	private void div(List<Token> operans) {
+		Token operan0 = operans.get(0);
+		Token operan1 = operans.get(1);
+		
+		byte opcode = Instruction.DIV;
+		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
+		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value0));
+			out.write((byte) (value1));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+
+	private void mul(List<Token> operans) {
+		Token operan0 = operans.get(0);
+		Token operan1 = operans.get(1);
+		
+		byte opcode = Instruction.MUL;
+		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
+		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value0));
+			out.write((byte) (value1));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+
+	private void sub(List<Token> operans) {
+		Token operan0 = operans.get(0);
+		Token operan1 = operans.get(1);
+		
+		byte opcode = Instruction.SUB;
+		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
+		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value0));
+			out.write((byte) (value1));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 	private void add(List<Token> operans) {
 		Token operan0 = operans.get(0);
 		Token operan1 = operans.get(1);
 		
 		byte opcode = Instruction.ADD;
-		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0));
-		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1));
+		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
+		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
 		try {
 			out.write((byte) opcode);
 			out.write((byte) (value0));

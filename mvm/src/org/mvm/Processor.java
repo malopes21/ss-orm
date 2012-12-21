@@ -311,49 +311,49 @@ public class Processor {
 	}
 
 	private void jmp() {
-		short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-		IP = pos;
+		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+		IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)));
 	}
 	
 	private void jg() {
 		if(FLAG_S == 0 && FLAG_Z != 0) {
-			short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = pos;
+			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)));
 		}
 	}
 	
 	private void jge() {
 		if(FLAG_S == 0) {
-			short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = pos;
+			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		}
 	}
 
 	private void jl() {
 		if(FLAG_S == 1 && FLAG_Z != 0) {
-			short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = pos;
+			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		}		
 	}
 	
 	private void jle() {
 		if(FLAG_S == 1) {
-			short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = pos;
+			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		}		
 	}
 	
 	private void je() {
 		if(FLAG_Z == 1) {
-			short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = pos;
+			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		}		
 	}
 	
 	private void jne() {
 		if(FLAG_Z == 0) {
-			short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = pos;
+			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
+			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
 		}		
 	}
 
@@ -414,25 +414,29 @@ public class Processor {
 	
 	private void pop_R0() {
 		short pos = (short) (SS + SP);
-		R[0] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
+		R[0] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
+		//R[0] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
 		SP += 2;
 	}
 	
 	private void pop_R1() {
 		short pos = (short) (SS + SP);
-		R[1] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
+		R[1] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
+		//R[1] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
 		SP += 2;
 	}
 	
 	private void pop_R2() {
 		short pos = (short) (SS + SP);
-		R[2] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
+		R[2] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
+		//R[2] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
 		SP += 2;
 	}
 	
 	private void pop_R3() {
 		short pos = (short) (SS + SP);
-		R[3] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
+		R[3] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
+		//R[3] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
 		SP += 2;
 	}
 	
