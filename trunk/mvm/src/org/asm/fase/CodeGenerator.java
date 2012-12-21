@@ -114,20 +114,14 @@ public class CodeGenerator {
 
 	// <Command> ::= <Label> <nl Opt> <Statment> <Args>
 	private Object command(Node no) {
-		// TODO: label implementation in Semantic Analyzer
-		/*Token label = (Token) gerar(no.getFilho(0));
-		if(label != null) {
-			
-		}*/
-		
+
 		String statment = (String) gerar(no.getFilho(2));
 		List<Token> operans = (List<Token>) gerar(no.getFilho(3));
 		Collections.reverse(operans);
 
-		// 'COPY' | 'LOAD' | 'STORE' | 'ADD' | 'SUB' | 'MUL' | 'DIV' | 'CMP' | 'JMP' |
-		// 'JG' |
-		// 'JGE' | 'JL' | 'JLE' | 'JE' | 'JNE' |  'PUSH' | 'POP' |
-		// 'EXIT'
+		// 'COPY' | 'LOAD' | 'STORE' | 'ADD' | 'SUB' | 'MUL' | 'DIV' | 'CMP' |
+		// 'JMP' |
+		// 'JG' | 'JGE' | 'JL' | 'JLE' | 'JE' | 'JNE' | 'PUSH' | 'POP' | 'EXIT'
 		if ("COPY".equalsIgnoreCase(statment)) {
 			copy(operans);
 		} else if ("LOAD".equalsIgnoreCase(statment)) {
@@ -146,32 +140,49 @@ public class CodeGenerator {
 			cmp(operans);
 		} else if ("JMP".equalsIgnoreCase(statment)) {
 			jmp(operans);
-		} else if("EXIT".equalsIgnoreCase(statment)) {
+		} else if ("JMP".equalsIgnoreCase(statment)) {
+			jg(operans);
+		} else if ("EXIT".equalsIgnoreCase(statment)) {
 			exit(operans);
 		}
 
 		return null;
 	}
 
-	private void jmp(List<Token> operans) {
-		byte opcode = Instruction.JMP;
-		
+	private void jg(List<Token> operans) {
+		byte opcode = Instruction.JG;
+
 		Token operan0 = operans.get(0);
 		short value = getBinaryValue(operan0);
-		
+
 		try {
 			out.write((byte) opcode);
 			out.write((byte) (value >> 8));
 			out.write((byte) (value % 256));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
+	}
+
+	private void jmp(List<Token> operans) {
+		byte opcode = Instruction.JMP;
+
+		Token operan0 = operans.get(0);
+		short value = getBinaryValue(operan0);
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void cmp(List<Token> operans) {
 		Token operan0 = operans.get(0);
 		Token operan1 = operans.get(1);
-		
+
 		byte opcode = Instruction.CMP;
 		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
 		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
@@ -181,13 +192,13 @@ public class CodeGenerator {
 			out.write((byte) (value1));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}			
+		}
 	}
 
 	private void div(List<Token> operans) {
 		Token operan0 = operans.get(0);
 		Token operan1 = operans.get(1);
-		
+
 		byte opcode = Instruction.DIV;
 		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
 		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
@@ -197,13 +208,13 @@ public class CodeGenerator {
 			out.write((byte) (value1));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	private void mul(List<Token> operans) {
 		Token operan0 = operans.get(0);
 		Token operan1 = operans.get(1);
-		
+
 		byte opcode = Instruction.MUL;
 		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
 		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
@@ -213,13 +224,13 @@ public class CodeGenerator {
 			out.write((byte) (value1));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	private void sub(List<Token> operans) {
 		Token operan0 = operans.get(0);
 		Token operan1 = operans.get(1);
-		
+
 		byte opcode = Instruction.SUB;
 		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
 		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
@@ -230,13 +241,13 @@ public class CodeGenerator {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void add(List<Token> operans) {
 		Token operan0 = operans.get(0);
 		Token operan1 = operans.get(1);
-		
+
 		byte opcode = Instruction.ADD;
 		byte value0 = (byte) Integer.parseInt(getBinaryReg(operan0), 2);
 		byte value1 = (byte) Integer.parseInt(getBinaryReg(operan1), 2);
@@ -252,7 +263,7 @@ public class CodeGenerator {
 	private void exit(List<Token> operans) {
 		byte opcode = Instruction.EXIT_PROC;
 		short value = 0;
-		
+
 		try {
 			out.write((byte) opcode);
 			out.write((byte) (value >> 8));
@@ -277,7 +288,7 @@ public class CodeGenerator {
 			opcode = Instruction.STORE_R3;
 		}
 		value = getBinaryValue(operan0);
-		
+
 		try {
 			out.write((byte) opcode);
 			out.write((byte) (value >> 8));
@@ -302,7 +313,7 @@ public class CodeGenerator {
 			opcode = Instruction.LOAD_R3;
 		}
 		value = getBinaryValue(operan1);
-		
+
 		try {
 			out.write((byte) opcode);
 			out.write((byte) (value >> 8));
@@ -316,7 +327,7 @@ public class CodeGenerator {
 	private void copy(List<Token> operans) {
 		byte opcode = 0;
 		short value = 0;
-		
+
 		Token operan0 = operans.get(0);
 		Token operan1 = operans.get(1);
 		if (operan1.getClazz() == Clazz.Literal_Char || operan1.getClazz() == Clazz.Literal_Decimal || operan1.getClazz() == Clazz.Literal_Hexa) {
@@ -371,7 +382,7 @@ public class CodeGenerator {
 			return (short) Integer.parseInt(operan1.getImage());
 		} else if (operan1.getClazz() == Clazz.Literal_Hexa) {
 			return (short) Integer.parseInt(operan1.getImage(), 16);
-		} else if(operan1.getClazz() == Clazz.Identifier) {
+		} else if (operan1.getClazz() == Clazz.Identifier) {
 			return (short) TabelaSimbolos.getMemoryPositionId(operan1);
 		}
 		return 0;
@@ -413,9 +424,9 @@ public class CodeGenerator {
 
 		return no.getFilho(0).getToken();
 	}
-	
-	//<DATA> ::= '.DATA' <nl> <Decls>
-	private Object data(Node no){
+
+	// <DATA> ::= '.DATA' <nl> <Decls>
+	private Object data(Node no) {
 		gerar(no.getFilho(2));
 		try {
 			out.writeByte('$');
@@ -425,45 +436,45 @@ public class CodeGenerator {
 		return null;
 	}
 
-	//<Decls> ::= <Decl> <nl> <Decls> | 
-	private Object decls(Node no){
-		if(!no.getFilhos().isEmpty()) {
+	// <Decls> ::= <Decl> <nl> <Decls> |
+	private Object decls(Node no) {
+		if (!no.getFilhos().isEmpty()) {
 			gerar(no.getFilho(0));
 			gerar(no.getFilho(2));
 		}
 		return null;
 	}
-	
-	//<Decl> ::= Id <Tipo> <Valor> 
-	private Object decl(Node no){
+
+	// <Decl> ::= Id <Tipo> <Valor>
+	private Object decl(Node no) {
 		Token id = no.getFilho(0).getToken();
 		String tipo = (String) gerar(no.getFilho(1));
 		Token valor = (Token) gerar(no.getFilho(2));
-		
+
 		TabelaSimbolos.setMemoryPositionId(id, memoryPosition);
-		if("DB".equalsIgnoreCase(tipo)) {
-			if(valor.getClazz() == Clazz.Literal_Decimal) {
+		if ("DB".equalsIgnoreCase(tipo)) {
+			if (valor.getClazz() == Clazz.Literal_Decimal) {
 				try {
 					out.writeByte(Integer.parseInt(valor.getImage()));
 					memoryPosition++;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(valor.getClazz() == Clazz.Literal_Hexa) {
+			} else if (valor.getClazz() == Clazz.Literal_Hexa) {
 				try {
 					out.writeByte(Integer.parseInt(valor.getImage(), 16));
 					memoryPosition++;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(valor.getClazz() == Clazz.Literal_Char) {
+			} else if (valor.getClazz() == Clazz.Literal_Char) {
 				try {
 					out.writeByte(valor.getImage().charAt(0));
 					memoryPosition++;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(valor.getClazz() == Clazz.Literal_String) {
+			} else if (valor.getClazz() == Clazz.Literal_String) {
 				try {
 					out.writeBytes(valor.getImage());
 					memoryPosition = (short) (memoryPosition + valor.getImage().length());
@@ -471,52 +482,52 @@ public class CodeGenerator {
 					e.printStackTrace();
 				}
 			}
-		} else if("DW".equalsIgnoreCase(tipo)) {
-			if(valor.getClazz() == Clazz.Literal_Decimal) {
+		} else if ("DW".equalsIgnoreCase(tipo)) {
+			if (valor.getClazz() == Clazz.Literal_Decimal) {
 				try {
 					out.writeShort(Integer.parseInt(valor.getImage()));
 					memoryPosition += 2;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(valor.getClazz() == Clazz.Literal_Hexa) {
+			} else if (valor.getClazz() == Clazz.Literal_Hexa) {
 				try {
 					out.writeShort(Integer.parseInt(valor.getImage(), 16));
 					memoryPosition += 2;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(valor.getClazz() == Clazz.Literal_Char) {
+			} else if (valor.getClazz() == Clazz.Literal_Char) {
 				try {
 					out.writeShort(valor.getImage().charAt(0));
 					memoryPosition += 2;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(valor.getClazz() == Clazz.Literal_String) {
+			} else if (valor.getClazz() == Clazz.Literal_String) {
 				try {
-					for(int i = 0; i < valor.getImage().length(); i++) {
+					for (int i = 0; i < valor.getImage().length(); i++) {
 						out.writeShort(valor.getImage().charAt(i));
 					}
 					memoryPosition = (short) (memoryPosition + valor.getImage().length() * 2);
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
-	//<Tipo> ::= 'DB' | 'DW'
-	private Object tipo(Node no){
+
+	// <Tipo> ::= 'DB' | 'DW'
+	private Object tipo(Node no) {
 		return no.getFilho(0).getToken().getImage();
 	}
-	
-	//<Valor> ::= StringLiteral | DecimalLiteral | HexaLiteral | CharLiteral
-	private Object valor(Node no){
+
+	// <Valor> ::= StringLiteral | DecimalLiteral | HexaLiteral | CharLiteral
+	private Object valor(Node no) {
 		return no.getFilho(0).getToken();
 	}
-	
+
 }
