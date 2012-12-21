@@ -16,9 +16,10 @@ start :
 
 	COPY R2 , 5
 	COPY R3 , 3
+pos1 :
 	DIV R2 , R3
 	CMP R2 , R3
-	JMP pos0
+	JMP pos1
 	COPY R1 , 0ffh
 
 ;	ADD  R0 , R1
