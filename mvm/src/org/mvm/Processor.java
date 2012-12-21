@@ -312,48 +312,48 @@ public class Processor {
 
 	private void jmp() {
 		//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-		IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)));
+		IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF));
 	}
 	
 	private void jg() {
 		if(FLAG_S == 0 && FLAG_Z != 0) {
 			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)));
+			IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF));
 		}
 	}
 	
 	private void jge() {
 		if(FLAG_S == 0) {
 			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
+			IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)); 
 		}
 	}
 
 	private void jl() {
 		if(FLAG_S == 1 && FLAG_Z != 0) {
 			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
+			IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)); 
 		}		
 	}
 	
 	private void jle() {
 		if(FLAG_S == 1) {
 			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
+			IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)); 
 		}		
 	}
 	
 	private void je() {
 		if(FLAG_Z == 1) {
 			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
+			IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)); 
 		}		
 	}
 	
 	private void jne() {
 		if(FLAG_Z == 0) {
 			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
-			IP = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF))); 
+			IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)); 
 		}		
 	}
 

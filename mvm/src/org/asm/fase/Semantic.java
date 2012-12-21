@@ -56,10 +56,20 @@ public class Semantic {
 			return tipo(no);
 		case Valor:
 			return valor(no);
+		case Label:
+			return label(no);
 		default:
 			throw new RuntimeException("Method not exists!");
 
 		}
+	}
+
+	//<Label> ::= Id ':' |
+	private Object label(Node no) {
+		if(!no.getFilhos().isEmpty()) {
+			return no.getFilho(0).getToken();
+		}
+		return null;
 	}
 
 	// <Start> ::= <nl opt> <Program> <nl Opt>
