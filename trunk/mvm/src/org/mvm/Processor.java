@@ -316,7 +316,7 @@ public class Processor {
 	}
 	
 	private void jg() {
-		if(FLAG_S == 0 && FLAG_Z != 0) {
+		if(FLAG_S == 0 && FLAG_Z == 0) {
 			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
 			IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF));
 		}
@@ -330,14 +330,14 @@ public class Processor {
 	}
 
 	private void jl() {
-		if(FLAG_S == 1 && FLAG_Z != 0) {
+		if(FLAG_S == 1 && FLAG_Z == 0) {
 			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
 			IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)); 
 		}		
 	}
 	
 	private void jle() {
-		if(FLAG_S == 1) {
+		if(FLAG_S == 1 || FLAG_Z == 1 ) {
 			//short pos = (short) (DS + (IR_ARG0 << 8) + IR_ARG1);
 			IP = (short) (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)); 
 		}		
