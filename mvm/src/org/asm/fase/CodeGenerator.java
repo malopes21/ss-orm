@@ -140,13 +140,148 @@ public class CodeGenerator {
 			cmp(operans);
 		} else if ("JMP".equalsIgnoreCase(statment)) {
 			jmp(operans);
-		} else if ("JMP".equalsIgnoreCase(statment)) {
+		} else if ("JG".equalsIgnoreCase(statment)) {
 			jg(operans);
+		} else if ("JGE".equalsIgnoreCase(statment)) {
+			jge(operans);
+		} else if ("JL".equalsIgnoreCase(statment)) {
+			jl(operans);
+		} else if ("JLE".equalsIgnoreCase(statment)) {
+			jle(operans);
+		} else if ("JE".equalsIgnoreCase(statment)) {
+			je(operans);
+		} else if ("JNE".equalsIgnoreCase(statment)) {
+			jne(operans);
+		} else if ("PUSH".equalsIgnoreCase(statment)) {
+			push(operans);
+		} else if ("POP".equalsIgnoreCase(statment)) {
+			pop(operans);
 		} else if ("EXIT".equalsIgnoreCase(statment)) {
 			exit(operans);
 		}
 
 		return null;
+	}
+
+	private void pop(List<Token> operans) {
+		byte opcode = 0;
+		short value = 0;
+		Token operan0 = operans.get(0);
+		if (operan0.getImage().equalsIgnoreCase("R0")) {
+			opcode = Instruction.POP_R0;
+		} else if (operan0.getImage().equalsIgnoreCase("R1")) {
+			opcode = Instruction.POP_R1;
+		} else if (operan0.getImage().equalsIgnoreCase("R2")) {
+			opcode = Instruction.POP_R2;
+		} else if (operan0.getImage().equalsIgnoreCase("R3")) {
+			opcode = Instruction.POP_R3;
+		}
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 		
+	}
+
+	private void push(List<Token> operans) {
+		byte opcode = 0;
+		short value = 0;
+		Token operan0 = operans.get(0);
+		if (operan0.getImage().equalsIgnoreCase("R0")) {
+			opcode = Instruction.PUSH_R0;
+		} else if (operan0.getImage().equalsIgnoreCase("R1")) {
+			opcode = Instruction.PUSH_R1;
+		} else if (operan0.getImage().equalsIgnoreCase("R2")) {
+			opcode = Instruction.PUSH_R2;
+		} else if (operan0.getImage().equalsIgnoreCase("R3")) {
+			opcode = Instruction.PUSH_R3;
+		}
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+	}
+
+	private void jne(List<Token> operans) {
+		byte opcode = Instruction.JNE;
+
+		Token operan0 = operans.get(0);
+		short value = getBinaryValue(operan0);
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+
+	private void je(List<Token> operans) {
+		byte opcode = Instruction.JE;
+
+		Token operan0 = operans.get(0);
+		short value = getBinaryValue(operan0);
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void jle(List<Token> operans) {
+		byte opcode = Instruction.JLE;
+
+		Token operan0 = operans.get(0);
+		short value = getBinaryValue(operan0);
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}			
+	}
+
+	private void jl(List<Token> operans) {
+		byte opcode = Instruction.JL;
+
+		Token operan0 = operans.get(0);
+		short value = getBinaryValue(operan0);
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}			
+	}
+
+	private void jge(List<Token> operans) {
+		byte opcode = Instruction.JGE;
+
+		Token operan0 = operans.get(0);
+		short value = getBinaryValue(operan0);
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
 	}
 
 	private void jg(List<Token> operans) {
