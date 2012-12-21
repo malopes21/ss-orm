@@ -253,9 +253,10 @@ public class Semantic {
 		return no.getFilho(0).getToken();
 	}
 
-	
-	
-	
-
+	public void showErrors() {
+		for(String erro: erros) {
+			System.out.println(erro);
+		}
+	}
 
 }

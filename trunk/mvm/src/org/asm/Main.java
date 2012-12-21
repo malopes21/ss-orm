@@ -11,11 +11,15 @@ import java.io.PrintWriter;
 import org.asm.def.TabelaSimbolos;
 import org.asm.fase.CodeGenerator;
 import org.asm.fase.Lexer;
+import org.asm.fase.Semantic;
 import org.asm.fase.Syntatic;
 
 public class Main {
 	
 	public static void main(String[] args) throws IOException {
+		
+		/************* FILE READ ********************/
+		
 		String fileRelPath = "prog01.asm";
 		BufferedReader in = null;
 		try {
@@ -26,6 +30,8 @@ public class Main {
 			System.exit(-1);
 		}
 		
+		/************* Lexic Analyser ********************/
+		
 		Lexer lexer = new Lexer(in);
 		if(!lexer.analyze()) {
 			System.out.println("Lexical error: ");
@@ -35,6 +41,8 @@ public class Main {
 		
 		System.out.println("TOKENS: ");
 		lexer.showTokens();
+		
+		/************* Syntatic Analyser ********************/
 		
 		Syntatic syntatic = new Syntatic(lexer.getTokens());
 		if(!syntatic.analyze()) {
@@ -48,7 +56,22 @@ public class Main {
 		System.out.println("TOKENS AGAIN: ");
 		lexer.showTokens();
 		
+		System.out.println("AST: ");
 		syntatic.mostraArvore();
+		
+		/************* Semantic Analyser ********************/
+		
+		Semantic semantic = new Semantic(syntatic.getRaiz());
+		if(!semantic.analisar()) {
+			System.out.println("Semantic error: ");
+			semantic.showErrors();
+			System.exit(-1);
+		}
+		
+        System.out.println("OK Semantic! Simbols AGAIN:");
+		TabelaSimbolos.listaTabela();
+		
+		/************* Code Generator ********************/
 		
 		String fileName = fileRelPath.substring(0, fileRelPath.indexOf(".")) + ".mvm";
 		DataOutputStream out = new DataOutputStream(new FileOutputStream(fileName));
@@ -57,7 +80,7 @@ public class Main {
         out.flush();
         out.close();
         
-        System.out.println("OK Sintaxe! Simbols AGAIN:");
+        System.out.println("OK Code Generation! Simbols AGAIN:");
 		TabelaSimbolos.listaTabela();
 		
 	}
