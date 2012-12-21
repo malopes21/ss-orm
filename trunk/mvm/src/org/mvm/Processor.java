@@ -385,59 +385,59 @@ public class Processor {
 	}
 
 	private void push_R0() {
+		SP += 2;
 		short pos = (short) (SS + SP);
 		Memory.ram[pos++] = (byte) (R[0] >> 8);
 		Memory.ram[pos] = (byte) (R[0] % 256);
-		SP -= 2;
 	}
 	
 	private void push_R1() {
+		SP += 2;
 		short pos = (short) (SS + SP);
 		Memory.ram[pos++] = (byte) (R[1] >> 8);
 		Memory.ram[pos] = (byte) (R[1] % 256);
-		SP -= 2;
 	}
 	
 	private void push_R2() {
+		SP += 2;
 		short pos = (short) (SS + SP);
 		Memory.ram[pos++] = (byte) (R[2] >> 8);
 		Memory.ram[pos] = (byte) (R[2] % 256);
-		SP -= 2;
 	}
 	
 	private void push_R3() {
+		SP += 2;
 		short pos = (short) (SS + SP);
 		Memory.ram[pos++] = (byte) (R[3] >> 8);
 		Memory.ram[pos] = (byte) (R[3] % 256);
-		SP -= 2;
 	}
 	
 	private void pop_R0() {
 		short pos = (short) (SS + SP);
 		R[0] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
 		//R[0] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
-		SP += 2;
+		SP -= 2;
 	}
 	
 	private void pop_R1() {
 		short pos = (short) (SS + SP);
 		R[1] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
 		//R[1] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
-		SP += 2;
+		SP -= 2;
 	}
 	
 	private void pop_R2() {
 		short pos = (short) (SS + SP);
 		R[2] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
 		//R[2] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
-		SP += 2;
+		SP -= 2;
 	}
 	
 	private void pop_R3() {
 		short pos = (short) (SS + SP);
 		R[3] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
 		//R[3] = (short) ((Memory.ram[pos++] << 8) + Memory.ram[pos]);
-		SP += 2;
+		SP -= 2;
 	}
 	
 }

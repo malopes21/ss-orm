@@ -230,7 +230,7 @@ public class Run {
 	private static void dumpDATA(Processor p, int incio, int fim) {
 		System.out.println("\nDUMP DATA: " + incio + "d -> " + fim + "d:");
 		for (int i = incio; i <= fim; i++) {
-			System.out.printf("[DS:%04x]: %02xh \t%c\n", i, Memory.ram[p.DS + i], Memory.ram[p.DS + i] < 0 ? 0 : Memory.ram[p.DS + i] );
+			System.out.printf("[DS:%04x]: %02xh \t%c\n", (short) i, Memory.ram[p.DS + i], Memory.ram[p.DS + i] < 0 ? 0 : Memory.ram[p.DS + i] );
 			// System.out.println("[DS:" + i + "]: " + Memory.ram[p.DS + i] +
 			// " - " + (char) Memory.ram[p.DS + i]);
 		}
@@ -239,7 +239,7 @@ public class Run {
 	private static void dumpSTACK(Processor p, int incio, int fim) {
 		System.out.println("\nDUMP STACK: " + incio + "d -> " + fim + "d:");
 		for (int i = incio; i <= fim; i++) {
-			System.out.printf("[SS:%04x]: %02xh \t%c\n", i, Memory.ram[p.SS + i], Memory.ram[p.SS + i] < 0 ? 0 : Memory.ram[p.SS + i] );
+			System.out.printf("[SS:%04x]: %02xh \t%c\n", (short) i, Memory.ram[p.SS + i], Memory.ram[p.SS + i] < 0 ? 0 : Memory.ram[p.SS + i] );
 			// System.out.println("[SS:" + i + "]: " + Memory.ram[p.SS + i] +
 			// " - " + (char) Memory.ram[p.SS + i]);
 		}
@@ -251,7 +251,7 @@ public class Run {
 			// System.out.print("[CS:" + i + "]: " + Memory.ram[p.CS + i] +
 			// " - " + Instruction.values.get(new Integer(Memory.ram[p.CS +
 			// i])));
-			System.out.printf("[CS:%04x]: %02xh  %-14s", i, Memory.ram[p.CS + i], Instruction.values.get(new Integer(Memory.ram[p.CS + i])));
+			System.out.printf("[CS:%04x]: %02xh  %-14s", (short) i, Memory.ram[p.CS + i], Instruction.values.get(new Integer(Memory.ram[p.CS + i])));
 			System.out.printf("%02x|%02xh\n", Memory.ram[p.CS + i + 1], Memory.ram[p.CS + i + 2] );
 		}
 	}
