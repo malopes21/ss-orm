@@ -14,6 +14,7 @@ start :
 ;	STORE var1 , R0
 ;	ADD R2 , R1
 
+	COPY R0 , 18
 	COPY R2 , 3
 	COPY R3 , 3
 pos1 :
@@ -25,6 +26,17 @@ pos1 :
 pos0 :
 	COPY R1 , 0eeh
 sai :
+
+	PUSH R0
+	PUSH R0
+	PUSH R0
+	PUSH R0
+
+	POP R0
+	POP R1
+;	POP R2
+;	POP R3
+
 	EXIT 0
 
 .END 
