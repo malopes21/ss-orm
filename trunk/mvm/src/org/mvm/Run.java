@@ -51,33 +51,7 @@ public class Run {
 		return saida;
 	}
 
-	private static void dumpRegs(Processor p) {
-		System.out.println("\nDUMP REGS: processor p" + p.getPid());
-		System.out.printf("R0: %04xh\n", p.R[0]);
-		System.out.printf("R1: %04xh\n", p.R[1]);
-		System.out.printf("R2: %04xh\n", p.R[2]);
-		System.out.printf("R3: %04xh\n", p.R[3]);
-		System.out.printf("R4: %04xh\n", p.R[4]);
-		System.out.printf("R5: %04xh\n", p.R[5]);
-		System.out.printf("R6: %04xh\n", p.R[6]);
-		System.out.printf("R7: %04xh\n", p.R[7]);
 
-		System.out.printf("\nCS: %04xh\n", p.CS);
-		System.out.printf("DS: %04xh\n", p.DS);
-		System.out.printf("SS: %04xh\n", p.SS);
-
-		System.out.printf("\nIP: %04xh\n", p.IP);
-
-		System.out.printf("\nIR_OPCODE: %01xh \t(%s)\n", p.IR_OPCODE, Instruction.values.get(new Integer(p.IR_OPCODE)));
-		System.out.printf("IR_ARG0: %01xh\n", p.IR_ARG0);
-		System.out.printf("IR_ARG1: %01xh\n", p.IR_ARG1);
-
-		System.out.printf("\nSP: %04xh\n", p.SP);
-		System.out.printf("BP: %04xh\n", p.BP);
-
-		System.out.printf("\nFLAG_Z: %01x\n", p.FLAG_Z);
-		System.out.printf("FLAG_S: %01x\n", p.FLAG_S);
-	}
 
 	private static byte[] createTestProgram() {
 		int position = 0;
@@ -277,9 +251,38 @@ public class Run {
 			// System.out.print("[CS:" + i + "]: " + Memory.ram[p.CS + i] +
 			// " - " + Instruction.values.get(new Integer(Memory.ram[p.CS +
 			// i])));
-			System.out.printf("[CS:%04x]: %02xh  %s", i, Memory.ram[p.CS + i], Instruction.values.get(new Integer(Memory.ram[p.CS + i])));
-			System.out.printf("\t%02x|%02xh\n", Memory.ram[p.CS + i + 1], Memory.ram[p.CS + i + 2] );
+			System.out.printf("[CS:%04x]: %02xh  %-14s", i, Memory.ram[p.CS + i], Instruction.values.get(new Integer(Memory.ram[p.CS + i])));
+			System.out.printf("%02x|%02xh\n", Memory.ram[p.CS + i + 1], Memory.ram[p.CS + i + 2] );
 		}
+	}
+	
+	private static void dumpRegs(Processor p) {
+		System.out.println("\nDUMP REGS: processor p" + p.getPid());
+		System.out.printf("R0: %04xh\n", p.R[0]);
+		System.out.printf("R1: %04xh\n", p.R[1]);
+		System.out.printf("R2: %04xh\n", p.R[2]);
+		System.out.printf("R3: %04xh\n", p.R[3]);
+		System.out.printf("R4: %04xh\n", p.R[4]);
+		System.out.printf("R5: %04xh\n", p.R[5]);
+		System.out.printf("R6: %04xh\n", p.R[6]);
+		System.out.printf("R7: %04xh\n", p.R[7]);
+		System.out.printf("TEMP: %04xh\n", p.TEMP);
+
+		System.out.printf("\nCS: %04xh\n", p.CS);
+		System.out.printf("DS: %04xh\n", p.DS);
+		System.out.printf("SS: %04xh\n", p.SS);
+
+		System.out.printf("\nIP: %04xh\n", p.IP);
+
+		System.out.printf("\nIR_OPCODE: %01xh \t(%s)\n", p.IR_OPCODE, Instruction.values.get(new Integer(p.IR_OPCODE)));
+		System.out.printf("IR_ARG0: %01xh\n", p.IR_ARG0);
+		System.out.printf("IR_ARG1: %01xh\n", p.IR_ARG1);
+
+		System.out.printf("\nSP: %04xh\n", p.SP);
+		System.out.printf("BP: %04xh\n", p.BP);
+
+		System.out.printf("\nFLAG_Z: %01x\n", p.FLAG_Z);
+		System.out.printf("FLAG_S: %01x\n", p.FLAG_S);
 	}
 
 }

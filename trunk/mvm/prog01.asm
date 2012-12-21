@@ -12,6 +12,14 @@ start :
 	COPY R1 , 40
 	LOAD R2 , var1
 	STORE var1 , R0
+	ADD R2 , R1
+
+	COPY R2 , 5
+	COPY R3 , 3
+	DIV R2 , R3
+	CMP R2 , R3
+	JMP pos0
+	COPY R1 , 0ffh
 
 ;	ADD  R0 , R1
 ;	COPY R0 , 07d
@@ -20,7 +28,7 @@ start :
 ;	COPY R3 , 'a'
 ;	LOAD R2 , 0003h
 ;	STORE 0006h , R3
-;pos0 : 
+pos0 :
 ; 	ADD R1 , R2
 ;	SUB R1 , R0
 	EXIT 0
