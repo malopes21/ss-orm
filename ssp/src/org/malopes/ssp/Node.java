@@ -65,10 +65,16 @@ public class Node {
 		return filhos.get(index);
 	}
 
+	@Override
+	public String toString() {
+		return "Node [tipo=" + tipo + ", token=" + token + "]";
+	}
+
 	/*
 	 * public abstract Object analisar();
 	 * 
 	 * public abstract Object interpretar();
 	 */
+	
 
 }

@@ -6,8 +6,8 @@ import java.io.PrintWriter;
 
 public class Main {
 
-	private Boolean DEBUG = false;
-	private Boolean COMPILER = false;
+	private Boolean DEBUG = true;
+	private Boolean COMPILER = true;
 
 	public static void main(String[] args) throws FileNotFoundException {
 		new Main().testa();
@@ -27,7 +27,7 @@ public class Main {
 		String filePath;
 		try {
 			// filePath = getClass().getResource("prog01.ssp").getFile();
-			filePath = "prog03.ssp";
+			filePath = "prog05.ssp";
 			print("Analisando arquivo: " + filePath);
 		} catch (Exception e) {
 			System.err.println("ERRO de : " + e);
@@ -59,6 +59,7 @@ public class Main {
 		print("Analise Sintatica OK!");
 		if (DEBUG) {
 			analisadorLexico.mostraTokens();
+			TabelaSimbolos.listaLiterais();
 			TabelaSimbolos.listaTabela();
 			analisadorSintatico.mostraArvore();
 		}
