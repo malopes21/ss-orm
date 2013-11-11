@@ -166,7 +166,15 @@ public class GeradorCodigo {
      * '}'
      */
     private Object def(Node node) {
+    	Token idDef = node.getFilho(1).getToken();
+    	out.write("\n");
+        out.write(idDef.getImagem() + " proc near\n");
+        out.write("\tpush ebp\n");
+        out.write("\tmov ebp, esp\n");
+        //gerar o listArg
         gerar(node.getFilho(8));
+        out.write("\n\tpop ebp\n");
+        out.write("\tret\n");	//mudar para retn ou usar o padrão empilha e desempilha no chamador
         return null;
     }
 

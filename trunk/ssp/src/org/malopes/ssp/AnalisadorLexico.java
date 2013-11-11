@@ -53,7 +53,9 @@ public class AnalisadorLexico {
 						int fim = linha.indexOf('"', inicio+1);
 						if (fim >0) {
 							//System.out.println("string literal:["+linha.substring(inicio+1, fim)+"]");
-							tokens.add(new Token(linha.substring(inicio+1, fim), Classe.ConstanteLiteralString, -1, nLinha, 0));
+							Token tokenLiteralString = new Token(linha.substring(inicio+1, fim), Classe.ConstanteLiteralString, -1, nLinha, 0);
+							TabelaSimbolos.addSimboloLiteral(tokenLiteralString);
+							tokens.add(tokenLiteralString);
 							tokenizador = new StringTokenizer(linha.substring(fim, linha.length()));
 							token = tokenizador.nextToken();
 						} else {

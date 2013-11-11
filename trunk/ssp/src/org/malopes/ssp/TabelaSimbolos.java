@@ -6,6 +6,7 @@ import java.util.List;
 public class TabelaSimbolos {
 
 	private static List<Simbolo> tabela = new ArrayList<Simbolo>();
+	private static List<SimboloLiteral> literais = new ArrayList<SimboloLiteral>();
 
 	public static List<Simbolo> getTabela() {
 		return tabela;
@@ -173,6 +174,26 @@ public class TabelaSimbolos {
 		} else {
 			return getTipoCompativel(token.getClasse());
 		}
+	}
+
+	public static void addSimboloLiteral(Token token) {
+		SimboloLiteral simboloLiteral = new SimboloLiteral(token.getImagem(), token.getClasse(), null);
+		if (!literais.contains(simboloLiteral)) {
+			literais.add(simboloLiteral);
+		} /*else {
+			simboloLiteral = literais.get(literais.indexOf(simboloLiteral));
+		}*/
+		//simbolo.getToken().setIndiceTabSimb(tabela.indexOf(simbolo));
+		token.setIndiceTabSimb(literais.indexOf(simboloLiteral));
+		
+	}
+
+	public static void listaLiterais() {
+		System.out.println("\n\nTabela de Literais:");
+		for(SimboloLiteral simboloLiteral: literais) {
+			System.out.println(simboloLiteral);
+		}
+		
 	}
 
 }
