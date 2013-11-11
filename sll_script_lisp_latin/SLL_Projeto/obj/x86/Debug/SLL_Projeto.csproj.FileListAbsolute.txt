@@ -1,0 +1,5 @@
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\bin\Debug\SLL_Projeto.exe
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\bin\Debug\SLL_Projeto.pdb
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\obj\x86\Debug\SLL_Projeto.exe
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\obj\x86\Debug\SLL_Projeto.pdb

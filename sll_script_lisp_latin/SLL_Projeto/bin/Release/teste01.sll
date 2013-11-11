@@ -1,0 +1,38 @@
+( vacum bla [ ] 
+	( reditus )
+)
+
+( verus soma [ ( verus a ) ( verus b ) ]       
+    ( reditus ( + a b ) )  //teste de comentarios de linha
+)
+
+( verus subt [ ( verus a ) ( verus b ) ]       
+    ( reditus ( - a b ) )  
+)
+
+//O ultimo Def é o lançador
+( vacum teste [ ( totum a1 ) ]          
+    ( verus r1 r2 r3 )   
+	( totum a2 a3 )    
+	( = a2 2 )
+	( = a3 3 )
+    ( = a1 ( + ( * a2 120 ) ( / 10 a3 ) ) )      
+    ( si ( > a2 10 )       
+        ( = a2 10 )  
+        ( = a2 20 )  
+    )       
+    ( = r2 ( + 20.0 30.0 ) )        
+	( = r1 ( soma 20.0 30.0 ) )        
+            
+    ( autem ( > r1 10.5 )     
+        ( = r1 ( + r1 10.9 ) )  
+        ( = r2 2.0 )   
+    )       
+	( chorda s1 )
+    ( lego s1 )       
+    ( noto "oi" )      
+	( noto "teste final" )     
+	( mus b1 ) 
+    ( = b1 verum )
+	( reditus )
+)   

@@ -1,0 +1,10 @@
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\bin\Release\sll.exe
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\bin\Release\sll.pdb
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\obj\x86\Release\sll.exe
+C:\Marcos\AulasCOMP\SLL_Projeto\SLL_Projeto\obj\x86\Release\sll.pdb
+C:\Marcos\Marcos_P4\AulasCOMP\SLL_Projeto\SLL_Projeto\obj\x86\Release\sll.exe
+C:\Marcos\Marcos_P4\AulasCOMP\SLL_Projeto\SLL_Projeto\obj\x86\Release\sll.pdb
+C:\Marcos\Marcos_P4\AulasCOMP\SLL_Projeto\SLL_Projeto\bin\Release\sll.exe
+C:\Marcos\Marcos_P4\AulasCOMP\SLL_Projeto\SLL_Projeto\bin\Release\sll.pdb
+C:\Marcos\Marcos_P4\AulasCOMP\SLL_Projeto\SLL_Projeto\obj\x86\Release\ResolveAssemblyReference.cache

@@ -1,0 +1,74 @@
+( vacum bla [ ] 
+	( reditus )
+)
+
+( verus soma [ ( verus a ) ( verus b ) ]       
+    ( reditus ( + a b ) )  //teste de comentarios de linha
+)
+
+( verus subt [ ( verus a ) ( verus b ) ]       
+    ( reditus ( - a b ) )  
+)
+
+( totum fat [ ( totum n ) ] 
+	//( totum n1 )
+	( si ( <= n 1 )
+		( reditus 1 )
+		(
+			//( = n1 ( - n 1 ) )
+			( reditus ( * n ( fat ( - n 1 ) ) ) )   //agora o SLL suporta expressões como argumentos para funções
+		)											// as expressões são avaliadas antecipadamente.
+	)
+)
+
+( totum fib [ ( totum n ) ]
+	( si ( < n 2 )
+		( reditus n )
+		( reditus ( + ( fib ( - n 1 ) ) ( fib ( - n 2 ) ) ) ) 
+	)
+)
+
+( vacum mostra [ ( chorda s ) ]
+	( noto s )
+)
+
+//O ultimo Def é o lançador
+( vacum teste [ ]   //não tem argumento de entrada nesse exemplo         
+	( totum a1 a2 a3 )    
+	( = a2 2 )	( = a3 3 )
+    ( = a1 ( + ( * a2 120 ) ( / 10 a3 ) ) )      
+    ( si ( > a1 100 )
+		( = a2 10 )
+		( = a2 20 )
+	)
+	( autem ( > a2 0 )
+		( = a3 ( + a3 1 ) )
+		( = a2 ( - a2 2 ) )
+	)
+	( noto "a1: " )     
+	( noto a1 ) 
+	( noto " a2: " )
+	( noto a2 )
+	( noto " a3: " )
+	( noto a3 )
+	( totum a4 )
+	//( noto " entre a4: " )
+	//( lego a4 )
+	//( noto " a4: " )
+	//( noto a4 )
+	( verus a5 ) 
+	( = a5 ( soma 2.0 3.0 ) )
+	( noto " a5: " )
+	( noto a5 )  
+	( totum a6 )
+	( = a6 ( fat 20 ) )
+	( noto " a6: " )
+	( noto a6 )
+
+	( totum a7 )
+	( = a7 ( fib 60 ) )
+	( noto " a7: " )
+	( noto a7 )
+
+	( reditus )
+)   
