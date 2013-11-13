@@ -179,6 +179,8 @@ public class TabelaSimbolos {
 	public static void addSimboloLiteral(Token token) {
 		SimboloLiteral simboloLiteral = new SimboloLiteral(token.getImagem(), token.getClasse(), null);
 		if (!literais.contains(simboloLiteral)) {
+			String rotuloVarCreated = "$$var" + literais.size();
+			simboloLiteral.setImagemVarGlobal(rotuloVarCreated);
 			literais.add(simboloLiteral);
 		} /*else {
 			simboloLiteral = literais.get(literais.indexOf(simboloLiteral));
@@ -194,6 +196,10 @@ public class TabelaSimbolos {
 			System.out.println(simboloLiteral);
 		}
 		
+	}
+
+	public static List<SimboloLiteral> getSimbolosLiterais() {
+		return literais;
 	}
 
 }
