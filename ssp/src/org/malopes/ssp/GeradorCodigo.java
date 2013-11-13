@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 
 public class GeradorCodigo {
@@ -28,31 +29,16 @@ public class GeradorCodigo {
         gerarCabecalho();
         gerarSecaoData();
         gerarInicioSecaoCode();
-        gerar(defPrincipal);
-        /*
+        //gerar(defPrincipal);
+        
         for(Entry<String, Node> entrada : mapDefs.entrySet()) {
-            if(!entrada.getKey().equals("principal")) {
-                gerar(entrada.getValue());
-            }
+        	gerar(entrada.getValue());
         }
-        */
+        
         gerarFimSecaoCode();
 
     }
 
-    private void gerarFimSecaoCode() {
-        out.write("\n");
-        out.write("\tpush 0\n");
-        out.write("\tcall ExitProcess\n");
-        out.write("end start\n");
-    }
-
-    private void gerarInicioSecaoCode() {
-        out.write("\n");
-        out.write(".code\n");
-        out.write("\n");
-        out.write("start: \n");
-    }
 
     private void gerarCabecalho() {
         out.write(".486 \n");
@@ -70,15 +56,33 @@ public class GeradorCodigo {
     private void gerarSecaoData() {
         out.write("\n");
         out.write(".data \n");
-        for(Simbolo simbolo : TabelaSimbolos.getTabela()) {
-            if(simbolo.getEscopo().equals("principal")) {
+        for(SimboloLiteral simboloLi : TabelaSimbolos.getSimbolosLiterais()) {
+        	String tipoCompativel = TabelaSimbolos.getTipoCompativel(simboloLi.getClasse());
+        	out.write("\t" + simboloLi.getImagemVarGlobal() + " " 
+                    + TabelaSimbolos.getTipoCompativelASM(tipoCompativel) + " " 
+                    + "\"" + simboloLi.getImagem() + "\", 0" + "\n");
+        	
+           /* if(simbolo.getEscopo().equals("principal")) {
                 out.write("\t" + simbolo.getToken().getImagem() + " " 
                         + TabelaSimbolos.getTipoCompativelASM(simbolo.getTipo()) + " " 
                         + TabelaSimbolos.getValorPadraoASM(simbolo.getTipo()) + "\n");
-            }
+            }*/
         }
     }
 
+    private void gerarInicioSecaoCode() {
+        out.write("\n");
+        out.write(".code\n");
+        out.write("\n");
+        out.write("start: \n");
+    }
+
+    private void gerarFimSecaoCode() {
+        out.write("\n");
+        out.write("\tpush 0\n");
+        out.write("\tcall ExitProcess\n");
+        out.write("end start\n");
+    }
 
     private Object gerar(Node node) {
         switch (node.getTipo()) {
@@ -173,8 +177,10 @@ public class GeradorCodigo {
         out.write("\tmov ebp, esp\n");
         //gerar o listArg
         gerar(node.getFilho(8));
+        out.write("\n\t;finalizar a proc");
         out.write("\n\tpop ebp\n");
         out.write("\tret\n");	//mudar para retn ou usar o padrão empilha e desempilha no chamador
+        out.write(idDef.getImagem() + " endp\n");
         return null;
     }
 
@@ -512,7 +518,11 @@ public class GeradorCodigo {
      */
     private Object ret(Node node) {
         Object retorno = gerar(node.getFilho(1));
-        throw new RetCommandException(retorno);
+        //desempilhar todas vars locais. Os parâmetros serão desempilhados pelo chamador
+        out.write("\n\t;comando retorno\n");
+        out.write("\tpop ebp\n");
+        out.write("\tret\n");
+        return null;
     }
 
 }

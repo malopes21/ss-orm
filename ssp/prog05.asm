@@ -10,15 +10,32 @@ includelib \masm32\lib\masm32.lib
 includelib \masm32\lib\kernel32.lib 
 
 .data 
-	principal DD 0
-	v1 DD 0
-	v2 DD 0
-	v3 DD 0
-	v4 DD 0
+	$$var0 DB "v1: ", 0
+	$$var1 DB " v2: ", 0
+	$$var2 DB " v3: ", 0
+	$$var3 DB " v4: ", 0
 
 .code
 
 start: 
+
+subt proc near
+	push ebp
+	mov ebp, esp
+
+	;comando atrib
+	mov eax, a
+	sub eax, b
+	mov aux, eax 
+
+	;comando retorno
+	pop ebp
+	ret
+
+	;finalizar a proc
+	pop ebp
+	ret
+subt endp
 
 principal proc near
 	push ebp
@@ -48,8 +65,28 @@ principal proc near
 	push offset  v4: 
 	call StdOut
 
+	;finalizar a proc
 	pop ebp
 	ret
+principal endp
+
+soma proc near
+	push ebp
+	mov ebp, esp
+
+	;comando atrib
+	mov eax, a
+	add eax, b
+	mov aux, eax 
+
+	;comando retorno
+	pop ebp
+	ret
+
+	;finalizar a proc
+	pop ebp
+	ret
+soma endp
 
 	push 0
 	call ExitProcess
