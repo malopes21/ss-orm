@@ -10,11 +10,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 public class GeradorCodigo {
 
     private Node raiz;
     private Map<String, Node> mapDefs;
-    private Stack<HashMap<String, Object>> pilha = new Stack<HashMap<String, Object>>();
+    private List<StackData> stackFrameVarLocal = new ArrayList<StackData>();
+    private List<StackData> stackFrameParam = new ArrayList<StackData>();
     private PrintWriter out;
 
     public GeradorCodigo(Node raiz, PrintWriter out) {
@@ -23,18 +26,13 @@ public class GeradorCodigo {
     }
 
     public void gerar() {
-        mapDefs = getDefs();
-        Node defPrincipal = mapDefs.get("principal");
+        //mapDefs = getDefs();
+        //Node defPrincipal = mapDefs.get("principal");
                 
         gerarCabecalho();
         gerarSecaoData();
         gerarInicioSecaoCode();
-        //gerar(defPrincipal);
-        
-        for(Entry<String, Node> entrada : mapDefs.entrySet()) {
-        	gerar(entrada.getValue());
-        }
-        
+        gerar(raiz);
         gerarFimSecaoCode();
 
     }
@@ -61,12 +59,6 @@ public class GeradorCodigo {
         	out.write("\t" + simboloLi.getImagemVarGlobal() + " " 
                     + TabelaSimbolos.getTipoCompativelASM(tipoCompativel) + " " 
                     + "\"" + simboloLi.getImagem() + "\", 0" + "\n");
-        	
-           /* if(simbolo.getEscopo().equals("principal")) {
-                out.write("\t" + simbolo.getToken().getImagem() + " " 
-                        + TabelaSimbolos.getTipoCompativelASM(simbolo.getTipo()) + " " 
-                        + TabelaSimbolos.getValorPadraoASM(simbolo.getTipo()) + "\n");
-            }*/
         }
     }
 
@@ -75,17 +67,27 @@ public class GeradorCodigo {
         out.write(".code\n");
         out.write("\n");
         out.write("start: \n");
-    }
-
-    private void gerarFimSecaoCode() {
+        out.write("\n");
+        out.write("\tcall principal\n");
         out.write("\n");
         out.write("\tpush 0\n");
         out.write("\tcall ExitProcess\n");
-        out.write("end start\n");
+    }
+
+    private void gerarFimSecaoCode() {
+       
+        out.write("\nend start\n");
     }
 
     private Object gerar(Node node) {
         switch (node.getTipo()) {
+        
+        case Program:
+            return program(node);
+        
+        case ListDef:
+            return listDef(node);
+        
         case Def:
             return def(node);
 
@@ -159,6 +161,25 @@ public class GeradorCodigo {
     }
 
     /**
+     * <Program>   ::= <ListDef>
+     */
+    private Object program(Node node) {
+		gerar(node.getFilho(0));
+    	return null;
+	}
+    
+    /**
+     * <ListDef>   ::= <Def> <ListDef> |
+     */
+    private Object listDef(Node node) {
+    	if(!node.getFilhos().isEmpty()) {
+    		gerar(node.getFilho(0));
+    		gerar(node.getFilho(1));
+    	}
+    	return null;
+	}
+
+	/**
      * <OpArit>    ::= '+' | '-' | '*' | '/'
      */
     private Object opArit(Node node) {
@@ -176,6 +197,14 @@ public class GeradorCodigo {
         out.write("\tpush ebp\n");
         out.write("\tmov ebp, esp\n");
         //gerar o listArg
+        stackFrameVarLocal.clear();
+        List<Simbolo> varsLocais = TabelaSimbolos.getVarsLocaisByEscopo(idDef);
+        for(Simbolo simbVarLocal: varsLocais) {
+        	stackFrameVarLocal.add(new StackData( simbVarLocal.getToken().getImagem(), simbVarLocal.getTipo() ));
+        }
+        out.write("\n\t;alocacao de vars locais");
+        out.write("\n\tsub esp, " + stackFrameVarLocal.size()*4 + "\n");  //considerando tudo 32 bits 
+        
         gerar(node.getFilho(8));
         out.write("\n\t;finalizar a proc");
         out.write("\n\tpop ebp\n");
@@ -184,15 +213,7 @@ public class GeradorCodigo {
         return null;
     }
 
-    private void populaStackFrame(HashMap<String, Object> stackFrame, String imagemDefId) {
-        System.out.println("STACKFRAME "+imagemDefId);
-        for(Simbolo simb : TabelaSimbolos.getSimbolosByEscopo(imagemDefId)) {
-            stackFrame.put(simb.getToken().getImagem(), simb.getValor());
-            System.out.println("Imagem "+ simb.getToken().getImagem() + " | Valor : " + simb.getValor());
-        }
-    }
-
-    private Map<String, Node> getDefs() {
+ /*   private Map<String, Node> getDefs() {
         Map<String, Node> mapDefsLocal = new HashMap<String, Node>();
         Node listDef = raiz.getFilho(0);
         addDefsRec(listDef, mapDefsLocal);
@@ -206,7 +227,7 @@ public class GeradorCodigo {
             mapDefsLocal.put(idDef, def);
             addDefsRec(listDef.getFilho(1), mapDefsLocal);
         }
-    }
+    }*/
     
     /**
      * <ListComand> ::= <Comand> <ListComand> |
@@ -325,7 +346,8 @@ public class GeradorCodigo {
         
         String tipoOperan = TabelaSimbolos.getTipoToken(operan);
         if (tipoOperan.equals("Str")) {
-            out.write("\n\tpush offset " + operan.getImagem());
+        	String imagemVarGlobal = TabelaSimbolos.getImagemVarGlobal(operan);
+            out.write("\n\tpush offset " + imagemVarGlobal);
             out.write("\n\tcall StdOut");
             out.write("\n");
         } else if(tipoOperan.equals("Int")) {
@@ -517,12 +539,24 @@ public class GeradorCodigo {
      * <Ret>       ::= 'ret' <Operan>
      */
     private Object ret(Node node) {
-        Object retorno = gerar(node.getFilho(1));
-        //desempilhar todas vars locais. Os parâmetros serão desempilhados pelo chamador
-        out.write("\n\t;comando retorno\n");
+        Token operan = (Token) gerar(node.getFilho(1));  //terá que ajustar para 'call' de função
+        out.write("\n\t;desalocacao de vars locais e retorno");
+        int posStackLocal = getPosStackLocal(operan.getImagem());
+        out.write("\n\tmov eax, [ebp-" + posStackLocal*4 +"]");
+        out.write("\n\tadd esp, " + stackFrameVarLocal.size()*4 + "\n");  //considerando tudo 32 bits
         out.write("\tpop ebp\n");
         out.write("\tret\n");
         return null;
     }
 
+	private int getPosStackLocal(String imagem) {
+		for(StackData stackData : stackFrameVarLocal) {
+			if(stackData.getImagem().equals(imagem)) {
+				return stackFrameVarLocal.indexOf(stackData) + 1;	//a posição 0 não ajuda aqui
+			}
+		}
+		return -1;
+	}
+
 }
+

@@ -9,7 +9,13 @@ public class Simbolo {
 	private String escopo;
 	private String tipo;
 	private Object valor;
+	private int natureza = -1;  //se é id de var. local, id de parâmetro, id de função, etc
 	private List<Token> params = new ArrayList<Token>();
+	
+	public static int VAR_LOCAL = 0;
+	public static int PARAMETRO = 1;
+	public static int FUNCAO = 2;
+	
 
 	public Simbolo() {
 	}
@@ -105,5 +111,15 @@ public class Simbolo {
 			return false;
 		return true;
 	}
+
+	public int getNatureza() {
+		return natureza;
+	}
+
+	public void setNatureza(int natureza) {
+		this.natureza = natureza;
+	}
+	
+	
 
 }

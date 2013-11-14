@@ -19,16 +19,49 @@ includelib \masm32\lib\kernel32.lib
 
 start: 
 
+	call principal
+
+	push 0
+	call ExitProcess
+
+soma proc near
+	push ebp
+	mov ebp, esp
+
+	;alocacao de vars locais
+	sub esp, 4
+
+	;comando atrib
+	mov eax, a
+	add eax, b
+	mov aux, eax 
+
+	;desalocacao de vars locais e retorno
+	mov eax, [ebp-4]
+	add esp, 4
+	pop ebp
+	ret
+
+	;finalizar a proc
+	pop ebp
+	ret
+soma endp
+
 subt proc near
 	push ebp
 	mov ebp, esp
+
+	;alocacao de vars locais
+	sub esp, 4
 
 	;comando atrib
 	mov eax, a
 	sub eax, b
 	mov aux, eax 
 
-	;comando retorno
+	;desalocacao de vars locais e retorno
+	mov eax, [ebp-4]
+	add esp, 4
 	pop ebp
 	ret
 
@@ -41,6 +74,9 @@ principal proc near
 	push ebp
 	mov ebp, esp
 
+	;alocacao de vars locais
+	sub esp, 16
+
 	;comando atrib
 	mov eax, 10
 	mov v1, eax 
@@ -50,19 +86,19 @@ principal proc near
 	mov v2, eax 
 
 	;comando ver
-	push offset v1: 
+	push offset $$var0
 	call StdOut
 
 	;comando ver
-	push offset  v2: 
+	push offset $$var1
 	call StdOut
 
 	;comando ver
-	push offset  v3: 
+	push offset $$var2
 	call StdOut
 
 	;comando ver
-	push offset  v4: 
+	push offset $$var3
 	call StdOut
 
 	;finalizar a proc
@@ -70,24 +106,4 @@ principal proc near
 	ret
 principal endp
 
-soma proc near
-	push ebp
-	mov ebp, esp
-
-	;comando atrib
-	mov eax, a
-	add eax, b
-	mov aux, eax 
-
-	;comando retorno
-	pop ebp
-	ret
-
-	;finalizar a proc
-	pop ebp
-	ret
-soma endp
-
-	push 0
-	call ExitProcess
 end start

@@ -3,6 +3,8 @@ package org.malopes.ssp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 public class TabelaSimbolos {
 
 	private static List<Simbolo> tabela = new ArrayList<Simbolo>();
@@ -167,6 +169,8 @@ public class TabelaSimbolos {
 		}
 		return null;
 	}
+	
+	
 
 	public static String getTipoToken(Token token) {
 		if(token.getClasse() == Classe.Identificador) {
@@ -197,9 +201,30 @@ public class TabelaSimbolos {
 		}
 		
 	}
-
+	
 	public static List<SimboloLiteral> getSimbolosLiterais() {
 		return literais;
+	}
+
+	public static String getImagemVarGlobal(Token operan) {
+		return literais.get(operan.getIndiceTabSimb()).getImagemVarGlobal();
+	}
+
+	
+	public static List<Simbolo> getVarsLocaisByEscopo(Token token) {
+		List<Simbolo> simbolosVarLocalByEscopo = new ArrayList<Simbolo>();
+		for (Simbolo simb : tabela) {
+			if (simb.getEscopo().equals(token.getImagem()) && simb.getNatureza() == Simbolo.VAR_LOCAL ) {
+				simbolosVarLocalByEscopo.add(simb);
+			}
+		}
+	
+		return simbolosVarLocalByEscopo;
+	}
+
+	public static void setTipoSimboloVarLocal(Token id, String tipo, int natureza) {
+		setTipoSimbolo(id, tipo);
+		tabela.get(id.getIndiceTabSimb()).setNatureza(natureza);
 	}
 
 }
