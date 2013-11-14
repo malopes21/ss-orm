@@ -1,6 +1,6 @@
 package org.malopes.ssp.node;
 
-public class NodeAtrib extends Node {
+ public class NodeAtrib extends Node {
 
 	public NodeAtrib(int maxFilhos) {
 		super(maxFilhos);
