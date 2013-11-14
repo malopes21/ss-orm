@@ -372,7 +372,7 @@ public class AnalisadorSemantico {
 				erros.add("Erro semantico: identificador de variável '" + id.getImagem() + "' redeclarado! Linha: " + id.getLinha() + ", coluna: " + id.getColuna() );
 				//break;
 			} else {
-				TabelaSimbolos.setTipoSimbolo(id, tipo);
+				TabelaSimbolos.setTipoSimboloVarLocal(id, tipo, Simbolo.VAR_LOCAL);
 			}
 		}
 		
