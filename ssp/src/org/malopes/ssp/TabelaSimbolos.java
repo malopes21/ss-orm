@@ -227,4 +227,13 @@ public class TabelaSimbolos {
 		tabela.get(id.getIndiceTabSimb()).setNatureza(natureza);
 	}
 
+	public static boolean isIdFuncao(Token operan1) {
+		for(Simbolo simbolo: tabela) {
+			if(simbolo.getToken().getImagem().equals(simbolo.getEscopo())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

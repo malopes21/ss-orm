@@ -32,7 +32,6 @@ soma proc near
 	sub esp, 4
 
 	;comando atrib
-	mov eax, [ebp+12]
 	add eax, [ebp+8]
 	mov [ebp-4], eax 
 
@@ -56,7 +55,6 @@ subt proc near
 	sub esp, 4
 
 	;comando atrib
-	mov eax, [ebp+12]
 	sub eax, [ebp+8]
 	mov [ebp-4], eax 
 
@@ -87,11 +85,15 @@ principal proc near
 	mov eax, 20
 	mov [ebp-8], eax 
 
+	;comando atrib
+
 	;empilha, chama sub e desempilha
 	push [ebp-4] ;v1
 	push 40
 	call soma
 	add esp, 8
+	add eax, 5
+	mov [ebp-12], eax 
 
 	;comando ver
 	push offset $$var0
