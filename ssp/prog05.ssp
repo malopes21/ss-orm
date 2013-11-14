@@ -15,7 +15,8 @@ def principal ( ) : Nada {
 	var v1 , v2 , v3 , v4 : Int ;
 	v1 = 10 ;
 	v2 = 20 ;
-	//v3 = soma ( v1 , 30 ) + 5 ;
+	v3 = soma ( v1 , 40 ) ;
+	//v3 = soma ( v1 , 30 ) ;
 	//v4 = v3 + subt ( 10 , 5 ) ;
 	
 	ver ( "v1: " ) ;

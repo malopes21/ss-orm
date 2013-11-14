@@ -197,6 +197,14 @@ public class GeradorCodigo {
         out.write("\tpush ebp\n");
         out.write("\tmov ebp, esp\n");
         //gerar o listArg
+        
+        stackFrameParam.clear();
+        List<Token> params = TabelaSimbolos.getParamsBySimbolo(idDef);
+        for(Token param: params) {
+        	stackFrameParam.add(new StackData(param.getImagem(), TabelaSimbolos.getTipoToken(param)));
+        }
+        Collections.reverse(stackFrameParam);
+        
         stackFrameVarLocal.clear();
         List<Simbolo> varsLocais = TabelaSimbolos.getVarsLocaisByEscopo(idDef);
         for(Simbolo simbVarLocal: varsLocais) {
@@ -206,7 +214,8 @@ public class GeradorCodigo {
         out.write("\n\tsub esp, " + stackFrameVarLocal.size()*4 + "\n");  //considerando tudo 32 bits 
         
         gerar(node.getFilho(8));
-        out.write("\n\t;finalizar a proc");
+        out.write("\n\t;finalizar a proc de qq. forma");
+        out.write("\n\tadd esp, " + stackFrameVarLocal.size()*4);  //considerando tudo 32 bits
         out.write("\n\tpop ebp\n");
         out.write("\tret\n");	//mudar para retn ou usar o padrão empilha e desempilha no chamador
         out.write(idDef.getImagem() + " endp\n");
@@ -264,22 +273,49 @@ public class GeradorCodigo {
         Collections.reverse(exprAtrib);
         
         Iterator<Token> it = exprAtrib.iterator();
-        out.write("\tmov eax, " + it.next().getImagem() + "\n");
+        Token operan1 = it.next();
+        if(operan1.getClasse() == Classe.Identificador) {
+        	String operan1Stack = calcStackAdress(operan1);
+        	out.write("\tmov eax, " + operan1Stack + "\n");
+        } else {
+        	out.write("\tmov eax, " + operan1.getImagem() + "\n");
+        }
+        
         while(it.hasNext()) {
             String opArit = it.next().getImagem();
-            String operan = it.next().getImagem();
+            Token operan = it.next();
+            String operanStack = null;
+            if(operan.getClasse() == Classe.Identificador) {
+            	operanStack = calcStackAdress(operan);
+            } else {
+            	operanStack = operan.getImagem();
+            }         
+            
             if(opArit.equals("+")) {
-                out.write("\tadd eax, " + operan + "\n");
+                out.write("\tadd eax, " + operanStack + "\n");
             } else if(opArit.equals("-")) {
-                out.write("\tsub eax, " + operan + "\n");
+                out.write("\tsub eax, " + operanStack + "\n");
             }
         }
-        out.write("\tmov " + id.getImagem() + ", eax \n");
+        String idStack = calcStackAdress(id);
+        out.write("\tmov " + idStack + ", eax \n");
         
         return null;
     }
 
-    /**
+
+	private String calcStackAdress(Token operan) {
+		  int posStack = getPosStackLocal(operan.getImagem());
+          if(posStack > 0) {
+          	posStack = posStack * (4);
+          	return "[ebp-"+posStack+"]";
+          } else {
+          	posStack = getPosStackParam(operan.getImagem()) * 4 + 4;
+          	return "[ebp+"+posStack+"]";
+          }
+	}
+
+	/**
      * <ExpAtrib> ::= <Operan> <ExpAtrib2>
      */
     private Object exprAtrib(Node node) {
@@ -506,6 +542,21 @@ public class GeradorCodigo {
      * <Call>      ::= Identifier '(' <ListParam> ')'
      */
     private Object call(Node node) {
+    	List<Token> args = (List<Token>) gerar(node.getFilho(2));
+    	Collections.reverse(args);
+    	out.write("\n\t;empilha, chama sub e desempilha");
+    	for(Token arg: args) {
+    		String argStack = null;
+    		if(arg.getClasse() == Classe.Identificador) {
+    			argStack = calcStackAdress(arg) + " ;"+arg.getImagem(); 
+    		} else {
+    			argStack = arg.getImagem();
+    		}
+    		out.write("\n\tpush "+argStack);
+    	}
+    	out.write("\n\tcall "+node.getFilho(0).getToken().getImagem());
+    	out.write("\n\tadd esp, " + args.size()*4 + "\n");  //considerando tudo 32 bits
+    	
         return null;
     }
 
@@ -514,10 +565,10 @@ public class GeradorCodigo {
      */
     private Object listParam(Node node) {
         if(node.getFilhos().size() == 0) {
-            return new ArrayList<Object>();
+            return new ArrayList<Token>();
         }
-        Object operan = gerar(node.getFilho(0));
-        List<Object> listParam2 = (List<Object>) gerar(node.getFilho(1));
+        Token operan = (Token) gerar(node.getFilho(0));
+        List<Token> listParam2 = (List<Token>) gerar(node.getFilho(1));
         listParam2.add(operan);
         return listParam2;
     }
@@ -527,10 +578,10 @@ public class GeradorCodigo {
      */
     private Object listParam2(Node node) {
         if(node.getFilhos().size() == 0) {
-            return new ArrayList<Object>();
+            return new ArrayList<Token>();
         }
-        Object operan = gerar(node.getFilho(1));
-        List<Object> listParam2 = (List<Object>) gerar(node.getFilho(2));
+        Token operan = (Token) gerar(node.getFilho(1));
+        List<Token> listParam2 = (List<Token>) gerar(node.getFilho(2));
         listParam2.add(operan);
         return listParam2;
     }
@@ -553,6 +604,16 @@ public class GeradorCodigo {
 		for(StackData stackData : stackFrameVarLocal) {
 			if(stackData.getImagem().equals(imagem)) {
 				return stackFrameVarLocal.indexOf(stackData) + 1;	//a posição 0 não ajuda aqui
+			}
+		}
+		return -1;
+	}
+	
+
+    private int getPosStackParam(String imagem) {
+    	for(StackData stackData : stackFrameParam) {
+			if(stackData.getImagem().equals(imagem)) {
+				return stackFrameParam.indexOf(stackData) + 1;	//a posição 0 não ajuda aqui
 			}
 		}
 		return -1;

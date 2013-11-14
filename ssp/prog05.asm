@@ -32,9 +32,9 @@ soma proc near
 	sub esp, 4
 
 	;comando atrib
-	mov eax, a
-	add eax, b
-	mov aux, eax 
+	mov eax, [ebp+12]
+	add eax, [ebp+8]
+	mov [ebp-4], eax 
 
 	;desalocacao de vars locais e retorno
 	mov eax, [ebp-4]
@@ -42,7 +42,8 @@ soma proc near
 	pop ebp
 	ret
 
-	;finalizar a proc
+	;finalizar a proc de qq. forma
+	add esp, 4
 	pop ebp
 	ret
 soma endp
@@ -55,9 +56,9 @@ subt proc near
 	sub esp, 4
 
 	;comando atrib
-	mov eax, a
-	sub eax, b
-	mov aux, eax 
+	mov eax, [ebp+12]
+	sub eax, [ebp+8]
+	mov [ebp-4], eax 
 
 	;desalocacao de vars locais e retorno
 	mov eax, [ebp-4]
@@ -65,7 +66,8 @@ subt proc near
 	pop ebp
 	ret
 
-	;finalizar a proc
+	;finalizar a proc de qq. forma
+	add esp, 4
 	pop ebp
 	ret
 subt endp
@@ -79,11 +81,17 @@ principal proc near
 
 	;comando atrib
 	mov eax, 10
-	mov v1, eax 
+	mov [ebp-4], eax 
 
 	;comando atrib
 	mov eax, 20
-	mov v2, eax 
+	mov [ebp-8], eax 
+
+	;empilha, chama sub e desempilha
+	push [ebp-4] ;v1
+	push 40
+	call soma
+	add esp, 8
 
 	;comando ver
 	push offset $$var0
@@ -101,7 +109,8 @@ principal proc near
 	push offset $$var3
 	call StdOut
 
-	;finalizar a proc
+	;finalizar a proc de qq. forma
+	add esp, 16
 	pop ebp
 	ret
 principal endp
