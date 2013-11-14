@@ -275,8 +275,12 @@ public class GeradorCodigo {
         Iterator<Token> it = exprAtrib.iterator();
         Token operan1 = it.next();
         if(operan1.getClasse() == Classe.Identificador) {
-        	String operan1Stack = calcStackAdress(operan1);
-        	out.write("\tmov eax, " + operan1Stack + "\n");
+        	if(TabelaSimbolos.isIdFuncao(operan1)) {
+        		//nada a fazer por hora
+        	} else {
+        		String operan1Stack = calcStackAdress(operan1);
+        		out.write("\tmov eax, " + operan1Stack + "\n");
+        	}
         } else {
         	out.write("\tmov eax, " + operan1.getImagem() + "\n");
         }
@@ -554,10 +558,11 @@ public class GeradorCodigo {
     		}
     		out.write("\n\tpush "+argStack);
     	}
-    	out.write("\n\tcall "+node.getFilho(0).getToken().getImagem());
+    	Token id = node.getFilho(0).getToken();
+    	out.write("\n\tcall "+id.getImagem());
     	out.write("\n\tadd esp, " + args.size()*4 + "\n");  //considerando tudo 32 bits
     	
-        return null;
+        return id;
     }
 
     /*
