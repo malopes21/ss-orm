@@ -1,3 +1,5 @@
+-- linguagem : C_SHARP
+
 create table Pessoa (
 	id integer not null ,
 	nome varchar ( 50 ) ,

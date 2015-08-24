@@ -4,19 +4,27 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
+import org.malopes.generator.defs.Linguagem;
 import org.malopes.generator.defs.TabelaSimbolos;
 import org.malopes.generator.fases.AnalisadorLexico;
 import org.malopes.generator.fases.AnalisadorSemantico;
 import org.malopes.generator.fases.AnalisadorSintaticoGA;
-import org.malopes.generator.fases.GeradorCodigo;
+import org.malopes.generator.fases.GeradorCodigoCsharp;
+import org.malopes.generator.fases.GeradorCodigoJava;
 
 public class Main {
 
 	private Boolean DEBUG = true;
 	private Boolean COMPILER = true;
+	private Linguagem linguagem = Linguagem.JAVA;
 
 	public static void main(String[] args) throws FileNotFoundException {
-		new Main().testa();
+		String fileName = null;
+		if(args.length > 0) {
+			fileName = args[0];
+		}
+		
+		new Main().testa(fileName);
 		// roda(args);
 	}
 
@@ -26,14 +34,19 @@ public class Main {
 		}
 	}
 
-	private void testa() throws FileNotFoundException {
+	private void testa(String fileName) throws FileNotFoundException {
 		long inicio = System.currentTimeMillis();
 
 		// Carga do programa a ser analisado
 		String filePath;
 		try {
 			// filePath = getClass().getResource("prog01.ssp").getFile();
-			filePath = "script02.sql";
+			if(fileName != null) {
+				filePath = fileName;
+			} else {
+				filePath = "script03.sql";
+			}
+			
 			print("Analisando arquivo: " + filePath);
 		} catch (Exception e) {
 			System.err.println("ERRO de : " + e);
@@ -52,6 +65,9 @@ public class Main {
 
 		print("Analise Lexica OK!");
 		analisadorLexico.mostraTokens();
+		if(analisadorLexico.getLinguagem() != null) {
+			linguagem = analisadorLexico.getLinguagem();
+		}
 
 		// Analise Sintatica com Geracao de arvore
 		AnalisadorSintaticoGA analisadorSintatico = new AnalisadorSintaticoGA(
@@ -86,8 +102,14 @@ public class Main {
 			TabelaSimbolos.listaTabela();
 		}
 
-		GeradorCodigo geradorCodigo = new GeradorCodigo(analisadorSintatico.getRaiz());
-		geradorCodigo.gerar();
+		if(linguagem == Linguagem.JAVA) {
+			GeradorCodigoJava geradorCodigo = new GeradorCodigoJava(analisadorSintatico.getRaiz());
+			geradorCodigo.gerar();
+		} else if(linguagem == Linguagem.C_SHARP) {
+			GeradorCodigoCsharp geradorCodigo = new GeradorCodigoCsharp(analisadorSintatico.getRaiz());
+			geradorCodigo.gerar();
+		}
+		
 
 		
 		System.out.println("OK, GERAÇÃO ENCERRADA!");
