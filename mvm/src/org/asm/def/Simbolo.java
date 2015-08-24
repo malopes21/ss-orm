@@ -6,7 +6,7 @@ public class Simbolo {
 	private String escopo;
 	private String tipo;
 	private Object valor;
-	private short memoryPosition;
+	private short memoryPosition = -1;
 
 	public Simbolo() {
 	}

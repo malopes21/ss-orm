@@ -10,10 +10,10 @@ public class Run {
 
 	public static void main(String[] args) throws Exception {
 
-		Instruction.createMapValues();  //need here for instruction map values initializarion
+		Instruction.createVerifyMapValues();  //need here for instruction map values initialization
 		Processor p0 = new Processor((short) 0);
 		//byte[] program = createTestProgram();
-		byte[] program = readProgram("prog01.mvm");
+		byte[] program = readProgram("prog02.mvm");
 		loadProgram(p0, program);
 		execProgram(p0);
 		dumpCODE(p0, 0, 40);
@@ -184,22 +184,25 @@ public class Run {
 		p.DS = (short) ((program[position++] << 8) + program[position++] + freeMemoryPosition);
 		p.SS = (short) ((program[position++] << 8) + program[position++] + freeMemoryPosition);
 
-		// reading CODE area
+	
+
+		// reading DATA area
 		byte readByte = program[position++];
 		short offset = 0;
 		while (readByte != '$') {
-			// System.out.println("CODE: " + readByte);
-			Memory.ram[p.CS + offset] = readByte;
+			// System.out.println("DATA: " + readByte);
+			Memory.ram[p.DS + offset] = readByte;
 			readByte = program[position++];
 			offset++;
 		}
-
-		// reading DATA area
+		
+		
+		// reading CODE area  - invert!
 		readByte = program[position++];
 		offset = 0;
 		while (readByte != '$') {
-			// System.out.println("DATA: " + readByte);
-			Memory.ram[p.DS + offset] = readByte;
+			// System.out.println("CODE: " + readByte);
+			Memory.ram[p.CS + offset] = readByte;
 			readByte = program[position++];
 			offset++;
 		}
@@ -220,6 +223,7 @@ public class Run {
 				p.decode_exec();
 			}
 			long fim = System.nanoTime();
+			System.out.println("\n-----------------------------------------------");
 			System.out.println("STOP OK! EXEC. TIME: " + (fim - inicio) + " ns");
 		} catch (Exception e) {
 			System.out.println("Encerrou abruptamente! " + e.getMessage());

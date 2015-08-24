@@ -1,5 +1,8 @@
 package org.mvm;
 
+import java.util.Scanner;
+import static org.mvm.Instruction.*;
+
 public class Processor {
 
 	private short pid;
@@ -182,10 +185,198 @@ public class Processor {
 
 		} else if (IR_OPCODE == Instruction.EXIT_PROC) {
 			return; // useless
+			
+		} else if (IR_OPCODE == Instruction.STDOUT) {
+			stdout();
+			
+		} else if (IR_OPCODE == Instruction.STDIN) {
+			stdin();
 
 		} else {
 			throw new RuntimeException("Instrução inválida!");
 		}
+	}
+
+	
+	public void decode_exec2() {
+
+		switch (IR_OPCODE) {
+			case COPY_IMED_R0: copy_imed_R0(); break;
+			case COPY_IMED_R1: copy_imed_R1(); break;
+ 
+			default:
+				break;
+		}
+		
+		if (IR_OPCODE == COPY_IMED_R0) {
+			
+
+		} else if (IR_OPCODE == Instruction.COPY_IMED_R1) {
+			copy_imed_R1();
+
+		} else if (IR_OPCODE == Instruction.COPY_IMED_R2) {
+			copy_imed_R2();
+
+		} else if (IR_OPCODE == Instruction.COPY_IMED_R3) {
+			copy_imed_R3();
+
+		} else if (IR_OPCODE == Instruction.COPY_R0_R1) {
+			copy_R0_R1();
+
+		} else if (IR_OPCODE == Instruction.COPY_R0_R2) {
+			copy_R0_R2();
+
+		} else if (IR_OPCODE == Instruction.COPY_R0_R3) {
+			copy_R0_R3();
+
+		} else if (IR_OPCODE == Instruction.COPY_R1_R0) {
+			copy_R1_R0();
+
+		} else if (IR_OPCODE == Instruction.COPY_R1_R2) {
+			copy_R1_R2();
+
+		} else if (IR_OPCODE == Instruction.COPY_R1_R3) {
+			copy_R1_R3();
+
+		} else if (IR_OPCODE == Instruction.COPY_R2_R0) {
+			copy_R2_R0();
+
+		} else if (IR_OPCODE == Instruction.COPY_R2_R1) {
+			copy_R2_R1();
+
+		} else if (IR_OPCODE == Instruction.COPY_R2_R3) {
+			copy_R2_R3();
+
+		} else if (IR_OPCODE == Instruction.COPY_R3_R0) {
+			copy_R3_R0();
+			
+		} else if (IR_OPCODE == Instruction.COPY_R3_R1) {
+			copy_R3_R1();
+			
+		} else if (IR_OPCODE == Instruction.COPY_R3_R2) {
+			copy_R3_R2();
+
+		} else if (IR_OPCODE == Instruction.LOAD_R0) {
+			load_R0();
+
+		} else if (IR_OPCODE == Instruction.LOAD_R1) {
+			load_R1();
+
+		} else if (IR_OPCODE == Instruction.LOAD_R2) {
+			load_R2();
+
+		} else if (IR_OPCODE == Instruction.LOAD_R3) {
+			load_R3();
+
+		} else if (IR_OPCODE == Instruction.STORE_R0) {
+			store_R0();
+
+		} else if (IR_OPCODE == Instruction.STORE_R1) {
+			store_R1();
+
+		} else if (IR_OPCODE == Instruction.STORE_R2) {
+			store_R2();
+
+		} else if (IR_OPCODE == Instruction.STORE_R3) {
+			store_R3();
+
+		} else if (IR_OPCODE == Instruction.JMP) {
+			jmp();
+
+		} else if (IR_OPCODE == Instruction.JG) {
+			jg();
+
+		} else if (IR_OPCODE == Instruction.JGE) {
+			jge();
+
+		} else if (IR_OPCODE == Instruction.JL) {
+			jl();
+
+		} else if (IR_OPCODE == Instruction.JLE) {
+			jle();
+
+		} else if (IR_OPCODE == Instruction.JE) {
+			je();
+
+		} else if (IR_OPCODE == Instruction.JNE) {
+			jne();
+
+		} else if (IR_OPCODE == Instruction.CMP) {
+			cmp();
+
+		} else if (IR_OPCODE == Instruction.ADD) {
+			add();
+
+		} else if (IR_OPCODE == Instruction.SUB) {
+			sub();
+
+		} else if (IR_OPCODE == Instruction.MUL) {
+			mul();
+
+		} else if (IR_OPCODE == Instruction.DIV) {
+			div();
+
+		} else if (IR_OPCODE == Instruction.PUSH_R0) {
+			push_R0();
+
+		} else if (IR_OPCODE == Instruction.PUSH_R1) {
+			push_R1();
+			
+		} else if (IR_OPCODE == Instruction.PUSH_R2) {
+			push_R2();
+
+		} else if (IR_OPCODE == Instruction.PUSH_R3) {
+			push_R3();
+
+		} else if (IR_OPCODE == Instruction.POP_R0) {
+			pop_R0();
+
+		} else if (IR_OPCODE == Instruction.POP_R1) {
+			pop_R1();
+
+		} else if (IR_OPCODE == Instruction.POP_R2) {
+			pop_R2();
+
+		} else if (IR_OPCODE == Instruction.POP_R3) {
+			pop_R3();
+
+		} else if (IR_OPCODE == Instruction.EXIT_PROC) {
+			return; // useless
+			
+		} else if (IR_OPCODE == Instruction.STDOUT) {
+			stdout();
+			
+		} else if (IR_OPCODE == Instruction.STDIN) {
+			stdin();
+
+		} else {
+			throw new RuntimeException("Instrução inválida!");
+		}
+	}
+
+	
+	private void stdin() {
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)));
+		Scanner sc = new Scanner(System.in);
+		String entrada = sc.nextLine();
+		short nBytes = R[3];
+		for(int i=0; i<nBytes && i<entrada.length(); i++) {
+			Memory.ram[pos++] = (byte) entrada.charAt(i);
+		}
+		sc.close();
+	}
+
+	private void stdout() {
+		short pos = (short) (DS + (((IR_ARG0 << 8 ) & 0xFF00) | (IR_ARG1 & 0x00FF)));
+		//R[0] = (short) (((Memory.ram[pos++] << 8 ) & 0xFF00) | (Memory.ram[pos] & 0x00FF));
+		
+		byte memValue = Memory.ram[pos++];
+		//System.out.flush();
+		while(memValue != 0) {
+			System.out.print((char)memValue);
+			memValue = Memory.ram[pos++];
+		}
+		
 	}
 
 	private void copy_R3_R2() {

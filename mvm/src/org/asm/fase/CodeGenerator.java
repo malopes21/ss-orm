@@ -86,9 +86,10 @@ public class CodeGenerator {
 
 	// <Program> ::= <DATA> <CODE> '.END'
 	private Object programa(Node no) {
-		// Node CODE first!
-		gerar(no.getFilho(1));
+		// Node CODE first! 	invert it! now, DATA first
 		gerar(no.getFilho(0));
+		gerar(no.getFilho(1));
+		
 		return null;
 	}
 
@@ -158,9 +159,39 @@ public class CodeGenerator {
 			pop(operans);
 		} else if ("EXIT".equalsIgnoreCase(statment)) {
 			exit(operans);
+		} else if ("STDOUT".equalsIgnoreCase(statment)) {
+			stdout(operans);
+		} else if ("STDIN".equalsIgnoreCase(statment)) {
+			stdin(operans);
 		}
 
 		return null;
+	}
+
+	private void stdin(List<Token> operans) {
+		byte opcode = Instruction.STDIN;
+		short value = getBinaryValue(operans.get(0));
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void stdout(List<Token> operans) {
+		byte opcode = Instruction.STDOUT;
+		short value = getBinaryValue(operans.get(0));
+
+		try {
+			out.write((byte) opcode);
+			out.write((byte) (value >> 8));
+			out.write((byte) (value % 256));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void pop(List<Token> operans) {
@@ -611,8 +642,28 @@ public class CodeGenerator {
 				}
 			} else if (valor.getClazz() == Clazz.Literal_String) {
 				try {
-					out.writeBytes(valor.getImage());
-					memoryPosition = (short) (memoryPosition + valor.getImage().length());
+					//out.writeBytes(valor.getImage());
+					//memoryPosition = (short) (memoryPosition + valor.getImage().length());
+					int i=0;
+					for(int j=0; j<valor.getImage().length(); j++) {
+						char car = valor.getImage().charAt(j);
+						if(car == '\\') {
+							j++;
+							car = valor.getImage().charAt(j);
+							if(car == '0') {
+								out.writeByte(0);
+								memoryPosition++;
+							} else if(car == 'n') {
+								out.writeByte(10);
+								memoryPosition++;
+								//out.writeByte(13);
+								//memoryPosition++;
+							}
+						} else {
+							out.writeByte(car);
+							memoryPosition++;
+						}
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

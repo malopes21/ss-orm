@@ -204,6 +204,8 @@ public class Syntatic {
 				|| token.getImage().equalsIgnoreCase("STORE")
 				|| token.getImage().equalsIgnoreCase("PUSH")
 				|| token.getImage().equalsIgnoreCase("POP")
+				|| token.getImage().equalsIgnoreCase("STDOUT")
+				|| token.getImage().equalsIgnoreCase("STDIN")
 				|| token.getImage().equalsIgnoreCase("EXIT")) {
 			no.addFilho(command());
 			no.addFilho(nl());
@@ -261,6 +263,8 @@ public class Syntatic {
 				|| token.getImage().equalsIgnoreCase("STORE")
 				|| token.getImage().equalsIgnoreCase("PUSH")
 				|| token.getImage().equalsIgnoreCase("POP")
+				|| token.getImage().equalsIgnoreCase("STDOUT")
+				|| token.getImage().equalsIgnoreCase("STDIN")
 				|| token.getImage().equalsIgnoreCase("EXIT")) {
 			no.addFilho(new Node(token));
 			nextToken();

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.asm.def.Clazz;
 import org.asm.def.Node;
 import org.asm.def.TabelaSimbolos;
 import org.asm.def.Token;
@@ -60,7 +61,6 @@ public class Semantic {
 			return label(no);
 		default:
 			throw new RuntimeException("Method not exists!");
-
 		}
 	}
 
@@ -80,9 +80,10 @@ public class Semantic {
 
 	// <Program> ::= <DATA> <CODE> '.END'
 	private Object programa(Node no) {
-		// Node CODE first!
-		analisar(no.getFilho(1));
+		// was Node CODE first!
 		analisar(no.getFilho(0));
+		analisar(no.getFilho(1));
+		
 		return null;
 	}
 
@@ -111,6 +112,13 @@ public class Semantic {
 		String statment = (String) analisar(no.getFilho(2));
 		List<Token> operans = (List<Token>) analisar(no.getFilho(3));
 		Collections.reverse(operans);
+		
+		// simple arg. check
+		//for(Token operan: operans) {
+		//	if(operan.getClazz() == Clazz.Identifier && TabelaSimbolos.getTipoSimbolo(operan) == null) {
+		//		erros.add("argumento do tipo variável não declarada: "+operan);
+		//	}
+		//}
 
 		// 'COPY' | 'LOAD' | 'STORE' | 'ADD' | 'SUB' | 'MUL' | 'DIV' | 'CMP' | 'JMP' |
 		// 'JG' |
@@ -183,73 +191,12 @@ public class Semantic {
 		Token id = no.getFilho(0).getToken();
 		String tipo = (String) analisar(no.getFilho(1));
 		Token valor = (Token) analisar(no.getFilho(2));
-		/*
-		TabelaSimbolos.setMemoryPositionId(id, memoryPosition);
-		if("DB".equalsIgnoreCase(tipo)) {
-			if(valor.getClazz() == Clazz.Literal_Decimal) {
-				try {
-					out.writeByte(Integer.parseInt(valor.getImage()));
-					memoryPosition++;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if(valor.getClazz() == Clazz.Literal_Hexa) {
-				try {
-					out.writeByte(Integer.parseInt(valor.getImage(), 16));
-					memoryPosition++;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if(valor.getClazz() == Clazz.Literal_Char) {
-				try {
-					out.writeByte(valor.getImage().charAt(0));
-					memoryPosition++;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if(valor.getClazz() == Clazz.Literal_String) {
-				try {
-					out.writeBytes(valor.getImage());
-					memoryPosition = (short) (memoryPosition + valor.getImage().length());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		} else if("DW".equalsIgnoreCase(tipo)) {
-			if(valor.getClazz() == Clazz.Literal_Decimal) {
-				try {
-					out.writeShort(Integer.parseInt(valor.getImage()));
-					memoryPosition += 2;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if(valor.getClazz() == Clazz.Literal_Hexa) {
-				try {
-					out.writeShort(Integer.parseInt(valor.getImage(), 16));
-					memoryPosition += 2;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if(valor.getClazz() == Clazz.Literal_Char) {
-				try {
-					out.writeShort(valor.getImage().charAt(0));
-					memoryPosition += 2;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if(valor.getClazz() == Clazz.Literal_String) {
-				try {
-					for(int i = 0; i < valor.getImage().length(); i++) {
-						out.writeShort(valor.getImage().charAt(i));
-					}
-					memoryPosition = (short) (memoryPosition + valor.getImage().length() * 2);
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+		
+		if(TabelaSimbolos.getTipoSimbolo(id) != null) {
+			erros.add("variável redeclarada: "+id);
+		} else {
+			TabelaSimbolos.setTipoSimbolo(id, tipo);
 		}
-		*/
 		return null;
 	}
 	
@@ -265,7 +212,7 @@ public class Semantic {
 
 	public void showErrors() {
 		for(String erro: erros) {
-			System.out.println(erro);
+			System.err.println(erro);
 		}
 	}
 

@@ -20,7 +20,7 @@ public class Main {
 		
 		/************* FILE READ ********************/
 		
-		String fileRelPath = "prog01.asm";
+		String fileRelPath = "prog02.asm";
 		BufferedReader in = null;
 		try {
 

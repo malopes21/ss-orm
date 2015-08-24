@@ -33,6 +33,8 @@ public class TabelasEstaticas {
             pReservadas.add("PUSH");
             pReservadas.add("POP");
             pReservadas.add("EXIT");
+            pReservadas.add("STDOUT");
+            pReservadas.add("STDIN");
             pReservadas.add("DB");
             pReservadas.add("DW");
             pReservadas.add(".DATA");
