@@ -1,0 +1,46 @@
+-- referente ao Job de Verificação de direitos de papel do usuário
+
+ALTER TABLE User
+ADD COLUMN lastRoleRightsVerifierExecutionDate datetime;
+
+
+job = new Job();
+		job.setClassName("com.blazon.identitymanagement.directory.jobs.RoleRightsUserVerifierJob");
+		job.setDisplayName("Role Rights User Verifier Job");
+		job.setDescription("Role Rights User Verifier Job.");
+		job.setParameters("[{\"name\":\"usersQueueLength\", \"value\":\"5\"}]");
+		jobService.save(job);
+		
+		instance = new JobInstance();
+		instance.setJob(job);
+		instance.setName("Role Rights User Verifier Job");
+		instance.setActivated( false);
+		instance.setCronExpression("0 0/1 0 * * ?");
+		instance.setExternalGroupId("Group");
+		instance.setExternalJobDetailId("JobInstance - " + instance.getId());
+		jobService.save(instance);
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.directory.jobs.RoleRightsUserVerifierJob', 'Role Rights User Verifier Job.', 'Role Rights User Verifier Job', '[{\"name\":\"usersQueueLength\", \"value\":\"10\"}]');
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Role Rights User Verifier Job' as name, 
+	'[{\"name\":\"usersQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Role Right Entry Processor Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.directory.jobs.RoleRightsUserVerifierJob';
+
+
+-- referente à adição de createdBy no ProvisioningEntry
+
+ALTER TABLE ProvisioningEntry
+ADD COLUMN createdBy varchar(255);
+
+ALTER TABLE ProvisioningEntry
+ADD COLUMN createdByObjectId varchar(255);
+
+

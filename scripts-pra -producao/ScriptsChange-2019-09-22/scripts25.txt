@@ -1,0 +1,21 @@
+create table BlazonRequestApprovalTask (
+    approvalType varchar(255),
+    disapprovalJustification varchar(1000),
+    justification varchar(1000),
+    id bigint not null,
+    request_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+alter table BlazonRequestApprovalTask 
+    add constraint FK2m9hvmf89j85ylrxvnhsreet0 
+    foreign key (request_id) 
+    references BlazonRequest (id)
+	on delete cascade;
+
+alter table BlazonRequestApprovalTask 
+    add constraint FK8r1k74nte48ahv791bloft256 
+    foreign key (id) 
+    references Task (id)
+	on delete cascade;
+

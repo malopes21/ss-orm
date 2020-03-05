@@ -1,0 +1,14 @@
+ALTER TABLE ResourceProvisioningProfile
+  CHANGE removeAccountProvisioningType revokeAccountProvisioningType VARCHAR(255) NULL;
+
+ALTER TABLE ResourceProvisioningProfile
+  CHANGE removeAccountProvisioningObject revokeAccountProvisioningObject VARCHAR(255) NULL;
+
+ALTER TABLE ResourceProvisioningProfile
+  CHANGE removeAccountProvisioningMappingIdentifier revokeAccountProvisioningMappingIdentifier BIGINT NULL;
+
+ALTER TABLE ResourceProvisioningProfile
+  CHANGE removeAccountProvisioningTaskQueueIdentifier revokeAccountProvisioningTaskQueueIdentifier BIGINT NULL;
+
+ALTER TABLE ResourceProvisioningProfile
+  CHANGE removeAccountProvisioningTaskDefinitionIdentifier revokeAccountProvisioningTaskDefinitionIdentifier BIGINT NULL;

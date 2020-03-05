@@ -1,0 +1,21 @@
+CREATE INDEX search_certification_entry_by_entryId_and_entryType ON CertificationEntry (entryId, entryType, status);
+
+CREATE INDEX search_certification_entry_by_entryId_and_entryType_and_status ON CertificationEntry (entryId, entryType, status);
+
+CREATE INDEX search_entry_by_state ON Entry (state);
+
+CREATE INDEX search_entry_by_type ON Entry (type);
+
+CREATE INDEX search_entry_by_risk ON Entry (risk);
+
+CREATE INDEX search_entry_by_state_and_type_and_risk ON Entry (state, type, risk);
+
+
+alter table CertificationEntry add column userId bigint;
+
+alter table CertificationEntry add column resourceId bigint;
+
+alter table CertificationEntry add column entitlementId bigint;
+
+alter table CertificationEntry add column roleId bigint;
+

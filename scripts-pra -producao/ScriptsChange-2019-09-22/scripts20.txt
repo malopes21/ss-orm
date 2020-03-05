@@ -1,0 +1,96 @@
+-- add sodValidatedAt field
+
+ALTER TABLE Entry
+ADD COLUMN sodValidatedAt datetime;
+
+
+-- update no Job SodPolicyExecutorJob (parametros)
+
+update Job set parameters = '[{\"name\":\"entryInfoQueueLength\", \"value\":\"10\"},{\"name\":\"entryInfoQueueTimeUnit\", \"value\":\"DAY\"},{\"name\":\"entryInfoQueueTimeAmount\", \"value\":\"10\"}]' where className = 'com.blazon.identitymanagement.policies.sodpolicy.jobs.SodPolicyExecutorJob';
+
+update JobInstance set params = '[{\"name\":\"entryInfoQueueLength\", \"value\":\"10\"},{\"name\":\"entryInfoQueueTimeUnit\", \"value\":\"DAY\"},{\"name\":\"entryInfoQueueTimeAmount\", \"value\":\"10\"}]' where name = 'SodPolicy Executor Job';
+
+
+-- criação do job SodEntryToExecutionJob
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.policies.sodpolicy.jobs.SodEntryToExecutionJob', 'SodEntry To Execution Job.', 'SodEntry To Execution Job', '[{\"name\":\"entryInfoQueueLength\", \"value\":\"10\"}]');
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'SodEntry To Execution Job' as name, 
+	'[{\"name\":\"entryInfoQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'SodEntry To Execution Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.policies.sodpolicy.jobs.SodEntryToExecutionJob';
+
+
+-- deletando a tabela SodEntryInfo
+
+alter table SodEntryInfo 
+drop foreign key FKof390irqvlgacyxcb37yfnw48;
+
+alter table SodEntryTransitionState 
+drop foreign key FKdws2gskxjm3lp673rmcg2vs01;
+
+drop table SodEntryInfo;
+
+
+-- criando a tabela SodEntry
+
+create table SodEntry (
+    id bigint not null auto_increment,
+    accountId bigint,
+    createdAt datetime,
+    entitlementId bigint,
+    entry_id bigint,
+    entryType varchar(255),
+    lockDate datetime,
+    lockNumber bigint,
+    processedAt datetime,
+    resourceId bigint,
+    result varchar(255),
+    roleId bigint,
+    sodPolicyId bigint,
+    status varchar(255),
+    userId bigint,
+    workflowId bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+alter table SodEntryTransitionState 
+    add constraint FKo79ld8360dxfhed9nqo9u6k4j 
+    foreign key (entryInfo_id) 
+    references SodEntry (id) 
+    on delete cascade;
+
+
+-- criando a tabela SodApprovalTaskDetail
+
+create table SodApprovalTaskDetail (
+    id bigint not null auto_increment,
+    approvalDate datetime,
+    creation datetime,
+    levelName varchar(255),
+    outcome varchar(255),
+    sodEntry_id bigint,
+    task_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+
+alter table SodApprovalTaskDetail 
+    add constraint FK7n0i7uwqqmkft3kpf28lcleyx 
+    foreign key (sodEntry_id) 
+    references SodEntry (id)
+	on delete cascade;
+
+alter table SodApprovalTaskDetail 
+    add constraint FK7fe8k0gwsjv27t3tsadhvbens 
+    foreign key (task_id) 
+    references Task (id)
+	on delete cascade;
+
+

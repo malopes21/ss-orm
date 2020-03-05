@@ -1,0 +1,331 @@
+
+-- ResourceProvisioningProfile
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN createAccountProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN updateAccountProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN removeAccountProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN changePasswordProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN activateAccountProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN inactivateAccountProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN grantEntitlementProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN revokeEntitlementProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN createEntitlementProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN removeEntitlementProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN updateEntitlementProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN addMemberToEntitlementProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN removeMemberOfEntitlementProvisioningTaskQueueIdentifier bigint;
+
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN createAccountProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN updateAccountProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN removeAccountProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN changePasswordProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN activateAccountProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN inactivateAccountProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN grantEntitlementProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN revokeEntitlementProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN createEntitlementProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN removeEntitlementProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN updateEntitlementProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN addMemberToEntitlementProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE ResourceProvisioningProfile
+ADD COLUMN removeMemberOfEntitlementProvisioningTaskDefinitionIdentifier bigint;
+
+
+-- OrganizationProvisioningProfile
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN createOrganizationProvisioningTaskQueueIdentifier  bigint;
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN updateOrganizationProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN removeOrganizationProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN addMemberToOrganizationProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN removeMemberOfOrganizationProvisioningTaskQueueIdentifier bigint;
+
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN createOrganizationProvisioningTaskDefinitionIdentifier  bigint;
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN updateOrganizationProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN removeOrganizationProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN addMemberToOrganizationProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE OrganizationProvisioningProfile
+ADD COLUMN removeMemberOfOrganizationProvisioningTaskDefinitionIdentifier bigint;
+
+
+-- RoleProvisioningProfile
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN createRoleProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN updateRoleProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN removeRoleProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN addMemberToRoleProvisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN removeMemberOfRoleProvisioningTaskQueueIdentifier bigint;
+
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN createRoleProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN updateRoleProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN removeRoleProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN addMemberToRoleProvisioningTaskDefinitionIdentifier bigint;
+
+ALTER TABLE RoleProvisioningProfile
+ADD COLUMN removeMemberOfRoleProvisioningTaskDefinitionIdentifier bigint;
+
+
+-- ProvisioningEntry
+
+ALTER TABLE ProvisioningEntry
+ADD COLUMN provisioningTaskQueueIdentifier bigint;
+
+ALTER TABLE ProvisioningEntry
+ADD COLUMN provisioningTaskDefinitionIdentifier bigint;
+
+
+-- ProvisioningWaitingAssignToTaskQueueExecutionJob
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.provisioning.jobs.ProvisioningWaitingAssignToTaskQueueExecutionJob', 'Provisioning Waiting Assign To TaskQueue Execution Job.', 'Provisioning Waiting Assign To TaskQueue Execution Job', '[{\"name\":\"provisioningEntriesQueueLength\", \"value\":\"10\"}]');
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Provisioning Waiting Assign To TaskQueue Execution Job' as name, 
+	'[{\"name\":\"provisioningEntriesQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Provisioning Waiting Assign To TaskQueue Execution Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.provisioning.jobs.ProvisioningWaitingAssignToTaskQueueExecutionJob';
+
+
+
+-- BlazonRequestApprovalTask
+
+create table BlazonRequestApprovalTask (
+    disapprovalJustification varchar(1000),
+    id bigint not null,
+    request_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+alter table BlazonRequestApprovalTask 
+    add constraint FK2m9hvmf89j85ylrxvnhsreet0 
+    foreign key (request_id) 
+    references BlazonRequest (id)
+	on delete cascade;
+
+alter table BlazonRequestApprovalTask 
+    add constraint FK8r1k74nte48ahv791bloft256 
+    foreign key (id) 
+    references Task (id)
+	on delete cascade;
+
+
+-- CertificationApprovalTask:
+
+create table CertificationApprovalTask (
+    entryId bigint,
+    entryType varchar(255),
+    justification varchar(1000),
+    revokedJustification varchar(1000),
+    id bigint not null,
+    certificationEntry_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+alter table CertificationApprovalTask 
+    add constraint FK770roj42rrvuscky5ehyklo32 
+    foreign key (certificationEntry_id) 
+    references CertificationEntry (id)
+	on delete cascade;
+
+alter table CertificationApprovalTask 
+    add constraint FKmtkb4bfvbweehvx3wy2ya3x18 
+    foreign key (id) 
+    references Task (id)
+	on delete cascade;
+
+
+-- SodApprovalTask:
+
+create table SodApprovalTask (
+    entryId bigint,
+    entryType varchar(255),
+    justification varchar(1000),
+    id bigint not null,
+    sodEntry_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+alter table SodApprovalTask 
+    add constraint FKfcdv3o1yc83395u2gg987h6bo 
+    foreign key (sodEntry_id) 
+    references SodEntry (id)
+	on delete cascade;
+
+alter table SodApprovalTask 
+    add constraint FKjll30k6tdo4l03abflf3l4h98 
+    foreign key (id) 
+    references Task (id)
+	on delete cascade;
+
+
+-- ProvisioningTask
+
+create table ProvisioningTask (
+    entryId bigint,
+    entryType varchar(255),
+    justification varchar(1000),
+    notProvisionedJustification varchar(1000),
+    id bigint not null,
+    provisioningEntry_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+alter table ProvisioningTask 
+    add constraint FKl1c2esbqnv2e2ma2pabljb5af 
+    foreign key (provisioningEntry_id) 
+    references ProvisioningEntry (id)
+	on delete cascade;
+
+alter table ProvisioningTask 
+    add constraint FKgbr1gxk2wo4ng224c1bc7x3ld 
+    foreign key (id) 
+    references Task (id)
+	on delete cascade;
+
+
+-- RoleRightApprovalTask
+
+create table RoleRightApprovalTask (
+    justification varchar(1000),
+    type varchar(255),
+    id bigint not null,
+    roleRightEntry_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+alter table RoleRightApprovalTask 
+    add constraint FKf0c54xnh40oviagv3er1ipf6e 
+    foreign key (roleRightEntry_id) 
+    references RoleRightEntry (id)
+	on delete cascade;
+
+alter table RoleRightApprovalTask 
+    add constraint FK7f9ue47oixmr1a9dpsqqegtxv 
+    foreign key (id) 
+    references Task (id)
+	on delete cascade;
+
+
+-- TaskData
+
+drop table TaskData;
+
+
+-- Task
+
+alter table Task
+drop column subject;
+
+alter table Task
+drop column description;
+
+alter table Task
+drop column workflow;
+
+alter table Task
+drop column generatedBySystem;
+
+alter table Task
+add column actionId integer;
+
+
+-- TaskDefinition
+
+alter table TaskDefinition
+drop column workflow;
+
+alter table TaskDefinition
+drop column templateurl;
+
+alter table TaskDefinition
+drop column subject;
+
+

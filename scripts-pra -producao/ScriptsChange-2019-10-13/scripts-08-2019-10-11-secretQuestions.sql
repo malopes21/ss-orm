@@ -1,0 +1,5 @@
+
+-- SecretQuestionConfiguration
+
+drop table SecretQuestionConfiguration;
+

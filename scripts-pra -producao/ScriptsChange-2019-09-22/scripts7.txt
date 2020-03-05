@@ -1,0 +1,95 @@
+-- tabela EventSetting
+
+create table EventSetting (
+    id bigint not null auto_increment,
+    description varchar(255),
+    enabled boolean default false,
+    name varchar(255),
+    primary key (id)
+) ENGINE=InnoDB;
+
+
+-- inserts de EventSettings
+
+insert into EventSetting (name, description, enabled) values ('Organization Event Setting', 'Enable/disable organization event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Resource Event Setting', 'Enable/disable resource event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Entitlement Event Setting', 'Enable/disable entitlement event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Account Event Setting', 'Enable/disable account event logging.', 1);
+
+
+insert into EventSetting (name, description, enabled) values ('Role Event Setting', 'Enable/disable role event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('User Event Setting', 'Enable/disable user event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Request Event Setting', 'Enable/disable request event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Approval Policy Event Setting', 'Enable/disable approval policy event logging.', 1);
+
+
+insert into EventSetting (name, description, enabled) values ('Assignment Policy Event Setting', 'Enable/disable assignment policy event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Certification Policy Event Setting', 'Enable/disable certification policy event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Password Policy Event Setting', 'Enable/disable password policy event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('SOD Policy Event Setting', 'Enable/disable SOD policy event logging.', 1);
+
+
+insert into EventSetting (name, description, enabled) values ('Task Event Setting', 'Enable/disable task event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Provisioning Event Setting', 'Enable/disable provisioning event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Reconciliation Event Setting', 'Enable/disable reconciliation event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Authentication Event Setting', 'Enable/disable authentication event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Job Event Setting', 'Enable/disable job event logging.', 1);
+
+insert into EventSetting (name, description, enabled) values ('Email Event Setting', 'Enable/disable email event logging.', 1);
+
+
+-- inserts para InternalPermissions
+
+insert into InternalPermission (category, description, label, name) values ('EVENT_SETTING', 'Listar configuração de eventos.', 'List event settings.', 'LIST_EVENT_SETTING');
+insert into InternalPermission (category, description, label, name) values ('EVENT_SETTING', 'Editar configuração de eventos.', 'Edit event settings.', 'EDIT_EVENT_SETTING');
+
+
+-- inserts para InternalPermissionGroup
+
+insert into InternalPermissionGroup (category, description, label, name) values ('SETTINGS', 'Visualizar Configuração de Eventos.', 'Visualizar Configuração de Eventos', 'EVENT_SETTING_VISUALIZE');
+insert into InternalPermissionGroup (category, description, label, name) values ('SETTINGS', 'Gerenciar Configuração de Eventos.', 'Gerenciar Configuração de Eventos', 'EVENT_SETTING_MANAGE');
+
+
+-- inserts para InternalPermissionGroup_InternalPermission
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'EVENT_SETTING_VISUALIZE' and ip.name = 'LIST_EVENT_SETTING';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'EVENT_SETTING_VISUALIZE' and ip.name = 'LIST_USER';
+
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'EVENT_SETTING_MANAGE' and ip.name = 'LIST_EVENT_SETTING';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'EVENT_SETTING_MANAGE' and ip.name = 'EDIT_EVENT_SETTING';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'EVENT_SETTING_MANAGE' and ip.name = 'LIST_USER';
+
+
+-- inserts para ManagerRole_InternalPermissionGroup
+
+-- acho que será melhor setar na tela esses!
+
+
+

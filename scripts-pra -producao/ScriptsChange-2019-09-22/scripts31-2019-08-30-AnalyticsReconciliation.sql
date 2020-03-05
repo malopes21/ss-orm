@@ -1,0 +1,6 @@
+
+-- 30-08-2019
+
+
+ALTER TABLE ANALYTICS_RECONCILIATION_HISTOGRAM
+ADD COLUMN amountReconciliationsByPeriod bigint;

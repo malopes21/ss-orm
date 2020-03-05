@@ -1,0 +1,47 @@
+-- SQLs NotificationListeners
+
+ALTER TABLE NotificationListenerInstance
+	ADD COLUMN listener_id bigint;
+
+alter table NotificationListenerInstance 
+    add constraint FKe1xb8i0i3wwl1evunp4jj8oyy 
+    foreign key (listener_id) 
+    references NotificationListener (id);
+
+
+-- SQLs RoleRightEntries
+
+ALTER TABLE RoleRightEntryItem
+ADD COLUMN entryName varchar(255);
+
+ALTER TABLE RoleRightEntryItem
+ADD COLUMN entryDescription varchar(255);
+
+
+-- SQL para RoleRightEntryProcessorJob
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.rolerights.jobs.RoleRightEntryProcessorJob', 'Role Right Entry Processor Job.', 'Role Right Entry Processor Job', '[{\"name\":\"roleRightEntriesQueueLength\", \"value\":\"10\"}]');
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Role Right Entry Processor Job' as name, 
+	'[{\"name\":\"roleRightEntriesQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Role Right Entry Processor Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.rolerights.jobs.RoleRightEntryProcessorJob';
+
+
+-- SQLs para InternalPermissions 
+ 
+insert into InternalPermission (category, description, label, name) values ('ROLES', 'Listar entrada de direito de papel.', 'Listar entrada de direito de papel', 'LIST_ROLERIGHT_ENTRY');
+
+insert into InternalPermissionGroup (category, description, label, name) values ('MANAGEMENT', 'Visualizar Entrada de Direito de Papel.', 'Visualizar Entrada de Direito de Papel', 'ROLERIGHT_ENTRY_VISUALIZE');
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLERIGHT_ENTRY_VISUALIZE' and ip.name = 'LIST_ROLERIGHT_ENTRY';
+

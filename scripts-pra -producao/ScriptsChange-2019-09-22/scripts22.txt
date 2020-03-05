@@ -1,0 +1,4 @@
+-- add atributo lastInactivatedAccountsVerifierExecutionDate to User 
+
+alter table User
+ADD COLUMN lastInactivatedAccountsVerifierExecutionDate datetime;

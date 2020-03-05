@@ -1,0 +1,16 @@
+
+-- job InactivateAccountsFromInactivatedUsersJob
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.directory.jobs.InactivateAccountsFromInactivatedUsersJob', 'Inactivate Accounts From Inactivated Users Job.', 'Inactivate Accounts From Inactivated Users Job', '[{\"name\":\"usersQueueLength\", \"value\":\"5\"}]');
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Inactivate Accounts From Inactivated Users Job' as name, 
+	'[{\"name\":\"usersQueueLength\", \"value\":\"5\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Inactivate Accounts From Inactivated Users Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.directory.jobs.InactivateAccountsFromInactivatedUsersJob';

@@ -1,0 +1,251 @@
+-- RoleRights:
+
+
+-- drop table RoleRightApprovalPolicy;
+
+-- drop table RoleRightApprovalTaskDetail;
+
+-- drop table RoleRightEntry_RoleRightEntryItem;
+
+-- drop table RoleRightEntry;
+
+-- drop table RoleRightEntryItem;
+
+create table RoleRightApprovalPolicy (
+    id bigint not null auto_increment,
+    autoApproved bit,
+    description varchar(255),
+    eligibility varchar(3500),
+    enabled bit,
+    name varchar(255),
+    operator varchar(255),
+    position integer,
+    workflow varchar(255),
+    primary key (id)
+) ENGINE=InnoDB;
+
+create table RoleRightApprovalTaskDetail (
+    id bigint not null auto_increment,
+    approvalDate datetime,
+    creation datetime,
+    levelName varchar(255),
+    outcome varchar(255),
+    roleRightEntry_id bigint,
+    task_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+create table RoleRightEntry (
+    id bigint not null auto_increment,
+    action varchar(255),
+    approvalWorkflowId bigint,
+    creationDate datetime,
+    executionDate datetime,
+    lockDate datetime,
+    lockNumber bigint,
+    roleId bigint,
+    roleRightPolicyId bigint,
+    status varchar(255),
+    primary key (id)
+) ENGINE=InnoDB;
+
+create table RoleRightEntry_RoleRightEntryItem (
+    RoleRightEntry_id bigint not null,
+    items_id bigint not null
+) ENGINE=InnoDB;
+
+create table RoleRightEntryItem (
+    id bigint not null auto_increment,
+    entryId bigint,
+    entryType varchar(255),
+    primary key (id)
+) ENGINE=InnoDB;
+
+alter table RoleRightApprovalTaskDetail 
+    add constraint RoleRightApprovalTaskDetail_RoleRightEntry
+    foreign key (roleRightEntry_id) 
+    references RoleRightEntry (id)
+	on delete cascade;
+
+alter table RoleRightApprovalTaskDetail 
+    add constraint RoleRightApprovalTaskDetail_Task 
+    foreign key (task_id) 
+    references Task (id)
+	on delete cascade;
+
+alter table RoleRightEntry_RoleRightEntryItem 
+    add constraint RoleRightEntry_RoleRightEntryItem_RoleRightEntryItem
+    foreign key (items_id) 
+    references RoleRightEntryItem (id)
+	on delete cascade;
+
+alter table RoleRightEntry_RoleRightEntryItem 
+    add constraint RoleRightEntry_RoleRightEntryItem_RoleRightEntry
+    foreign key (RoleRightEntry_id) 
+    references RoleRightEntry (id)
+	on delete cascade;
+
+alter table RoleRightEntry_RoleRightEntryItem 
+    add constraint UK_RoleRightEntry_RoleRightEntryItem_items_id unique (items_id);
+
+
+-- atributos adicionados no BlazonRequest:
+
+alter table BlazonRequest
+	add column resourceId bigint;
+
+alter table BlazonRequest
+	add column entitlementId bigint;
+
+alter table BlazonRequest
+	add column membershipId bigint;
+
+alter table BlazonRequest
+	add column roleId bigint;
+
+alter table BlazonRequest
+	add column accountId bigint;
+
+ 
+-- atributos adicionados no ProvisioningEntry:
+
+alter table ProvisioningEntry
+	add column entitlementId bigint;
+
+alter table ProvisioningEntry
+	add column organizationId bigint;
+
+alter table ProvisioningEntry
+	add column roleId bigint;
+
+alter table ProvisioningEntry
+	add column accountId bigint;
+
+
+-- Novos Jobs:
+-- para entradas expiradas:
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.directory.jobs.RevokeExpiredMembershipEntitlementsJob', 'Revoke Expired MembershipEntitlements Job.', 'Revoke Expired MembershipEntitlements Job', '[{\"name\":\"membershipsQueueLength\", \"value\":\"5\"}]');
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.directory.jobs.InactivateExpiredAccountsJob', 'Inactivate Expired Accounts Job.', 'Inactivate Expired Accounts Job', '[{\"name\":\"accountsQueueLength\", \"value\":\"5\"}]');
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.directory.jobs.InactivateExpiredUsersJob', 'Inactivate Expired Users Job.', 'Inactivate Expired Users Job', '[{\"name\":\"usersQueueLength\", \"value\":\"5\"}]');
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.directory.jobs.RemoveUsersFromExpiredRolesJob', 'Remove Users From Expired Roles Job.', 'Remove Users From Expired Roles Job', '[{\"name\":\"rolesQueueLength\", \"value\":\"5\"}]');
+
+
+-- para Provisioning:
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.provisioning.jobs.ProvisioningDispatchToWaitingResourceAdapterPullingJob', 'Provisioning Dispatch To Waiting Resource Adapter Pulling Job.', 'Provisioning Dispatch To Waiting Resource Adapter Pulling Job', '[{\"name\":\"provisioningEntriesQueueLength\", \"value\":\"10\"}]');
+
+
+-- para Request:
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.requests.jobs.BlazonRequestWaitingResolvingEntryDependenciesFunctionJob', 'Blazon Request Waiting Resolving Entry Dependencies Function Job.', 'Blazon Request Waiting Resolving Entry Dependencies Function Job', '[{\"name\":\"bllazonRequestsQueueLength\", \"value\":\"5\"}]');
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.requests.jobs.BlazonRequestWaitingDependenciesVerifierJob', 'Bllazon Request Waiting Dependencies Verifier Job.', 'Bllazon Request Waiting Dependencies Verifier Job', '[{\"name\":\"bllazonRequestsQueueLength\", \"value\":\"5\"}]');
+
+
+-- JobInstances:
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Revoke Expired MembershipEntitlements Job' as name, 
+	'[{\"name\":\"membershipsQueueLength\", \"value\":\"5\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0 0/1 * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Revoke Expired MembershipEntitlements Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.directory.jobs.RevokeExpiredMembershipEntitlementsJob';
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 
+	'Inactivate Expired Accounts Job' as name, 
+	'[{\"name\":\"accountsQueueLength\", \"value\":\"5\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0 0/1 * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Inactivate Expired Accounts Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.directory.jobs.InactivateExpiredAccountsJob';
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 
+	'Inactivate Expired Users Job' as name, 
+	'[{\"name\":\"usersQueueLength\", \"value\":\"5\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0 0/1 * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Inactivate Expired Users Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.directory.jobs.InactivateExpiredUsersJob';
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 
+	'Remove Users From Expired Roles Job' as name, 
+	'[{\"name\":\"rolesQueueLength\", \"value\":\"5\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0 0/1 * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Remove Users From Expired Roles Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.directory.jobs.RemoveUsersFromExpiredRolesJob';
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 
+	'Provisioning Dispatch To Waiting Resource Adapter Pulling Job' as name, 
+	'[{\"name\":\"provisioningEntriesQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0 0/1 * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Provisioning Dispatch To Waiting Resource Adapter Pulling Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.provisioning.jobs.ProvisioningDispatchToWaitingResourceAdapterPullingJob';
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 
+	'Blazon Request Waiting Resolving Entry Dependencies Function Job' as name, 
+	'[{\"name\":\"bllazonRequestsQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Blazon Request Waiting Resolving Entry Dependencies Function Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.requests.jobs.BlazonRequestWaitingResolvingEntryDependenciesFunctionJob';
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 
+	'Blazon Request Waiting Dependencies Verifier Job' as name, 
+	'[{\"name\":\"bllazonRequestsQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Bllazon Request Waiting Dependencies Verifier Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.requests.jobs.BlazonRequestWaitingDependenciesVerifierJob';
+
+
+
+-- drop ReconciliationEntry_ruleOneMatchedEntriesIds:
+
+drop table ReconciliationEntry_ruleOneMatchedEntriesIds;
+
+
+
+-- drop ReconciliationEntry_ruleTwoMatchedEntriesIds:
+
+drop table ReconciliationEntry_ruleTwoMatchedEntriesIds;
+

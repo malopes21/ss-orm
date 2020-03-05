@@ -1,0 +1,16 @@
+
+-- adição de campo userId 
+
+alter table CertificationSelectorEntry add column userId bigint;
+
+
+-- mudança no path dos jobs
+
+update Job set className = 'com.blazon.identitymanagement.policies.certificationpolicy.policy.jobs.CertificationQueueJob' where className = 'com.blazon.identitymanagement.policies.certificationpolicy.jobs.CertificationQueueJob';
+
+update Job set className = 'com.blazon.identitymanagement.policies.certificationpolicy.policy.jobs.CertificationExecutorPolicyJob' where className = 'com.blazon.identitymanagement.policies.certificationpolicy.jobs.CertificationExecutorPolicyJob';
+
+update Job set className = 'com.blazon.identitymanagement.policies.certificationpolicy.policy.jobs.CertificationRevokeExecutionQueueJob' where className = 'com.blazon.identitymanagement.policies.certificationpolicy.jobs.CertificationRevokeExecutionQueueJob';
+
+update Job set className = 'com.blazon.identitymanagement.policies.certificationpolicy.selector.jobs.CertificationSelectorEntryFinalizeJob' where className = 'com.blazon.identitymanagement.policies.certificationpolicy.jobs.CertificationSelectorEntryFinalizeJob';
+

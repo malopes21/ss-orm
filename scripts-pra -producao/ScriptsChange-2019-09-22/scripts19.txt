@@ -1,0 +1,11 @@
+
+-- ddl pra ajuste no job SodPolicyExecutorJob
+
+ALTER TABLE Entry
+ADD COLUMN sodValidatedAt datetime;
+
+
+update Job set parameters = '[{\"name\":\"entryInfoQueueLength\", \"value\":\"10\"},{\"name\":\"entryInfoQueueTimeUnit\", \"value\":\"DAY\"},{\"name\":\"entryInfoQueueTimeAmount\", \"value\":\"10\"}]' where className = 'com.blazon.identitymanagement.policies.sodpolicy.jobs.SodPolicyExecutorJob';
+
+
+update JobInstance set params = '[{\"name\":\"entryInfoQueueLength\", \"value\":\"10\"},{\"name\":\"entryInfoQueueTimeUnit\", \"value\":\"DAY\"},{\"name\":\"entryInfoQueueTimeAmount\", \"value\":\"10\"}]' where name = 'SodPolicy Executor Job';

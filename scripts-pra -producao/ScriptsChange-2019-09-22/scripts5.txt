@@ -1,0 +1,50 @@
+===================================================
+
+De BlazonRequest:
+
+
+ALTER TABLE BlazonRequest
+ADD COLUMN dependenciesVerifiedAt datetime;
+
+create table BlazonRequest_dependsOnIds (
+    BlazonRequest_id bigint not null,
+    dependsOnIds bigint
+) ENGINE=InnoDB;
+
+alter table BlazonRequest_dependsOnIds 
+    add constraint FK73j0pl934t6ws8d2wck0h2dfb 
+    foreign key (BlazonRequest_id) 
+    references BlazonRequest (id)
+	on delete cascade;
+
+====================================================
+
+De SelfServiceCartItem:
+
+create table SelfServiceCartItem_dependsOnIds (
+    SelfServiceCartItem_id bigint not null,
+    dependsOnIds bigint
+) ENGINE=InnoDB;
+
+alter table SelfServiceCartItem_dependsOnIds 
+    add constraint FK20yxx2aeq73tron1nm3ovakxe 
+    foreign key (SelfServiceCartItem_id) 
+    references SelfServiceCartItem (id)
+    on delete cascade;
+
+====================================================
+
+Jobs de execução para BlazonRequest. Substituir {job_id} pelo id do Job inserido em cada JobInstance abaixo!
+
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.requests.jobs.BlazonRequestWaitingDependenciesVerifierJob', 'Bllazon Request Waiting Dependencies Verifier Job.', 'Bllazon Request Waiting Dependencies Verifier Job', '[{"name":"bllazonRequestsQueueLength", "value":"5"}]');
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.requests.jobs.BlazonRequestNewVerifierJob', 'Bllazon Request New Verifier Job.', 'Bllazon Request New Verifier Job', '[{"name":"bllazonRequestsQueueLength", "value":"5"}]');
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) values ('Bllazon Request Waiting Dependencies Verifier Job', '[{"name":"bllazonRequestsQueueLength", "value":"5"}]', {job_id}, true, '0 0/1 * * * ?', 'Blazon Jobs', '4:Bllazon Request Waiting Dependencies Verifier Job');
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) values ('Bllazon Request New Verifier Job', '[{"name":"bllazonRequestsQueueLength", "value":"5"}]', {job_id}, true, '0 0/1 * * * ?', 'Blazon Jobs', '5:Bllazon Request New Verifier Job');
+
+
+====================================================

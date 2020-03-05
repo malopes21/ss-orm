@@ -1,0 +1,170 @@
+--- tabelas NotificationListener e etc
+
+create table NotificationEntry (
+    id bigint not null auto_increment,
+    createdAt datetime,
+    event varchar(255),
+    lockDate datetime,
+    lockNumber bigint,
+    payload varchar(255),
+    processedAt datetime,
+    resolveDependenciesAt datetime,
+    status varchar(255),
+    listenerInstance_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+create table NotificationListener (
+    id bigint not null auto_increment,
+    bean varchar(255),
+    description varchar(255),
+    name varchar(255),
+    primary key (id)
+) ENGINE=InnoDB;
+
+create table NotificationListenerInstance (
+    id bigint not null auto_increment,
+    bean varchar(255),
+    description varchar(255),
+    enabled bit,
+    name varchar(255),
+    primary key (id)
+) ENGINE=InnoDB;
+
+create table NotificationListenerInstance_listeningTo (
+    NotificationListenerInstance_id bigint not null,
+    listeningTo varchar(255)
+) ENGINE=InnoDB;
+
+create table NotificationListenerInstance_parameters (
+    NotificationListenerInstance_id bigint not null,
+    parameters varchar(255),
+    parameters_KEY varchar(255) not null,
+    primary key (NotificationListenerInstance_id, parameters_KEY)
+) ENGINE=InnoDB;
+
+alter table NotificationEntry 
+    add constraint FK55qnwbbguv4gb39349lgost1q 
+    foreign key (listenerInstance_id) 
+    references NotificationListenerInstance (id);
+
+alter table NotificationListenerInstance_listeningTo 
+    add constraint FKokk7llp8fvkf82pp588rd86fy 
+    foreign key (NotificationListenerInstance_id) 
+    references NotificationListenerInstance (id);
+
+alter table NotificationListenerInstance_parameters 
+    add constraint FKp98b2ttf2ollso82xcux4yjs4 
+    foreign key (NotificationListenerInstance_id) 
+    references NotificationListenerInstance (id);
+
+
+-- jobs and jobInstances
+
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.enablers.notification.jobs.NotificationEntriesWaitingResolveDependenciesJob', 'Notification Entries Waiting Resolve Dependencies Job.', 'Notification Entries Waiting Resolve Dependencies Job', '[{\"name\":\"notificationEntryQueueLength\", \"value\":\"5\"}]');
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.enablers.notification.jobs.NotificationNewEntriesToBeProcessedJob', 'Notification New Entries To Be Processed Job.', 'Notification New Entries To Be Processed Job', '[{\"name\":\"notificationEntryQueueLength\", \"value\":\"5\"}]');
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Notification Entries Waiting Resolve Dependencies Job' as name, 
+	'[{\"name\":\"notificationEntryQueueLength\", \"value\":\"5\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 0 * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Notification Entries Waiting Resolve Dependencies Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.enablers.notification.jobs.NotificationEntriesWaitingResolveDependenciesJob';
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Notification New Entries To Be Processed Job' as name, 
+	'[{\"name\":\"notificationEntryQueueLength\", \"value\":\"5\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 0 * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Notification New Entries To Be Processed Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.enablers.notification.jobs.NotificationNewEntriesToBeProcessedJob';
+
+
+-- inserts para InternalPermissions
+
+
+insert into InternalPermission (category, description, label, name) values ('NOTIFICATION_LISTENERS', 'Listar ouvintes de notificação.', 'Listar ouvintes de notificação', 'LIST_NOTIFICATION_LISTENER');
+
+insert into InternalPermission (category, description, label, name) values ('NOTIFICATION_LISTENERS', 'Listar entradas de notificação.', 'Listar entradas de notificação', 'LIST_NOTIFICATION_ENTRY');
+
+insert into InternalPermission (category, description, label, name) values ('NOTIFICATION_LISTENERS', 'Listar instâncias de ouvintes de notificação.', 'Listar instâncias de ouvintes de notificação', 'LIST_NOTIFICATION_LISTENER_INSTANCE');
+
+insert into InternalPermission (category, description, label, name) values ('NOTIFICATION_LISTENERS', 'Criar instâncias de ouvintes de notificação.', 'Criar instâncias de ouvintes de notificação', 'CREATE_NOTIFICATION_LISTENER_INSTANCE');
+
+insert into InternalPermission (category, description, label, name) values ('NOTIFICATION_LISTENERS', 'Editar instâncias de ouvintes de notificação.', 'Editar instâncias de ouvintes de notificação', 'EDIT_NOTIFICATION_LISTENER_INSTANCE');
+		
+insert into InternalPermission (category, description, label, name) values ('NOTIFICATION_LISTENERS', 'Remover instâncias de ouvintes de notificação.', 'Remover instâncias de ouvintes de notificação', 'REMOVE_NOTIFICATION_LISTENER_INSTANCE');
+
+
+-- inserts para InternalPermissionGroup
+
+
+insert into InternalPermissionGroup (category, description, label, name) values ('SETTINGS', 'Visualizar Configuração de Ouvinte de Notificação.', 'Visualizar Configuração de Ouvinte de Notificação', 'NOTIFICATION_LISTENER_VISUALIZE');
+
+insert into InternalPermissionGroup (category, description, label, name) values ('SETTINGS', 'Gerenciar Configuração de Ouvinte de Notificação.', 'Gerenciar Configuração de Ouvinte de Notificação', 'NOTIFICATION_LISTENER_MANAGE');
+
+
+-- inserts para InternalPermissionGroup_InternalPermission
+
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_VISUALIZE' and ip.name = 'LIST_NOTIFICATION_LISTENER';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_VISUALIZE' and ip.name = 'LIST_NOTIFICATION_ENTRY';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_VISUALIZE' and ip.name = 'LIST_NOTIFICATION_LISTENER_INSTANCE';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_VISUALIZE' and ip.name = 'LIST_USER';
+
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_MANAGE' and ip.name = 'LIST_NOTIFICATION_LISTENER';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_MANAGE' and ip.name = 'LIST_NOTIFICATION_ENTRY';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_MANAGE' and ip.name = 'LIST_NOTIFICATION_LISTENER_INSTANCE';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_MANAGE' and ip.name = 'CREATE_NOTIFICATION_LISTENER_INSTANCE';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_MANAGE' and ip.name = 'EDIT_NOTIFICATION_LISTENER_INSTANCE';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_MANAGE' and ip.name = 'REMOVE_NOTIFICATION_LISTENER_INSTANCE';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'NOTIFICATION_LISTENER_MANAGE' and ip.name = 'LIST_USER';
+
+
+-- inserts para ManagerRole_InternalPermissionGroup
+
+-- acho que será melhor setar na tela esses!
+

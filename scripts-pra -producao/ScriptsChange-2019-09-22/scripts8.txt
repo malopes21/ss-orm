@@ -1,0 +1,77 @@
+
+create table RoleRightApprovalPolicy (
+    id bigint not null auto_increment,
+    autoApproved bit,
+    description varchar(255),
+    eligibility varchar(3500),
+    enabled bit,
+    name varchar(255),
+    operator varchar(255),
+    position integer,
+    workflow varchar(255),
+    primary key (id)
+) ENGINE=InnoDB;
+
+create table RoleRightApprovalTaskDetail (
+    id bigint not null auto_increment,
+    approvalDate datetime,
+    creation datetime,
+    levelName varchar(255),
+    outcome varchar(255),
+    roleRightEntry_id bigint,
+    task_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+create table RoleRightEntry (
+    id bigint not null auto_increment,
+    action varchar(255),
+    approvalWorkflowId bigint,
+    creationDate datetime,
+    executionDate datetime,
+    lockDate datetime,
+    lockNumber bigint,
+    roleId bigint,
+    roleRightPolicyId bigint,
+    status varchar(255),
+    primary key (id)
+) ENGINE=InnoDB;
+
+create table RoleRightEntry_RoleRightEntryItem (
+    RoleRightEntry_id bigint not null,
+    items_id bigint not null
+) ENGINE=InnoDB;
+
+create table RoleRightEntryItem (
+    id bigint not null auto_increment,
+    entryId bigint,
+    entryType varchar(255),
+    primary key (id)
+) ENGINE=InnoDB;
+
+alter table RoleRightApprovalTaskDetail 
+    add constraint FK6wx7r1qyextic94w2w2nkanr2 
+    foreign key (roleRightEntry_id) 
+    references RoleRightEntry (id)
+	on delete cascade;
+
+alter table RoleRightApprovalTaskDetail 
+    add constraint FKcvdiq2kvg7b6i3218ypqh5iq9 
+    foreign key (task_id) 
+    references Task (id)
+	on delete cascade;
+
+alter table RoleRightEntry_RoleRightEntryItem 
+    add constraint FKmk5jn4b3ux611o3lpvgyeck6q 
+    foreign key (items_id) 
+    references RoleRightEntryItem (id)
+	on delete cascade;
+
+alter table RoleRightEntry_RoleRightEntryItem 
+    add constraint FK599jtliel8jj62u4iymrtv26w 
+    foreign key (RoleRightEntry_id) 
+    references RoleRightEntry (id)
+	on delete cascade;
+
+alter table RoleRightEntry_RoleRightEntryItem 
+    add constraint UK_mbua7nvn8f43uytgy0ynu0rrs unique (items_id);

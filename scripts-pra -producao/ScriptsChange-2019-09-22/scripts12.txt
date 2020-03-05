@@ -1,0 +1,28 @@
+-- SQLs de RoleRights
+
+
+-- add fields
+
+ALTER TABLE RoleRightEntryItem
+ADD COLUMN approvalStatus varchar(255);
+
+ALTER TABLE Rightt
+ADD COLUMN rightsCertifiedAt datetime;
+
+-- add job
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.rolerights.jobs.RoleRightEntryToExecutionJob', 'Role Right Entry To Execution Job.', 'Role Right Entry To Execution Job', '[{\"name\":\"roleRightEntriesQueueLength\", \"value\":\"10\"}]');
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Role Right Entry To Execution Job' as name, 
+	'[{\"name\":\"roleRightEntriesQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Role Right Entry Processor Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.rolerights.jobs.RoleRightEntryToExecutionJob';
+
+

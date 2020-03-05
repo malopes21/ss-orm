@@ -1,0 +1,89 @@
+-- Criar RoleRightRevokeEntry
+
+create table RoleRightRevokeEntry (
+    id bigint not null auto_increment,
+    createdAt datetime,
+    finalizedAt datetime,
+    lockDate datetime,
+    lockNumber bigint,
+    resolution varchar(255),
+    status varchar(255),
+    targetId varchar(255),
+    targetType varchar(255),
+    role_id bigint,
+    user_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+
+-- Job que dispara processamento das RoleRightRevokeEntry
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.rolerightsrevoke.jobs.RoleRightRevokeProcessorJob', 'Role Right Revoke Entry Processor Job.', 'Role Right Revoke Entry Processor Job', '[{\"name\":\"roleRightEntriesQueueLength\", \"value\":\"10\"}]');
+
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Role Right Revoke Entry Processor Job' as name, 
+	'[{\"name\":\"roleRightEntriesQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Role Right Entry Processor Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.rolerightsrevoke.jobs.RoleRightRevokeProcessorJob';
+
+
+-- Permissões internas para ROLERIGHT_APPROVAL_POLICY
+		
+insert into InternalPermission (category, description, label, name) values ('ROLE_RIGHTS', 'Listar política de aprovação de direito de papel.', 'Listar política de aprovação de direito de papel', 'LIST_RIGHT_APPROVAL_POLICY');
+
+insert into InternalPermission (category, description, label, name) values ('ROLE_RIGHTS', 'Criar política de aprovação de direito de papel.', 'Criar política de aprovação de direito de papel', 'CREATE_RIGHT_APPROVAL_POLICY');
+
+insert into InternalPermission (category, description, label, name) values ('ROLE_RIGHTS', 'Editar política de aprovação de direito de papel.', 'Editar política de aprovação de direito de papel', 'EDIT_RIGHT_APPROVAL_POLICY');
+
+insert into InternalPermission (category, description, label, name) values ('ROLE_RIGHTS', 'Remover política de aprovação de direito de papel.', 'Remover política de aprovação de direito de papel', 'REMOVE_RIGHT_APPROVAL_POLICY');
+
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLE_VISUALIZE' and ip.name = 'LIST_RIGHT_APPROVAL_POLICY';
+
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLE_MANAGE' and ip.name = 'LIST_RIGHT_APPROVAL_POLICY';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLE_MANAGE' and ip.name = 'CREATE_RIGHT_APPROVAL_POLICY';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLE_MANAGE' and ip.name = 'EDIT_RIGHT_APPROVAL_POLICY';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLE_MANAGE' and ip.name = 'REMOVE_RIGHT_APPROVAL_POLICY';
+
+
+-- Permissões internas para ROLERIGHT_REVOKE
+
+insert into InternalPermission (category, description, label, name) values ('ROLE_RIGHTS', 'Listar entrada de revogação de direito de papel.', 'Listar entrada de revogação de direito de papel', 'LIST_REVOKERIGHT_ENTRY');
+
+insert into InternalPermission (category, description, label, name) values ('ROLE_RIGHTS', 'Criar entrada de revogação de direito de papel.', 'Criar entrada de revogação de direito de papel', 'EDIT_REVOKERIGHT_ENTRY');
+
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLE_VISUALIZE' and ip.name = 'LIST_REVOKERIGHT_ENTRY';
+
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLE_MANAGE' and ip.name = 'LIST_REVOKERIGHT_ENTRY';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLE_MANAGE' and ip.name = 'EDIT_REVOKERIGHT_ENTRY';
+
+

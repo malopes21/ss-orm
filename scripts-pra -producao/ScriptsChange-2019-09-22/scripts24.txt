@@ -1,0 +1,49 @@
+-- CertificationEntry
+
+ALTER TABLE CertificationEntry
+DROP COLUMN revokeUncertifiedEntry;
+
+ALTER TABLE CertificationEntry
+ADD COLUMN uncertifiedEntryAction varchar(255);
+
+
+-- CertificationPolicy
+
+ALTER TABLE CertificationPolicy
+DROP COLUMN revokeUncertifiedEntry;
+
+ALTER TABLE CertificationPolicy
+ADD COLUMN uncertifiedEntryAction varchar(255);
+
+ALTER TABLE CertificationPolicy
+ADD COLUMN limitOfEntriesByExecution integer;
+
+ALTER TABLE CertificationPolicy
+ADD COLUMN userFilterRules longtext;
+
+
+-- CertificationSelector
+
+ALTER TABLE CertificationSelector
+DROP COLUMN revokeUncertifiedUser;
+
+ALTER TABLE CertificationSelector
+DROP COLUMN revokeUncertifiedAccount;
+
+ALTER TABLE CertificationSelector
+DROP COLUMN revokeUncertifiedMembershipRole;
+
+ALTER TABLE CertificationSelector
+DROP COLUMN revokeUncertifiedMembershipEntitlement;
+
+ALTER TABLE CertificationSelector
+ADD COLUMN uncertifiedUserAction varchar(255);
+
+ALTER TABLE CertificationSelector
+ADD COLUMN uncertifiedAccountAction varchar(255);
+
+ALTER TABLE CertificationSelector
+ADD COLUMN uncertifiedMembershipRoleAction varchar(255);
+
+ALTER TABLE CertificationSelector
+ADD COLUMN uncertifiedMembershipEntitlementAction varchar(255);

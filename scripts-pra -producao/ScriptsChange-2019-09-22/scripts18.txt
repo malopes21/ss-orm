@@ -1,0 +1,26 @@
+
+-- ddl pra CertificationApprovalTaskDetail
+
+create table CertificationApprovalTaskDetail (
+    id bigint not null auto_increment,
+    approvalDate datetime,
+    creation datetime,
+    levelName varchar(255),
+    outcome varchar(255),
+    certificationEntry_id bigint,
+    task_id bigint,
+    primary key (id)
+) ENGINE=InnoDB;
+
+
+alter table CertificationApprovalTaskDetail 
+    add constraint FKf6pkruwwv4u3bak5es6fva6hg 
+    foreign key (certificationEntry_id) 
+    references CertificationEntry (id)
+	on delete cascade;
+
+alter table CertificationApprovalTaskDetail 
+    add constraint FKgol6qjog5rsxykj1vdg2sbpp1 
+    foreign key (task_id) 
+    references Task (id)
+	on delete cascade;

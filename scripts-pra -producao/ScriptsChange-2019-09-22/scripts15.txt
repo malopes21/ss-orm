@@ -1,0 +1,44 @@
+
+-- atributos para CertificationSelectorEntry
+
+alter table CertificationSelectorEntry add column lockDate datetime;
+
+alter table CertificationSelectorEntry add column lockNumber bigint;
+
+
+-- Job de Finalização de CertificationSelectorEntry
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitymanagement.policies.certificationpolicy.jobs.CertificationSelectorEntryFinalizeJob', 'Certification Selector Entry Finalize Job.', 'Certification Selector Entry Finalize Job', '[{\"name\":\"certificationQueueLength\", \"value\":\"10\"}]');
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Certification Selector Entry Finalize Job' as name, 
+	'[{\"name\":\"certificationQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Certification Selector Entry Finalize Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitymanagement.policies.certificationpolicy.jobs.CertificationSelectorEntryFinalizeJob';
+
+
+-- Permissão interna MANUAL_CERTIFICATION_REQUEST
+
+insert into InternalPermission (category, description, label, name) values ('CERTIFICATION_POLICIES', 'Requisição manual de certificação de entrada.', 'Manual Certification request', 'MANUAL_CERTIFICATION_REQUEST');
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ACCOUNT_MANAGE' and ip.name = 'MANUAL_CERTIFICATION_REQUEST';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'USER_MANAGE' and ip.name = 'MANUAL_CERTIFICATION_REQUEST';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'ROLE_MANAGE' and ip.name = 'MANUAL_CERTIFICATION_REQUEST';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'CERTIFICATION_POLICY_MANAGE' and ip.name = 'MANUAL_CERTIFICATION_REQUEST';
+

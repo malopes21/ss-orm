@@ -1,0 +1,67 @@
+-- tabela ResetPasswordFactor
+
+create table ResetPasswordFactor (
+    id bigint not null auto_increment,
+    description varchar(255),
+    displayName varchar(255),
+    enabled bit not null,
+    name varchar(255),
+    position integer not null,
+    primary key (id)
+) ENGINE=InnoDB;
+
+
+
+-- inserts para ResetPasswordFactories
+
+insert into ResetPasswordFactor (name, displayName, description, position, enabled) values ('secureChannelPersonalEmail', 'Send Token to personal email.', 'Send Token to personal email.', 1,false);
+
+insert into ResetPasswordFactor (name, displayName, description, position, enabled) values ('secureChannelEmail', 'Send Token to email.', 'Send Token to email.', 2, false);
+
+insert into ResetPasswordFactor (name, displayName, description, position, enabled) values ('secretQuestions', 'Secret Questions.', 'Secret Questions.', 3, false);
+
+insert into ResetPasswordFactor (name, displayName, description, position, enabled) values ('otpTimeBased', 'OTP Time based token.', 'OTP Time based token.', 4, false);
+
+
+-- inserts para InternalPermissions
+
+insert into InternalPermission (category, description, label, name) values ('RESET_PASSWORD_POLICIES', 'Listar reset password policies.', 'List reset password policies.', 'LIST_RESET_PASSWORD_POLICY');
+insert into InternalPermission (category, description, label, name) values ('RESET_PASSWORD_POLICIES', 'Editar reset password policy.', 'Edit reset password policies.', 'EDIT_RESET_PASSWORD_POLICY');
+
+
+-- inserts para InternalPermissionGroup
+
+insert into InternalPermissionGroup (category, description, label, name) values ('POLICIES', 'Visualizar Política de Reset de Senha.', 'Visualizar Política de Reset de Senha', 'PASSWORD_RESET_POLICY_VISUALIZE');
+insert into InternalPermissionGroup (category, description, label, name) values ('POLICIES', 'Gerenciar Política de Reset de Senha.', 'Gerenciar Política de Reset de Senha', 'PASSWORD_RESET_POLICY_MANAGE');
+
+
+-- inserts para InternalPermissionGroup_InternalPermission
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'PASSWORD_RESET_POLICY_VISUALIZE' and ip.name = 'LIST_RESET_PASSWORD_POLICY';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'PASSWORD_RESET_POLICY_VISUALIZE' and ip.name = 'LIST_USER';
+
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'PASSWORD_RESET_POLICY_MANAGE' and ip.name = 'LIST_RESET_PASSWORD_POLICY';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'PASSWORD_RESET_POLICY_MANAGE' and ip.name = 'EDIT_RESET_PASSWORD_POLICY';
+
+insert into InternalPermissionGroup_InternalPermission (internalPermissionGroups_id, internalPermissions_id) 
+select ipg.id as internalPermissionGroups_id, ip.id as internalPermissions_id from InternalPermissionGroup ipg, InternalPermission ip 
+where ipg.name = 'PASSWORD_RESET_POLICY_MANAGE' and ip.name = 'LIST_USER';
+
+
+-- inserts para ManagerRole_InternalPermissionGroup
+
+-- acho que será melhor setar na tela esses!
+
+
+
