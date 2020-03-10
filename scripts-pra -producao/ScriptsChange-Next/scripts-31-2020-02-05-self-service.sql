@@ -90,6 +90,7 @@ drop table SelfServiceCartInstanceItem;
 create table SelfServiceCartInstanceItem (
     id bigint not null auto_increment,
     accountAlreadyExist bit,
+    adminAccountLocked bit,
     alreadyRequestInProgress bit,
     membershipEntitlementAlreadyExist bit,
     membershipRoleAlreadyExist bit,
@@ -102,6 +103,8 @@ create table SelfServiceCartInstanceItem (
     cartItem_id bigint,
     primary key (id)
 ) ENGINE=InnoDB;
+
+-- alter table SelfServiceCartInstanceItem add column adminAccountLocked bit;
 
 -- SelfServiceCartItem
 

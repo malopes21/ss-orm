@@ -52,6 +52,23 @@ select 'Assignment Role Revoke Processor Job' as name,
 	'Assignment Role Revoke Processor Job' as externalJobDetailId
 from Job job
 where job.className = 'com.blazon.identitybusinessrules.assignmentpolicy.jobs.AssignmentRoleRevokeProcessorJob';
+
+
+-- com.blazon.identitybusinessrules.assignmentpolicy.jobs.AssignmentRoleKeepProcessorJob
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.identitybusinessrules.assignmentpolicy.jobs.AssignmentRoleKeepProcessorJob', 
+'Assignment Role Keep Processor Job.', 'Assignment Role Keep Processor Job', null);
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Assignment Role Keep Processor Job' as name, 
+	'[{\"name\":\"keepRoleEntriesQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Assignment Role Keep Processor Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.identitybusinessrules.assignmentpolicy.jobs.AssignmentRoleKeepProcessorJob';
  
 
 

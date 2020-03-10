@@ -15,6 +15,8 @@ ALTER TABLE Groupp_User CHANGE COLUMN ManagerRole_id Group_id bigint not null;
 
 ALTER TABLE TaskQueue_Groupp CHANGE COLUMN managerRoles_id groups_id bigint not null;
 
+ALTER TABLE taskqueue_groupp drop foreign key FKrd8be9kl9ei6298118yer8jl8;
+
 
 
 
