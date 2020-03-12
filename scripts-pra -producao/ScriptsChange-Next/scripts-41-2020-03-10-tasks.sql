@@ -1,4 +1,4 @@
 
 -- Task
 
-alter table Task add column lockNumber bigint;
+alter table Task add column 

@@ -246,19 +246,9 @@ create table AccountPasswordVault (
     id bigint not null auto_increment,
     accountId bigint,
     passwordVaultId bigint,
-    userId bigint,
     primary key (id)
 ) ENGINE=InnoDB;
 
-alter table AccountPasswordVault
-add column userId bigint;
-
-create table AdminAccountLock (
-    accountId bigint not null,
-    lockNumber bigint,
-    version bigint,
-    primary key (accountId)
-) ENGINE=InnoDB;
 
 create table AdminAccountPasswordVault (
     id bigint not null auto_increment,
