@@ -250,7 +250,9 @@ create table AccountPasswordVault (
 ) ENGINE=InnoDB;
 
 
-create table AdminAccountPasswordVault (
+-- drop table AdminAccountPasswordVault;
+
+create table CheckinAdminAccountPasswordVault (
     id bigint not null auto_increment,
     accountId bigint,
     passwordVaultId bigint,
