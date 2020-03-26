@@ -73,3 +73,14 @@ from Job job
 where job.className = 'com.blazon.humantasks.autoescalation.jobs.ResolveTasksInWaitingEscalationJob';
 
 
+-- TaskQueueAssignHistory
+
+create table TaskQueueAssignHistory (
+	id bigint not null auto_increment,
+	assign_date datetime,
+	from_id bigint,
+	task_id bigint,
+	to_id bigint,
+	primary key (id)
+) ENGINE=InnoDB;
+
