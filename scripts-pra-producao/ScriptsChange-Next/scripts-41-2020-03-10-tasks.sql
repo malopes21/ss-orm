@@ -1,8 +1,6 @@
 
 -- Task
 
-alter table Task add column assignedTo_id bigint; 
-
 alter table Task add column currentQueue_id bigint;
 
 -- com.blazon.humantasks.jobs.TaskEscalationPeriodicJob
