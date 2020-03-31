@@ -88,20 +88,20 @@ drop table SelfServiceCartItem_payloads;
 drop table SelfServiceCartInstanceItem;
 
 create table SelfServiceCartInstanceItem (
-    id bigint not null auto_increment,
-    accountAlreadyExist bit,
-    adminAccountLocked bit,
-    alreadyRequestInProgress bit,
-    membershipEntitlementAlreadyExist bit,
-    membershipRoleAlreadyExist bit,
-    payload varchar(4000),
-    relatedAccountNotFound bit,
-    relatedCatalogItemId varchar(255),
-    relatedCatalogItemName varchar(255),
-    schemaValidated bit,
-    userId varchar(255),
-    cartItem_id bigint,
-    primary key (id)
+	id bigint not null auto_increment,
+	accountAlreadyExist bit,
+	adminAccountLocked bit,
+	alreadyRequestInProgress bit,
+	membershipEntitlementAlreadyExist bit,
+	membershipRoleAlreadyExist bit,
+	payload varchar(4000),
+	relatedAccountNotFound bit,
+	relatedCatalogItemId varchar(255),
+	relatedCatalogItemName varchar(255),
+	schemaValidated bit,
+	userId varchar(255),
+	cartItem_id bigint,
+	primary key (id)
 ) ENGINE=InnoDB;
 
 -- alter table SelfServiceCartInstanceItem add column adminAccountLocked bit;
@@ -117,7 +117,6 @@ create table SelfServiceCartItem (
     cart_id bigint,
     primary key (id)
 ) ENGINE=InnoDB;
-
 
 
 -- Ajuste no job 'Remove permanentemente as MembershipRoles do diretório'

@@ -2003,26 +2003,25 @@ create table SelfServiceCart (
 ) ENGINE=InnoDB;
 
 create table SelfServiceCartItem (
-    id bigint not null auto_increment,
-    assignType varchar(255),
-    targetId varchar(255),
-    targetType varchar(255),
-    cart_id bigint,
-    primary key (id)
+	id bigint not null auto_increment,
+	assignType varchar(255),
+	catalogItemId varchar(255),
+	cart_id bigint,
+	primary key (id)
 ) ENGINE=InnoDB;
 
-create table SelfServiceCartItem_dependsOnIds (
-    SelfServiceCartItem_id bigint not null,
-    dependsOnIds bigint
-) ENGINE=InnoDB;
+-- create table SelfServiceCartItem_dependsOnIds (
+--    SelfServiceCartItem_id bigint not null,
+--    dependsOnIds bigint
+-- ) ENGINE=InnoDB;
 
-create table SelfServiceCartItem_payloads (
-    SelfServiceCartItem_id bigint not null,
-    payload varchar(4000),
-    schemaValidated bit not null,
-    sodValidated bit not null,
-    userId varchar(255)
-) ENGINE=InnoDB;
+-- create table SelfServiceCartItem_payloads (
+--    SelfServiceCartItem_id bigint not null,
+--    payload varchar(4000),
+--    schemaValidated bit not null,
+--    sodValidated bit not null,
+--    userId varchar(255)
+-- ) ENGINE=InnoDB;
 
 create table SelfServiceSettings (
     id bigint not null auto_increment,

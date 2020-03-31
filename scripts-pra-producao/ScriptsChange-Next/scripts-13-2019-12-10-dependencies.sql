@@ -243,17 +243,17 @@ ADD COLUMN provisioningInternalEntry_id bigint;
 -- create tables
 
 create table ProvisioningDirectoryEntry (
-    type varchar(31) not null,
-    id bigint not null auto_increment,
-    directoryIdentifier bigint,
-    name varchar(255),
-    accountId bigint,
-    accountIdentifier varchar(255),
-    entitlementId bigint,
-    entitlementName varchar(255),
-    displayName varchar(255),
-    username varchar(255),
-    primary key (id)
+	type varchar(31) not null,
+	id bigint not null auto_increment,
+	directoryIdentifier bigint,
+	displayName varchar(255),
+	username varchar(255),
+	name varchar(255),
+	accountId bigint,
+	accountIdentifier varchar(255),
+	entitlementId bigint,
+	entitlementName varchar(255),
+	primary key (id)
 ) ENGINE=InnoDB;
 
 
@@ -463,22 +463,21 @@ ADD COLUMN reconciliationMatchedInternalEntry_id bigint;
 -- create tables
 
 create table ReconciliationDirectoryEntry (
-    type varchar(31) not null,
-    id bigint not null auto_increment,
-    directoryIdentifier bigint,
-    displayName varchar(255),
-    roleId bigint,
-    roleName varchar(255),
-    userId bigint,
-    username varchar(255),
-    name varchar(255),
-    accountIdentifier varchar(255),
-    accountId bigint,
-    entitlementId bigint,
-    entitlementName varchar(255),
-    primary key (id)
+	type varchar(31) not null,
+	id bigint not null auto_increment,
+	directoryIdentifier bigint,
+	name varchar(255),
+	accountId bigint,
+	accountIdentifier varchar(255),
+	entitlementId bigint,
+	entitlementName varchar(255),
+	displayName varchar(255),
+	roleId bigint,
+	roleName varchar(255),
+	userId bigint,
+	username varchar(255),
+	primary key (id)
 ) ENGINE=InnoDB;
-
 
 -- alter tables ???
 

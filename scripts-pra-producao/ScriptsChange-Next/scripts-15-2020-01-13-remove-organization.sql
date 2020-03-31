@@ -78,17 +78,17 @@ drop table Organization;
 
 -- ProvisioningDirectoryEntry 
 
-ALTER TABLE ProvisioningDirectoryEntry 
-DROP COLUMN organizationId;
+-- ALTER TABLE ProvisioningDirectoryEntry 
+-- DROP COLUMN organizationId;
 
-ALTER TABLE ProvisioningDirectoryEntry 
-DROP COLUMN organizationName;
+-- ALTER TABLE ProvisioningDirectoryEntry 
+-- DROP COLUMN organizationName;
 
 
 -- ReconciliationDirectoryEntry
 
-ALTER TABLE ReconciliationDirectoryEntry 
-DROP COLUMN organization_id;
+-- ALTER TABLE ReconciliationDirectoryEntry 
+-- DROP COLUMN organization_id;
 
 
 -- SituationDef_entryTypes
