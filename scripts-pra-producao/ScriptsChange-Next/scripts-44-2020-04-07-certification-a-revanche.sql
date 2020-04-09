@@ -6,6 +6,8 @@ ALTER TABLE CertificationEntry drop foreign key FK1x242ckfigtodvrmwt2s21i7h;
 alter table CertificationEntry
 drop column policy_id;
 
+drop table CampaignDefinition_CertificationPolicy;
+
 -- CertificationPolicy
 
 create table CertificationPolicy_CertificationEntry (
@@ -95,6 +97,9 @@ add column startAt datetime;
 
 alter table CampaignDefinition
 add column startedAt datetime;
+
+alter table CampaignDefinition
+add column certificationWorkflowName varchar(255);
 
 -- adicionar atributo lastCertificationExecutionDate na Entry
 
