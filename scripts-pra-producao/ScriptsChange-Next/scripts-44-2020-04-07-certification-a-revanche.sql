@@ -36,9 +36,6 @@ drop column limitOfEntriesByExecution;
 alter table CertificationPolicy
 drop column selectExpiratedEntries;
 
-alter table CertificationPolicy
-drop column uncertifiedEntryAction;
-
 -- add column to CertitficationPolicy
 
 alter table CertificationPolicy
@@ -82,6 +79,9 @@ drop column enabled;
 alter table CampaignDefinition
 drop column sla;
 
+alter table CampaignDefinition
+drop column lastExecution;
+
 
 alter table CampaignDefinition
 add column deadline datetime;
@@ -101,10 +101,28 @@ add column startedAt datetime;
 alter table CampaignDefinition
 add column certificationWorkflowName varchar(255);
 
+alter table CampaignDefinition
+add column status varchar(255);
+
 -- adicionar atributo lastCertificationExecutionDate na Entry
 
 alter table Entry
 add column lastCertificationExecutionDate datetime;
 
 
+-- com.blazon.governance.certification.campaign.jobs.CertificationCampaignExecutionInstanceJob
+
+insert into Job (className, description, displayName, parameters) values ('com.blazon.governance.certification.campaign.jobs.CertificationCampaignExecutionInstanceJob', 
+'Certification Campaign Execution Instance Job.', 'Certification Campaign Execution Instance Job', null);
+
+insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
+select 'Certification Campaign Execution Instance Job' as name, 
+	'[{\"name\":\"instanceQueueLength\", \"value\":\"10\"}]' as params, 
+	job.id as job_id, 
+	false as activated, 
+	'0 0/1 * * * ?' as cronExpression,
+	'Blazon Jobs' as externalGroupId,
+	'Certification Campaign Execution Instance Job' as externalJobDetailId
+from Job job
+where job.className = 'com.blazon.governance.certification.campaign.jobs.CertificationCampaignExecutionInstanceJob';
 
