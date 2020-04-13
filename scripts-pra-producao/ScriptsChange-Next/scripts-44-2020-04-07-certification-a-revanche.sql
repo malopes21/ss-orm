@@ -126,3 +126,81 @@ select 'Certification Campaign Execution Instance Job' as name,
 from Job job
 where job.className = 'com.blazon.governance.certification.campaign.jobs.CertificationCampaignExecutionInstanceJob';
 
+-- ajuste de paths de jobs
+
+-- com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignExecutionInstanceJob
+
+update Job 
+set className = 'com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignExecutionInstanceJob'
+where className like '%CertificationCampaignExecutionInstanceJob';
+
+
+-- com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignFinalizeJob	
+
+update Job 
+set className = 'com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignFinalizeJob'
+where className like '%CertificationCampaignFinalizeJob';
+
+
+-- com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignStartJob
+
+update Job 
+set className = 'com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignStartJob'
+where className like '%CertificationCampaignStartJob';
+
+
+-- com.blazon.governance.certification.types.campaigns.jobs.RevokeEntriesFromCampaignsCertificationsWithDeadlineReachedJob
+
+update Job 
+set className = 'com.blazon.governance.certification.types.campaigns.jobs.RevokeEntriesFromCampaignsCertificationsWithDeadlineReachedJob'
+where className like '%RevokeEntriesFromCampaignsCertificationsWithDeadlineReachedJob';
+
+
+-- com.blazon.governance.certification.types.policies.jobs.CertificationPolicyExecutorJob
+
+update Job 
+set className = 'com.blazon.governance.certification.types.policies.jobs.CertificationPolicyExecutorJob'
+where className like '%CertificationPolicyExecutorJob';
+
+
+-- com.blazon.governance.certification.process.statemachine.jobs.CertificationQueueJob
+
+update Job 
+set className = 'com.blazon.governance.certification.process.statemachine.jobs.CertificationQueueJob'
+where className like '%CertificationQueueJob';
+
+
+-- com.blazon.governance.certification.process.statemachine.jobs.CertificationRevokeExecutionQueueJob
+
+update Job 
+set className = 'com.blazon.governance.certification.process.statemachine.jobs.CertificationRevokeExecutionQueueJob'
+where className like '%CertificationRevokeExecutionQueueJob';
+
+
+-- com.blazon.governance.certification.types.selectors.instance.jobs.CertificationSelectorExecutionInstanceFinalizeJob
+
+update Job 
+set className = 'com.blazon.governance.certification.types.selectors.instance.jobs.CertificationSelectorExecutionInstanceFinalizeJob'
+where className like '%CertificationSelectorExecutionInstanceFinalizeJob';
+
+
+-- com.blazon.governance.certification.types.selectors.instance.jobs.RevokeEntriesFromSelectorsCertificationsWithDeadlineReachedJob
+
+update Job 
+set className = 'com.blazon.governance.certification.types.selectors.instance.jobs.RevokeEntriesFromSelectorsCertificationsWithDeadlineReachedJob'
+where className like '%RevokeEntriesFromSelectorsCertificationsWithDeadlineReachedJob';
+
+
+-- com.blazon.governance.certification.types.micro.jobs.MicroCertificationExecutionInstanceFinalizeJob
+
+update Job 
+set className = 'com.blazon.governance.certification.types.micro.jobs.MicroCertificationExecutionInstanceFinalizeJob'
+where className like '%MicroCertificationExecutionInstanceFinalizeJob';
+
+
+-- com.blazon.governance.certification.types.micro.jobs.RevokeEntriesFromMicroCertificationsWithDeadlineReachedJob
+
+update Job 
+set className = 'com.blazon.governance.certification.types.micro.jobs.RevokeEntriesFromMicroCertificationsWithDeadlineReachedJob'
+where className like '%RevokeEntriesFromMicroCertificationsWithDeadlineReachedJob';
+
