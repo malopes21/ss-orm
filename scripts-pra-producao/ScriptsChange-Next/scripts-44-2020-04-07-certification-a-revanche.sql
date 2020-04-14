@@ -204,3 +204,47 @@ update Job
 set className = 'com.blazon.governance.certification.types.micro.jobs.RevokeEntriesFromMicroCertificationsWithDeadlineReachedJob'
 where className like '%RevokeEntriesFromMicroCertificationsWithDeadlineReachedJob';
 
+
+-- Remover a tabela CertificationSelector
+
+alter table SelectorExecutionInstance drop foreign key FKrrbdlit9u6jlc2flnnl2krg7o;
+
+alter table CertificationEntry drop foreign key FK5299i3hbcyb6cnhqkscp4lieq;
+
+drop table CertificationSelector;
+
+
+-- Renomear o atributo selector para policy em SelectorExecutionInstance
+
+alter table SelectorExecutionInstance drop column selector_id;
+
+alter table SelectorExecutionInstance add column policy_id bigint;
+
+
+-- ajustar os campos de CertificationPolicy
+
+alter table CertificationPolicy drop column certificationObjectType;
+
+alter table CertificationPolicy drop column certificationWorkflowName;
+
+alter table CertificationPolicy drop column criticity;
+
+alter table CertificationPolicy drop column filterObjectType;
+
+alter table CertificationPolicy drop column filterObjectTypeId;
+
+alter table CertificationPolicy drop column numberOfDaysSinceLastCertification;
+
+alter table CertificationPolicy drop column selectAllEntries;
+
+alter table CertificationPolicy drop column selectNotCertifiableEntries;
+
+alter table CertificationPolicy drop column userFilterRules;
+
+
+alter table CertificationPolicy add column configuration longtext;
+
+alter table CertificationPolicy add column type varchar(255);
+
+
+
