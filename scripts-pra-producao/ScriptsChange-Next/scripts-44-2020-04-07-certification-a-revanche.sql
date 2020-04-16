@@ -36,6 +36,9 @@ drop column limitOfEntriesByExecution;
 alter table CertificationPolicy
 drop column selectExpiratedEntries;
 
+alter table CertificationPolicy
+drop column processedAt;
+
 -- add column to CertitficationPolicy
 
 alter table CertificationPolicy
@@ -54,9 +57,9 @@ alter table CertificationPolicy
 add column sla integer;
 
 
--- com.blazon.governance.certification.policy.jobs.CertificationPolicyExecutorJob
+-- com.blazon.governance.certification.types.policies.periodicitybased.jobs.CertificationPolicyExecutorJob
 
-insert into Job (className, description, displayName, parameters) values ('com.blazon.governance.certification.policy.jobs.CertificationPolicyExecutorJob', 
+insert into Job (className, description, displayName, parameters) values ('com.blazon.governance.certification.types.policies.periodicitybased.jobs.CertificationPolicyExecutorJob', 
 'Certification Policy Executor Job.', 'Certification Policy Executor Job', null);
 
 insert into JobInstance (name, params, job_id, activated, cronExpression, externalGroupId, externalJobDetailId) 
@@ -68,7 +71,7 @@ select 'Certification Policy Executor Job' as name,
 	'Blazon Jobs' as externalGroupId,
 	'Certification Policy Executor Job' as externalJobDetailId
 from Job job
-where job.className = 'com.blazon.governance.certification.policy.jobs.CertificationPolicyExecutorJob';
+where job.className = 'com.blazon.governance.certification.types.policies.periodicitybased.jobs.CertificationPolicyExecutorJob';
 
 
 -- CampaignDefinition
@@ -128,6 +131,13 @@ where job.className = 'com.blazon.governance.certification.campaign.jobs.Certifi
 
 -- ajuste de paths de jobs
 
+-- com.blazon.governance.certification.types.policies.periodicitybased.jobs.CertificationPolicyExecutorJob
+
+update Job 
+set className = 'com.blazon.governance.certification.types.policies.periodicitybased.jobs.CertificationPolicyExecutorJob'
+where className like '%CertificationPolicyExecutorJob';
+
+
 -- com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignExecutionInstanceJob
 
 update Job 
@@ -177,17 +187,17 @@ set className = 'com.blazon.governance.certification.process.statemachine.jobs.C
 where className like '%CertificationRevokeExecutionQueueJob';
 
 
--- com.blazon.governance.certification.types.selectors.instance.jobs.CertificationSelectorExecutionInstanceFinalizeJob
+-- com.blazon.governance.certification.types.policies.userattributeschangebased.instance.jobs.CertificationSelectorExecutionInstanceFinalizeJob
 
 update Job 
-set className = 'com.blazon.governance.certification.types.selectors.instance.jobs.CertificationSelectorExecutionInstanceFinalizeJob'
+set className = 'com.blazon.governance.certification.types.policies.userattributeschangebased.instance.jobs.CertificationSelectorExecutionInstanceFinalizeJob'
 where className like '%CertificationSelectorExecutionInstanceFinalizeJob';
 
 
--- com.blazon.governance.certification.types.selectors.instance.jobs.RevokeEntriesFromSelectorsCertificationsWithDeadlineReachedJob
+-- com.blazon.governance.certification.types.policies.userattributeschangebased.instance.jobs.RevokeEntriesFromSelectorsCertificationsWithDeadlineReachedJob
 
 update Job 
-set className = 'com.blazon.governance.certification.types.selectors.instance.jobs.RevokeEntriesFromSelectorsCertificationsWithDeadlineReachedJob'
+set className = 'com.blazon.governance.certification.types.policies.userattributeschangebased.instance.jobs.RevokeEntriesFromSelectorsCertificationsWithDeadlineReachedJob'
 where className like '%RevokeEntriesFromSelectorsCertificationsWithDeadlineReachedJob';
 
 
