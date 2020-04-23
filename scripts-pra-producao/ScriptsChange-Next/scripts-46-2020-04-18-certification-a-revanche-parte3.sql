@@ -50,6 +50,9 @@ ALTER TABLE MicroCertificationExecutionInstance
 drop COLUMN finalizeDate;
 
 ALTER TABLE MicroCertificationExecutionInstance
+add COLUMN startedAt datetime;
+
+ALTER TABLE MicroCertificationExecutionInstance
 add COLUMN createdAt datetime;
 
 ALTER TABLE MicroCertificationExecutionInstance
