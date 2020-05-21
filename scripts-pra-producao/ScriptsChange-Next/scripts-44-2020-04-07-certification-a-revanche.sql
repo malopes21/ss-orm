@@ -151,19 +151,17 @@ where className like '%CertificationCampaignStartJob';
 
 
 -- CAMPAIGN: com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignFinalizeWithDeadlineReachedJob
-
-update Job 
-set className = 'com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignFinalizeWithDeadlineReachedJob',
-description = 'Certification Campaign Finalize With Deadline Reached Job.',
-displayName = 'Certification Campaign Finalize With Deadline Reached Job'
-where className like '%RevokeEntriesFromCampaignsCertificationsWithDeadlineReachedJob';
-
 UPDATE JobInstance set 
 name = 'Certification Campaign Finalize With Deadline Reached Job',
 description = 'Certification Campaign Finalize With Deadline Reached Job.',
 externalJobDetailId = 'Certification Campaign Finalize With Deadline Reached Job'
 where job_id in ( select id from Job where className like '%RevokeEntriesFromCampaignsCertificationsWithDeadlineReachedJob');
 
+update Job 
+set className = 'com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignFinalizeWithDeadlineReachedJob',
+description = 'Certification Campaign Finalize With Deadline Reached Job.',
+displayName = 'Certification Campaign Finalize With Deadline Reached Job'
+where className like '%RevokeEntriesFromCampaignsCertificationsWithDeadlineReachedJob';
 
 -- CAMPAIGN: com.blazon.governance.certification.types.campaigns.jobs.CertificationCampaignSearchWithDeadlineReachedJob
 
@@ -322,7 +320,6 @@ where className like '%CertificationQueueJob';
 update Job 
 set className = 'com.blazon.governance.certification.process.statemachine.jobs.CertificationRevokeExecutionQueueJob'
 where className like '%CertificationRevokeExecutionQueueJob';
-
 
 
 -- Remover a tabela CertificationSelector
