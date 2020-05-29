@@ -1,4 +1,94 @@
 
+-- update BlazonMultipleRequestFinalizeInExecutionJob
+
+UPDATE JobInstance set 
+name = 'Blazon Multiple Request Finalize In Execution Job',
+description = 'Blazon Multiple Request Finalize In Execution Job.',
+externalJobDetailId = 'Blazon Multiple Request Finalize In Execution Job'
+where job_id in ( select id from Job where className like '%BlazonMultipleRequestFinalizeInExecutionJob');
+
+update Job 
+set className = 'com.blazon.requests.engine.jobs.BlazonMultipleRequestFinalizeInExecutionJob',
+description = 'Blazon Multiple Request Finalize In Execution Job.',
+displayName = 'Blazon Multiple Request Finalize In Execution Job'
+where className like '%BlazonMultipleRequestFinalizeInExecutionJob';
+
+
+-- update BlazonRequestExecutionQueueJob
+
+UPDATE JobInstance set 
+name = 'Blazon Request Execution Queue Job',
+description = 'Blazon Request Execution Queue Job.',
+externalJobDetailId = 'Blazon Request Execution Queue Job'
+where job_id in ( select id from Job where className like '%BlazonRequestExecutionQueueJob');
+
+update Job 
+set className = 'com.blazon.requests.engine.jobs.BlazonRequestExecutionQueueJob',
+description = 'Blazon Request Execution Queue Job.',
+displayName = 'Blazon Request Execution Queue Job'
+where className like '%BlazonRequestExecutionQueueJob';
+
+
+-- update BlazonRequestNewVerifierJob
+
+UPDATE JobInstance set 
+name = 'Blazon Request New Verifier Job',
+description = 'Blazon Request New Verifier Job.',
+externalJobDetailId = 'Blazon Request New Verifier Job'
+where job_id in ( select id from Job where className like '%BlazonRequestNewVerifierJob');
+
+update Job 
+set className = 'com.blazon.requests.engine.jobs.BlazonRequestNewVerifierJob',
+description = 'Blazon Request New Verifier Job.',
+displayName = 'Blazon Request New Verifier Job'
+where className like '%BlazonRequestNewVerifierJob';
+
+
+-- update BlazonRequestQueueJob
+
+UPDATE JobInstance set 
+name = 'Blazon Request Queue Job',
+description = 'Blazon Request Queue Job.',
+externalJobDetailId = 'Blazon Request Queue Job'
+where job_id in ( select id from Job where className like '%BlazonRequestQueueJob');
+
+update Job 
+set className = 'com.blazon.requests.engine.jobs.BlazonRequestQueueJob',
+description = 'Blazon Request Queue Job.',
+displayName = 'Blazon Request Queue Job'
+where className like '%BlazonRequestQueueJob';
+
+
+-- update BlazonRequestWaitingDependenciesVerifierJob
+
+UPDATE JobInstance set 
+name = 'Blazon Request Waiting Dependencies Verifier Job',
+description = 'Blazon Request Waiting Dependencies Verifier Job.',
+externalJobDetailId = 'Blazon Request Waiting Dependencies Verifier Job'
+where job_id in ( select id from Job where className like '%BlazonRequestWaitingDependenciesVerifierJob');
+
+update Job 
+set className = 'com.blazon.requests.engine.jobs.BlazonRequestWaitingDependenciesVerifierJob',
+description = 'Blazon Request Waiting Dependencies Verifier Job.',
+displayName = 'Blazon Request Waiting Dependencies Verifier Job'
+where className like '%BlazonRequestWaitingDependenciesVerifierJob';
+
+
+-- update BlazonRequestWaitingResolvingEntryDependenciesFunctionJob
+
+UPDATE JobInstance set 
+name = 'Blazon Request Waiting Resolving Entry Dependencies Function Job',
+description = 'Blazon Request Waiting Resolving Entry Dependencies Function Job.',
+externalJobDetailId = 'Blazon Request Waiting Resolving Entry Dependencies Function Job'
+where job_id in ( select id from Job where className like '%BlazonRequestWaitingResolvingEntryDependenciesFunctionJob');
+
+update Job 
+set className = 'com.blazon.requests.engine.jobs.BlazonRequestWaitingResolvingEntryDependenciesFunctionJob',
+description = 'Blazon Request Waiting Resolving Entry Dependencies Function Job.',
+displayName = 'Blazon Request Waiting Resolving Entry Dependencies Function Job'
+where className like '%BlazonRequestWaitingResolvingEntryDependenciesFunctionJob';
+
+
 -- com.blazon.authentication.module.securechannel.jobs.SecureChannelSendTokenJob
 
 UPDATE JobInstance set 
@@ -370,10 +460,6 @@ description = 'Task Escalation Time Based Job.',
 displayName = 'Task Escalation Time Based Job'
 where className like '%TaskEscalationTimeBasedJob';	
 
-
-
-
-
 -- com.blazon.humantasks.escalations.auto.jobs.FindTasksReadyToCancelationJob
 
 UPDATE JobInstance set 
@@ -402,7 +488,6 @@ description = 'Find Tasks To Waiting Escalation Job.',
 displayName = 'Find Tasks To Waiting Escalation Job'
 where className like '%FindTasksToWaitingEscalationJob';	
 
-
 -- com.blazon.humantasks.escalations.auto.jobs.ResolveTasksInWaitingEscalationJob
 
 UPDATE JobInstance set 
@@ -416,9 +501,6 @@ set className = 'com.blazon.humantasks.escalations.auto.jobs.ResolveTasksInWaiti
 description = 'Resolve Tasks In Waiting Escalation Job.',
 displayName = 'Resolve Tasks In Waiting Escalation Job'
 where className like '%ResolveTasksInWaitingEscalationJob';	
-
-
-
 
 -- com.blazon.provisioning.engine.jobs.ProvisioningDispatchFailoverWorkflowExecutionJob
 
@@ -781,21 +863,6 @@ displayName = 'Calculate User Risk Job'
 where className like '%CalculateUserRiskJob';
 
 
--- com.blazon.usermanagement.jobs.CalculateUserRiskJob
-
-UPDATE JobInstance set 
-name = 'Calculate User Risk Job',
-description = 'Calculate User Risk Job.',
-externalJobDetailId = 'Calculate User Risk Job'
-where job_id in ( select id from Job where className like '%CalculateUserRiskJob');
-
-update Job 
-set className = 'com.blazon.usermanagement.jobs.CalculateUserRiskJob',
-description = 'Calculate User Risk Job.',
-displayName = 'Calculate User Risk Job'
-where className like '%CalculateUserRiskJob';
-
-
 -- com.blazon.usermanagement.jobs.FindUserReadyToRemove
 
 UPDATE JobInstance set 
@@ -956,14 +1023,6 @@ where job_id IN
 
 delete from Job	
 where className like '%RevokeUsersJob';
-
-
-
-
-
-
-
-
 
 
 
