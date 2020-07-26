@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram version="1" name="Aula01.erd">
+	<entities>
+		<data-source id="mysql5-1701d047d49-55d876adbec569d2">
+			<entity id="1" name="D_Cliente" fq-name="DW.D_Cliente" order="0" x="985" y="357">
+				<path name="DW"/>
+			</entity>
+			<entity id="2" name="D_Data" fq-name="DW.D_Data" order="1" x="663" y="217">
+				<path name="DW"/>
+			</entity>
+			<entity id="3" name="D_Funcionario" fq-name="DW.D_Funcionario" order="2" x="600" y="31">
+				<path name="DW"/>
+			</entity>
+			<entity id="4" name="D_GrupoGeografico" fq-name="DW.D_GrupoGeografico" order="3" x="28" y="41">
+				<path name="DW"/>
+			</entity>
+			<entity id="5" name="D_Pais" fq-name="DW.D_Pais" order="4" x="203" y="166">
+				<path name="DW"/>
+			</entity>
+			<entity id="6" name="D_Produto" fq-name="DW.D_Produto" order="5" x="599" y="666">
+				<path name="DW"/>
+			</entity>
+			<entity id="7" name="D_RegiaoVendas" fq-name="DW.D_RegiaoVendas" order="6" x="367" y="161">
+				<path name="DW"/>
+			</entity>
+			<entity id="8" name="F_Venda" fq-name="DW.F_Venda" order="7" x="339" y="340">
+				<path name="DW"/>
+			</entity>
+			<entity id="9" name="F_VendaDetalhe" fq-name="DW.F_VendaDetalhe" order="8" x="624" y="364">
+				<path name="DW"/>
+			</entity>
+		</data-source>
+	</entities>
+	<relations/>
+</diagram>

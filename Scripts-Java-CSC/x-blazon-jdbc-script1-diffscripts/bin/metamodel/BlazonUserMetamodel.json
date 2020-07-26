@@ -1,0 +1,35 @@
+{
+	"root": "User",
+	"_attributes": {
+		"id": {
+			"_type": "Long",
+			"_metatype": "Java"
+		},
+		"state": {
+			"_type": "String",
+			"_metatype": "Java"
+		},
+		"createdBy": {
+			"_type": "CreatedBy",
+			"_metatype": "Blazon",
+			"_attributes": {
+				"id": {
+					"_type": "Long",
+					"_metatype": "Java"
+				},
+				"type": {
+					"_type": "String",
+					"_metatype": "Java"
+				},
+				"objectId": {
+					"_type": "String",
+					"_metatype": "Java"
+				}
+			}
+		},
+		"firstName": {
+			"_type": "String",
+			"_metatype": "Java"
+		}
+	}
+}

@@ -1,0 +1,74 @@
+{
+	"folders": {},
+	"connections": {
+		"mysql5-16e64e6fc24-19d77fec8b00f437": {
+			"provider": "mysql",
+			"driver": "mysql5",
+			"name": "MySQL - blazon",
+			"save-password": true,
+			"read-only": false,
+			"configuration": {
+				"host": "localhost",
+				"port": "3306",
+				"database": "blazon",
+				"url": "jdbc:mysql://localhost:3306/blazon",
+				"home": "/usr",
+				"type": "dev"
+			}
+		},
+		"mysql5-16f0fb83027-7651e908e576afce": {
+			"provider": "mysql",
+			"driver": "mysql5",
+			"name": "MySQL - blazon 2",
+			"save-password": true,
+			"read-only": false,
+			"configuration": {
+				"host": "localhost",
+				"port": "3306",
+				"database": "blazon",
+				"url": "jdbc:mysql://localhost:3306/blazon",
+				"home": "/usr",
+				"type": "dev"
+			}
+		},
+		"mysql5-16f32f79f77-2201f3f3ddba637f": {
+			"provider": "mysql",
+			"driver": "mysql5",
+			"name": "MySQL - blazon 3",
+			"save-password": true,
+			"read-only": false,
+			"configuration": {
+				"host": "localhost",
+				"port": "3306",
+				"database": "blazon",
+				"url": "jdbc:mysql://localhost:3306/blazon",
+				"home": "/usr",
+				"type": "dev",
+				"handlers": {}
+			}
+		}
+	},
+	"virtual-models": {
+		"mysql5-16e64e6fc24-19d77fec8b00f437": {
+			"blazon": {
+				":CampaignExecutionInstance_CertificationEntry": {
+					"properties": {
+						"erd.diagram.state": {
+							"serialized": "<diagram version=\"1\" name=\"CampaignExecutionInstance_CertificationEntry\" time=\"201911261740\"><entities><data-source id=\"mysql5-16e64e6fc24-19d77fec8b00f437\"><entity id=\"1\" name=\"CampaignExecutionInstance_CertificationEntry\" fq-name=\"blazon.CampaignExecutionInstance_CertificationEntry\" order=\"0\" color-bg=\"255,128,64\" x=\"20\" y=\"348\"><path name=\"blazon\"/></entity><entity id=\"2\" name=\"CertificationEntry\" fq-name=\"blazon.CertificationEntry\" order=\"1\" x=\"404\" y=\"20\"><path name=\"blazon\"/></entity><entity id=\"3\" name=\"CampaignExecutionInstance\" fq-name=\"blazon.CampaignExecutionInstance\" order=\"2\" x=\"404\" y=\"467\"><path name=\"blazon\"/></entity><entity id=\"4\" name=\"CampaignDefinition_CertificationPolicy\" fq-name=\"blazon.CampaignDefinition_CertificationPolicy\" order=\"3\" x=\"904\" y=\"424\"><path name=\"blazon\"/></entity><entity id=\"5\" name=\"CampaignDefinition\" fq-name=\"blazon.CampaignDefinition\" order=\"4\" x=\"866\" y=\"129\"><path name=\"blazon\"/></entity><entity id=\"6\" name=\"CertificationPolicy\" fq-name=\"blazon.CertificationPolicy\" order=\"5\" border-width=\"3\" x=\"778\" y=\"631\"><path name=\"blazon\"/></entity></data-source></entities><relations><relation name=\"FK2fr87upivbvhydyvk9p65efd4\" fq-name=\"blazon.CampaignExecutionInstance_CertificationEntry.FK2fr87upivbvhydyvk9p65efd4\" type=\"fk\" pk-ref=\"2\" fk-ref=\"1\"/><relation name=\"FKd58k3coi84soje4v4dmtjx0ew\" fq-name=\"blazon.CampaignExecutionInstance_CertificationEntry.FKd58k3coi84soje4v4dmtjx0ew\" type=\"fk\" pk-ref=\"3\" fk-ref=\"1\"/><relation name=\"FKtkbluunr5y46x411vhu6rmrx6\" fq-name=\"blazon.CampaignExecutionInstance.FKtkbluunr5y46x411vhu6rmrx6\" type=\"fk\" pk-ref=\"5\" fk-ref=\"3\"/><relation name=\"FKko0ibm9slpc7iifbxmistfd2y\" fq-name=\"blazon.CampaignDefinition_CertificationPolicy.FKko0ibm9slpc7iifbxmistfd2y\" type=\"fk\" pk-ref=\"5\" fk-ref=\"4\"/><relation name=\"FK1x242ckfigtodvrmwt2s21i7h\" fq-name=\"blazon.CertificationEntry.FK1x242ckfigtodvrmwt2s21i7h\" type=\"fk\" pk-ref=\"6\" fk-ref=\"2\"/><relation name=\"FKas66va1cvim2nfnk3ktlm5kj9\" fq-name=\"blazon.CampaignDefinition_CertificationPolicy.FKas66va1cvim2nfnk3ktlm5kj9\" type=\"fk\" pk-ref=\"6\" fk-ref=\"4\"/></relations></diagram>"
+						}
+					}
+				}
+			}
+		}
+	},
+	"connection-types": {
+		"dev": {
+			"name": "Development",
+			"color": "255,255,255",
+			"description": "Regular development database",
+			"auto-commit": true,
+			"confirm-execute": false,
+			"confirm-data-change": false
+		}
+	}
+}

@@ -1,0 +1,106 @@
+{
+	"root": "User",
+	"_attributes": {
+		"id": {
+			"_type": "Long",
+			"_metatype": "Java",
+			"_mappingTo": "Entry.id"
+		},
+		"state": {
+			"_type": "String",
+			"_metatype": "Java",
+			"_mappingTo": "Entry.state"
+		},
+		"provisioningStatus": {
+			"_type": "String",
+			"_metatype": "Java",
+			"_mappingTo": "Entry.provisioningStatus"
+		},
+		"createdBy": {
+			"_type": "CreatedBy",
+			"_metatype": "Blazon",
+			"_attributes": {
+				"id": {
+					"_type": "Long",
+					"_metatype": "Java",
+					"_mappingTo": "CreatedBy.id"
+				},
+				"type": {
+					"_type": "String",
+					"_metatype": "Java",
+					"_mappingTo": "CreatedBy.type"
+				},
+				"objectId": {
+					"_type": "String",
+					"_metatype": "Java",
+					"_mappingTo": "CreatedBy.objectId"
+				}
+			}
+		},
+		"createdAt": {
+			"_type": "Date",
+			"_metatype": "Java",
+			"_mappingTo": "Entry.createdAt"
+		},
+		"modifiedAt": {
+			"_type": "Date",
+			"_metatype": "Java",
+			"_mappingTo": "Entry.modifiedAt"
+		},
+		"expireAt": {
+			"_type": "Date",
+			"_metatype": "Java",
+			"_mappingTo": "Entry.expireAt"
+		},
+		"certificatedAt": {
+			"_type": "Date",
+			"_metatype": "Java",
+			"_mappingTo": "Entry.certificatedAt"
+		},
+		"risk": {
+			"_type": "String",
+			"_metatype": "Java",
+			"_mappingTo": "Entry.risk"
+		},
+		"managedBy": {
+			"_type": "ManagedBy",
+			"_metatype": "Blazon",
+			"_attributes": {
+				"id": {
+					"_type": "Long",
+					"_metatype": "Java",
+					"_mappingTo": "CreatedBy.id"
+				},
+				"type": {
+					"_type": "String",
+					"_metatype": "Java",
+					"_mappingTo": "CreatedBy.type"
+				},
+				"objectId": {
+					"_type": "String",
+					"_metatype": "Java",
+					"_mappingTo": "CreatedBy.objectId"
+				}
+			}
+		},
+		"firstName": {
+			"_type": "String",
+			"_metatype": "Java",
+			"_mappingTo": "User.firstName"
+		}
+	},
+	"tables": {
+		"Entry": {
+			"_pk": "id",
+			"_type": "bigint"
+		},
+		"CreatedBy": {
+			"_pk": "id",
+			"_type": "bigint"
+		},
+		"User": {
+			"_pk": "id",
+			"_type": "bigint"
+		}
+	}
+}

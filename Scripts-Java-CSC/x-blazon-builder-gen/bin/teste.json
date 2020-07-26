@@ -1,0 +1,1 @@
+{"nested":{"path":"referenceTo","query":{"bool":{"must":[{"match":{"referenceTo.referenceToIdentifier":?0}},{"match":{"referenceTo.referenceToType":"?1"}}]}},"score_mode":"avg"}}

@@ -1,0 +1,582 @@
+IDENTITY  ANALYTICS_CERTIFICATION_CAMPAIGN_DETAIL_FACT
+
+IDENTITY  ANALYTICS_CERTIFICATION_CAMPAIGN_POLICY_DIMENSION
+
+IDENTITY  ANALYTICS_CERTIFICATION_CAMPAIGN_RESUME_FACT
+
+IDENTITY  ANALYTICS_CERTIFICATION_EXECUTOR_FACT
+
+IDENTITY  ANALYTICS_CERTIFICATION_EXECUTOR_INSTANCE_DIMENSION
+
+IDENTITY  ANALYTICS_CERTIFICATION_EXECUTOR_USER_DIMENSION
+
+IDENTITY  ANALYTICS_CERTIFICATION_MICRO_DETAIL_FACT
+
+IDENTITY  ANALYTICS_CERTIFICATION_MICRO_RESUME_FACT
+
+IDENTITY  ANALYTICS_CERTIFICATION_SELECTOR_DETAIL_FACT
+
+IDENTITY  ANALYTICS_CERTIFICATION_SELECTOR_RESUME_FACT
+
+IDENTITY  ANALYTICS_CERTIFICATION_SELECTOR_SELECTOR_DIMENSION
+
+IDENTITY  ANALYTICS_CERTIFICATION_SELECTOR_USER_DIMENSION
+
+IDENTITY  ANALYTICS_CERTIFICATION_TASK_FACT
+
+IDENTITY  ANALYTICS_CERTIFICATION_TASK_INSTANCE_DIMENSION
+
+IDENTITY  ANALYTICS_DIRECTORY_MANAGEMENT_DETAIL_FACT
+
+IDENTITY  ANALYTICS_DIRECTORY_OBJECTS_CREATION_DETAIL_FACT
+
+IDENTITY  ANALYTICS_DIRECTORY_OBJECTS_DETAIL_FACT
+
+IDENTITY  ANALYTICS_DIRECTORY_OBJECTS_FACT
+
+IDENTITY  ANALYTICS_DIRECTORY_RISK_DETAIL_FACT
+
+IDENTITY  ANALYTICS_PROVISIONING_ENTRY_ENTRY_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_ENTRY_FACT
+
+IDENTITY  ANALYTICS_PROVISIONING_ENTRY_OPERATION_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_ENTRY_TYPE_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_ENTRY_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_EXECUTOR_ENTRY_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_EXECUTOR_FACT
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_EXECUTOR_TYPE_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_EXECUTOR_USER_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_FACT
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_QUEUE_ENTRY_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_QUEUE_FACT
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_QUEUE_NAME_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_QUEUE_TYPE_DIMENSION
+
+IDENTITY  ANALYTICS_PROVISIONING_TASK_TYPE_DIMENSION
+
+IDENTITY  ANALYTICS_RECONCILIATION_RESUME_BATCH_DIMENSION
+
+IDENTITY  ANALYTICS_RECONCILIATION_RESUME_FACT
+
+IDENTITY  ANALYTICS_RECONCILIATION_RESUME_PROFILE_DIMENSION
+
+IDENTITY  ANALYTICS_RECONCILIATION_RESUME_RESOURCE_DIMENSION
+
+IDENTITY  ANALYTICS_RECONCILIATION_SITUATION_BATCH_DIMENSION
+
+IDENTITY  ANALYTICS_RECONCILIATION_SITUATION_ENTRY_TYPE_DIMENSION
+
+IDENTITY  ANALYTICS_RECONCILIATION_SITUATION_FACT
+
+IDENTITY  ANALYTICS_RECONCILIATION_SITUATION_PROFILE_DIMENSION
+
+IDENTITY  ANALYTICS_RECONCILIATION_SITUATION_RESOURCE_DIMENSION
+
+IDENTITY  ANALYTICS_REQUEST_APPROVAL_TASK_ENTRY_DIMENSION
+
+IDENTITY  ANALYTICS_REQUEST_APPROVAL_TASK_EXECUTOR_ENTRY_DIMENSION
+
+IDENTITY  ANALYTICS_REQUEST_APPROVAL_TASK_EXECUTOR_FACT
+
+IDENTITY  ANALYTICS_REQUEST_APPROVAL_TASK_EXECUTOR_TYPE_DIMENSION
+
+IDENTITY  ANALYTICS_REQUEST_APPROVAL_TASK_EXECUTOR_USER_DIMENSION
+
+IDENTITY  ANALYTICS_REQUEST_APPROVAL_TASK_FACT
+
+IDENTITY  ANALYTICS_REQUEST_APPROVAL_TASK_TYPE_DIMENSION
+
+IDENTITY  ANALYTICS_REQUEST_RESUME_ENTRYTYPE_DIMENSION
+
+IDENTITY  ANALYTICS_REQUEST_RESUME_FACT
+
+IDENTITY  ANALYTICS_REQUEST_RESUME_TYPE_DIMENSION
+
+IDENTITY  Account
+
+IDENTITY  AccountNotificationSettings
+
+UPDATE  AccountPasswordVault
+	ALTER TABLE AccountPasswordVault DROP COLUMN userId;			------ DONE
+
+IDENTITY  ApprovalPolicy
+
+IDENTITY  ApprovalTaskDetail
+
+IDENTITY  AssignmentDirectoryEntry
+
+IDENTITY  AssignmentEntry
+
+UPDATE  AssignmentPolicy
+	ALTER TABLE AssignmentPolicy DROP COLUMN revokeType;			------ DONE
+
+IDENTITY  AssignmentRoleRevokeEntry
+
+IDENTITY  AssignmentRoleRevokeRole
+
+IDENTITY  AssignmentRoleRevokeUser
+
+IDENTITY  AssociationRule
+
+UPDATE  AttributeMap
+	UPDATE  value  varchar(2000)									------- DONE
+
+IDENTITY  AttributeMapping
+
+IDENTITY  AttributeMapping_AttributeMap
+
+IDENTITY  AuthenticationMethodsNotificationSettings
+
+IDENTITY  AuthenticationPolicy
+
+IDENTITY  AuthenticationPolicyParameters
+
+IDENTITY  AuthenticationSourceKerberos
+
+IDENTITY  AuthenticationSourceLDAP
+
+IDENTITY  AuthenticationSourceOpenId
+
+IDENTITY  AuthenticationSourceSaml
+
+IDENTITY  BlazonAccessManagerSession
+
+IDENTITY  BlazonAccessManagerSessionAttributes
+
+UPDATE  BlazonRequest												-------- DONE  						(validar isso nos scripts da change  -- OK)
+	ALTER TABLE BlazonRequest ADD COLUMN account_id bigint(20);				-- ALTER TABLE BlazonRequest DROP COLUMN account_id
+	ALTER TABLE BlazonRequest ADD COLUMN entitlement_id bigint(20);			-- ALTER TABLE BlazonRequest DROP COLUMN entitlement_id
+	ALTER TABLE BlazonRequest ADD COLUMN membershipId bigint(20);			-- ALTER TABLE BlazonRequest DROP COLUMN membershipId
+	ALTER TABLE BlazonRequest ADD COLUMN operationWorkflowId bigint(20);	-- ALTER TABLE BlazonRequest DROP COLUMN operationWorkflowId
+	ALTER TABLE BlazonRequest ADD COLUMN resource_id bigint(20);			-- ALTER TABLE BlazonRequest DROP COLUMN resource_id
+	ALTER TABLE BlazonRequest ADD COLUMN role_id bigint(20);				-- ALTER TABLE BlazonRequest DROP COLUMN role_id
+
+IDENTITY  BlazonRequestApprovalTask
+
+IDENTITY  BlazonRequestDirectoryEntry
+
+IDENTITY  BlazonRequestNotificationSettings
+
+IDENTITY  BlazonRequestSodApprovalTask
+
+IDENTITY  BlazonRequestTransitionState
+
+IDENTITY  BlazonRequest_dependsOnIds
+
+IDENTITY  BllazonImage
+
+IDENTITY  CampaignDefinition
+
+IDENTITY  CampaignDefinition_CertificationPolicy
+
+IDENTITY  CampaignExecutionInstance
+
+IDENTITY  CampaignExecutionInstance_CertificationEntry
+
+IDENTITY  CertificationApprovalTask
+
+IDENTITY  CertificationApprovalTaskDetail
+
+IDENTITY  CertificationDirectoryEntry
+
+UPDATE  CertificationEntry
+	ALTER TABLE CertificationEntry ADD COLUMN uncertifiedEntryAction varchar(255);    ------- DONE ALTER TABLE CertificationEntry DROP COLUMN uncertifiedEntryAction
+
+IDENTITY  CertificationEntryTransitionState
+
+IDENTITY  CertificationNotificationSettings
+
+UPDATE  CertificationPolicy
+	ALTER TABLE CertificationPolicy ADD COLUMN uncertifiedEntryAction varchar(255);		----- DONE ALTER TABLE CertificationPolicy DROP COLUMN uncertifiedEntryAction;
+	ALTER TABLE CertificationPolicy DROP COLUMN enabled;								----- DONE 
+
+IDENTITY  CertificationSelector
+
+IDENTITY  ChangeApplicationAccountOwnerAccount
+
+UPDATE  ChangeApplicationAccountOwnerEntry												------ DONE
+	ALTER TABLE ChangeApplicationAccountOwnerEntry ADD COLUMN newOwner_id bigint(20);
+	ALTER TABLE ChangeApplicationAccountOwnerEntry ADD COLUMN resolveNote varchar(1000);
+	ALTER TABLE ChangeApplicationAccountOwnerEntry DROP COLUMN newOnwer_id;
+	ALTER TABLE ChangeApplicationAccountOwnerEntry DROP COLUMN observations;
+
+IDENTITY  ChangeApplicationAccountOwnerEntry_actions
+
+IDENTITY  ChangeApplicationAccountOwnerUser
+
+IDENTITY  ChangePasswordAccount
+
+IDENTITY  ChangePasswordAccountEntry
+
+IDENTITY  ChangePasswordResource
+
+IDENTITY  ChangePasswordUser
+
+IDENTITY  CheckinAdminAccountPasswordVault
+
+IDENTITY  CreatedBy
+
+IDENTITY  Dictionary
+
+IDENTITY  DictionaryWord
+
+IDENTITY  Domain
+
+IDENTITY  EmailQueueEntry
+
+IDENTITY  EmailQueueEntry_attachments
+
+IDENTITY  EmailQueueEntry_cc
+
+IDENTITY  Entitlement
+
+IDENTITY  Entitlement_User
+
+IDENTITY  Entry
+
+IDENTITY  EntryAttribute
+
+IDENTITY  EntryAttributeCategory
+
+IDENTITY  EntryAttributeValue
+
+IDENTITY  EventSetting
+
+IDENTITY  ExpirationOptions
+
+IDENTITY  Groupp
+
+IDENTITY  Groupp_InternalPermissionGroup
+
+IDENTITY  Groupp_User
+
+IDENTITY  ImportBatch
+
+IDENTITY  ImportBatchUser
+
+IDENTITY  ImportEntry
+
+IDENTITY  InactiveUserAccountRuleConfiguration
+
+IDENTITY  Inbox
+
+IDENTITY  InternalPermission
+
+IDENTITY  InternalPermissionGroup
+
+IDENTITY  InternalPermissionGroup_InternalPermission
+
+IDENTITY  Job
+
+IDENTITY  JobExecution
+
+IDENTITY  JobInstance
+
+IDENTITY  LogginModuleSettings
+
+IDENTITY  ManagedBy
+
+IDENTITY  ManagedBy_objectIds
+
+IDENTITY  MembershipEntitlement
+
+IDENTITY  MembershipEntitlementNotificationSettings
+
+IDENTITY  MembershipRole
+
+IDENTITY  MembershipRoleNotificationSettings
+
+IDENTITY  MfaSettings
+
+UPDATE  MicroCertificationExecutionInstance
+	ALTER TABLE MicroCertificationExecutionInstance ADD COLUMN uncertifiedEntryAction varchar(255);		----- ALTER TABLE MicroCertificationExecutionInstance DROP COLUMN uncertifiedEntryAction;
+
+IDENTITY  MicroCertificationExecutionInstance_CertificationEntry
+
+IDENTITY  NetworkConfig
+
+IDENTITY  NotificationSettings
+
+IDENTITY  OAuthAccessToken
+
+IDENTITY  OAuthApiClient
+
+IDENTITY  OAuthClient
+
+IDENTITY  OAuthCode
+
+IDENTITY  OS_CURRENTSTEP
+
+IDENTITY  OS_CURRENTSTEP_PREV
+
+IDENTITY  OS_GROUP
+
+IDENTITY  OS_HISTORYSTEP
+
+IDENTITY  OS_HISTORYSTEP_PREV
+
+IDENTITY  OS_MEMBERSHIP
+
+IDENTITY  OS_PROPERTYENTRY
+
+IDENTITY  OS_USER
+
+IDENTITY  OS_WFENTRY
+
+IDENTITY  OS_WORKFLOWDEFS
+
+IDENTITY  OtpTimeBasedConfiguration
+
+IDENTITY  OtpTimeBasedUserKey
+
+IDENTITY  Parameter
+
+IDENTITY  PasswordHistory
+
+IDENTITY  PasswordPolicy
+
+IDENTITY  PasswordPolicySettings
+
+IDENTITY  PasswordVaultEntry
+
+IDENTITY  PasswordVaultEntryAttribute
+
+IDENTITY  PasswordVaultNotificationSettings
+
+IDENTITY  PasswordVaultOwner
+
+IDENTITY  PasswordVaultShare
+
+IDENTITY  PasswordVaultWebScript
+
+IDENTITY  ProfileSituation
+
+UPDATE  ProvisioningDirectoryEntry												-- ALTER TABLE ProvisioningDirectoryEntry DROP COLUMN roleId
+	ALTER TABLE ProvisioningDirectoryEntry ADD COLUMN roleId bigint(20);			ALTER TABLE ProvisioningDirectoryEntry DROP COLUMN roleName
+	ALTER TABLE ProvisioningDirectoryEntry ADD COLUMN roleName varchar(255);
+
+IDENTITY  ProvisioningEntry
+
+IDENTITY  ProvisioningEntryTransitionState
+
+IDENTITY  ProvisioningNotificationSettings
+
+IDENTITY  ProvisioningParameters
+
+IDENTITY  ProvisioningTask
+
+IDENTITY  ProvisioningTaskDetail
+
+IDENTITY  QRTZ_BLOB_TRIGGERS
+
+IDENTITY  QRTZ_CALENDARS
+
+IDENTITY  QRTZ_CRON_TRIGGERS
+
+IDENTITY  QRTZ_FIRED_TRIGGERS
+
+IDENTITY  QRTZ_JOB_DETAILS
+
+IDENTITY  QRTZ_LOCKS
+
+IDENTITY  QRTZ_PAUSED_TRIGGER_GRPS
+
+IDENTITY  QRTZ_SCHEDULER_STATE
+
+IDENTITY  QRTZ_SIMPLE_TRIGGERS
+
+IDENTITY  QRTZ_SIMPROP_TRIGGERS
+
+IDENTITY  QRTZ_TRIGGERS
+
+IDENTITY  ReconciliationAction
+
+IDENTITY  ReconciliationAction_entryTypes
+
+IDENTITY  ReconciliationAction_situationNames
+
+IDENTITY  ReconciliationBatchEntry
+
+UPDATE  ReconciliationDirectoryEntry													------- DONE
+	ALTER TABLE ReconciliationDirectoryEntry ADD COLUMN accountId bigint(20);
+	ALTER TABLE ReconciliationDirectoryEntry ADD COLUMN entitlementId bigint(20);
+	ALTER TABLE ReconciliationDirectoryEntry ADD COLUMN entitlementName varchar(255);
+	ALTER TABLE ReconciliationDirectoryEntry ADD COLUMN roleId bigint(20);
+	ALTER TABLE ReconciliationDirectoryEntry ADD COLUMN roleName varchar(255);
+	ALTER TABLE ReconciliationDirectoryEntry ADD COLUMN userId bigint(20);
+	
+	ALTER TABLE ReconciliationDirectoryEntry DROP COLUMN account_id;
+	ALTER TABLE ReconciliationDirectoryEntry DROP COLUMN entitlement_id;
+	ALTER TABLE ReconciliationDirectoryEntry DROP COLUMN role_id;
+	ALTER TABLE ReconciliationDirectoryEntry DROP COLUMN user_id;
+
+IDENTITY  ReconciliationEntry
+
+IDENTITY  ReconciliationEntryTransitionState
+
+IDENTITY  ReconciliationEntry_matchedEntriesIds
+
+IDENTITY  ReconciliationEntry_matchedOwnersIds
+
+IDENTITY  ReconciliationNotificationSettings
+
+IDENTITY  ReconciliationProfile
+
+IDENTITY  ReconciliationProfile_AttributeMap
+
+IDENTITY  RemoveSharedAccountMembershipEntry
+
+IDENTITY  Resource
+
+IDENTITY  ResourceAdapter
+
+IDENTITY  ResourceAdapter_instances
+
+IDENTITY  ResourceCategory
+
+IDENTITY  ResourceProvisioningProfile
+
+IDENTITY  Resource_User
+
+IDENTITY  Rightt
+
+IDENTITY  Rightt_Entitlement
+
+IDENTITY  Role
+
+IDENTITY  RoleRightApprovalPolicy
+
+IDENTITY  RoleRightApprovalTask
+
+IDENTITY  RoleRightApprovalTaskDetail
+
+IDENTITY  RoleRightDirectoryEntry
+
+IDENTITY  RoleRightEntry
+
+IDENTITY  RoleRightEntryItem
+
+IDENTITY  RoleRightEntry_RoleRightEntryItem
+
+IDENTITY  RoleRightRevokeDirectoryEntry
+
+IDENTITY  RoleRightRevokeEntry
+
+IDENTITY  RoleRightRevokeNotificationSettings
+
+IDENTITY  Role_User
+
+IDENTITY  SAMLSession
+
+IDENTITY  SamlAuthenticationClient
+
+IDENTITY  SamlAuthenticationClient_attributes
+
+IDENTITY  SecretQuestion
+
+IDENTITY  SecureChannelOtpConfiguration
+
+IDENTITY  SecureChannelToken
+
+IDENTITY  SelectorExecutionInstance
+
+IDENTITY  SelectorExecutionInstance_CertificationEntry
+
+IDENTITY  SelfServiceCart
+
+UPDATE  SelfServiceCartInstanceItem																------ ALTER TABLE ProvisioningDirectoryEntry DROP COLUMN roleName
+	ALTER TABLE SelfServiceCartInstanceItem ADD COLUMN relatedCatalogItemId varchar(255);
+	ALTER TABLE SelfServiceCartInstanceItem ADD COLUMN relatedCatalogItemName varchar(255);
+	
+	ALTER TABLE SelfServiceCartInstanceItem DROP COLUMN relatedResourceNotFoundId;
+	ALTER TABLE SelfServiceCartInstanceItem DROP COLUMN relatedResourceNotFoundName;
+	ALTER TABLE SelfServiceCartInstanceItem DROP COLUMN relatedResourceNotFoundType;
+
+UPDATE  SelfServiceCartItem
+	ALTER TABLE SelfServiceCartItem ADD COLUMN catalogItemId varchar(255);
+	ALTER TABLE SelfServiceCartItem DROP COLUMN targetId;
+	ALTER TABLE SelfServiceCartItem DROP COLUMN targetType;
+
+IDENTITY  ServerMailSetup
+
+IDENTITY  SharedAccountAccount
+
+IDENTITY  SharedAccountMembership
+
+IDENTITY  SharedAccountUser
+
+IDENTITY  SituationDef
+
+IDENTITY  SituationDef_entryTypes
+
+IDENTITY  SodApprovalTask
+
+IDENTITY  SodApprovalTaskDetail
+
+IDENTITY  SodDirectoryEntry
+
+IDENTITY  SodEntry
+
+IDENTITY  SodEntryTransitionState
+
+IDENTITY  SodNotificationSettings
+
+IDENTITY  SodPolicy
+
+IDENTITY  SodSettings
+
+IDENTITY  SodTaskDetail
+
+UPDATE  Task
+	ALTER TABLE Task ADD COLUMN lockNumber bigint(20);			--- ALTER TABLE Task DROP COLUMN lockNumber
+
+IDENTITY  TaskAssignHistory
+
+IDENTITY  TaskComment
+
+IDENTITY  TaskDefinition
+
+UPDATE  TaskEscalation
+	ALTER TABLE TaskEscalation ADD COLUMN queueTo_id bigint(20);	---- ALTER TABLE TaskEscalation DROP COLUMN queueTo_id;
+
+IDENTITY  TaskEscalationDefinition
+
+IDENTITY  TaskQueue
+
+IDENTITY  TaskQueueAssignHistory
+
+IDENTITY  TaskQueue_Groupp
+
+IDENTITY  TaskQueue_Task
+
+IDENTITY  User
+
+IDENTITY  UserAccessDetail
+
+IDENTITY  UserDevice
+
+IDENTITY  UserNotificationSettings
+
+IDENTITY  UserTask
+
+IDENTITY  UsernamePasswordCredentialsVaultItem
+
+IDENTITY  UsernamePolicy
+
+IDENTITY  VaultEntryPermission
+
+IDENTITY  WebHook
+
+OK 270 270 0
