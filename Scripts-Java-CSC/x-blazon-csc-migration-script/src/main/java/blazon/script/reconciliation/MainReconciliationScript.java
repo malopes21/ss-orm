@@ -10,23 +10,14 @@ public class MainReconciliationScript {
 		
 		long inicio = System.currentTimeMillis();
 		
-		//ImportReconciliationActionsService.execute();
-		
 		ImportReconciliationBatchsService.execute();
 		
 		ImportReconciliationEntriesService.execute();
 		
-		//ReconciliationDirectoryEntry
-		// ReconciliationBatchEntry
-		//ReconciliationEntry
-		
-		//| ReconciliationEntry_matchedEntriesIds |
+		// ReconciliationEntry_matchedEntriesIds |
 		// ReconciliationEntry_matchedOwnersIds  |
 		
 		ImportReconciliationTransitionStatesService.execute();
-		
-		//ReconciliationEntryTransitionState
-		
 		
 		System.out.println("TERMINOU! Tempo consumido: " + (System.currentTimeMillis() - inicio) + " ms");	
 	}

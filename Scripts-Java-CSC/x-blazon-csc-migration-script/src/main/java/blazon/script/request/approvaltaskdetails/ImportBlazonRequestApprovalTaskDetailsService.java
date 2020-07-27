@@ -1,4 +1,4 @@
-package blazon.script.reconciliation.transitionstate;
+package blazon.script.request.approvaltaskdetails;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,10 +9,10 @@ import java.util.logging.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
-public class ImportReconciliationTransitionStatesService {
+public class ImportBlazonRequestApprovalTaskDetailsService {
 	
 	
-	private final static Logger LOGGER = Logger.getLogger(ImportReconciliationTransitionStatesService.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(ImportBlazonRequestApprovalTaskDetailsService.class.getName());
 	
 	
 	public static void main(String[] args) {
@@ -27,7 +27,7 @@ public class ImportReconciliationTransitionStatesService {
 
 	public static void execute() {
 		
-		LOGGER.log(Level.INFO, "Iniciando importação de Reconciliation TransitionStates ...");
+		LOGGER.log(Level.INFO, "Iniciando importação de Blazon Request Approval Task Details ...");
 		
 		try {
 			
@@ -35,7 +35,7 @@ public class ImportReconciliationTransitionStatesService {
 			
 			int limit = 100;
 			
-			List<Map<String, Object>> rows = ImportReconciliationTransitionStatesFunctions.readSourceReconciliationTransitionStates(limit);
+			List<Map<String, Object>> rows = ImportBlazonRequestApprovalTaskDetailsFunctions.readSourceApprovalTaskDetails(limit);
 			
 			int total = rows.size();
 			
@@ -46,9 +46,9 @@ public class ImportReconciliationTransitionStatesService {
 			
 			while(!rows.isEmpty()) {
 				
-				ImportReconciliationTransitionStatesFunctions.saveTargetReconciliationTransitionStates(rows);
+				ImportBlazonRequestApprovalTaskDetailsFunctions.saveTargetApprovalTaskDetails(rows);
 				
-				rows = ImportReconciliationTransitionStatesFunctions.readSourceReconciliationTransitionStates(limit);
+				rows = ImportBlazonRequestApprovalTaskDetailsFunctions.readSourceApprovalTaskDetails(limit);
 				
 				total = total + rows.size();
 				
@@ -67,7 +67,7 @@ public class ImportReconciliationTransitionStatesService {
 			e.printStackTrace();
 		}
 		
-		LOGGER.info("Finalizado importação de Reconciliation TransitionStates!");
+		LOGGER.info("Finalizado importação de Blazon Request Approval Task Details!");
 	}
 	
 
@@ -78,7 +78,7 @@ public class ImportReconciliationTransitionStatesService {
 			Connection conn = ConnectionFactory.getSourceConnection();
 			PreparedStatement statement = null;
 			
-			String sql = "alter table ReconciliationEntryTransitionState add column _imported_ int default 0";
+			String sql = "alter table ApprovalTaskDetail add column _imported_ int default 0";
 	
 			conn = ConnectionFactory.getSourceConnection();
 	
@@ -104,7 +104,7 @@ public class ImportReconciliationTransitionStatesService {
 		Connection conn = ConnectionFactory.getSourceConnection();
 		PreparedStatement statement = null;
 		
-		String sql = "alter table ReconciliationEntryTransitionState drop column _imported_";
+		String sql = "alter table ApprovalTaskDetail drop column _imported_";
 
 		conn = ConnectionFactory.getSourceConnection();
 

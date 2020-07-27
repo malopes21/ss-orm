@@ -1,4 +1,4 @@
-package blazon.script.reconciliation.transitionstate;
+package blazon.script.request.transtionstate;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,11 +14,11 @@ import java.util.logging.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
-class ImportReconciliationTransitionStatesFunctions {
+class ImportBlazonRequestTransitionStatesFunctions {
 
-	private final static Logger LOGGER = Logger.getLogger(ImportReconciliationTransitionStatesFunctions.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(ImportBlazonRequestTransitionStatesFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceReconciliationTransitionStates(int limit) throws Exception {
+	static List<Map<String, Object>> readSourceRequestTransitionStates(int limit) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -26,10 +26,10 @@ class ImportReconciliationTransitionStatesFunctions {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 
-		String sql = "select pets.* from ReconciliationEntryTransitionState pets \n" + 
-				"join ReconciliationEntry pe on pets.reconciliationEntry_id = pe.id \n" + 
+		String sql = "select pets.* from BlazonRequestTransitionState pets \n" + 
+				"join BlazonRequest pe on pets.request_id = pe.id \n" + 
 				"where pets._imported_ <> 1 \n" + 
-				"and pe.status in ('PROCESSED', 'ERROR') \n" +
+				"and pe.type <> 'MULTIPLE_REQUESTS' \n" +
 				"limit %s ";
 
 		sql = String.format(sql, limit);
@@ -53,7 +53,7 @@ class ImportReconciliationTransitionStatesFunctions {
 		return rows;
 	}
 
-	public static void saveTargetReconciliationTransitionStates(List<Map<String, Object>> rows) throws Exception {
+	public static void saveTargetRequestTransitionStates(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -62,13 +62,13 @@ class ImportReconciliationTransitionStatesFunctions {
 
 			try {
 				
-				saveReconciliationTransitionState(targetConn, row);
+				saveRequestTransitionState(targetConn, row);
 
-				setImportedReconciliationTransitionState(sourceConn, row);
+				setImportedRequestTransitionState(sourceConn, row);
 
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar reconciliation entry transition state com id %s", row.get("id")));
+				LOGGER.log(Level.SEVERE, String.format("Erro ao importar blazon request transition state com id %s", row.get("id")));
 				throw e;
 			}
 		}
@@ -80,12 +80,12 @@ class ImportReconciliationTransitionStatesFunctions {
 		sourceConn.close();
 	}
 
-	private static void saveReconciliationTransitionState(Connection conn, Map<String, Object> row) throws SQLException {
+	private static void saveRequestTransitionState(Connection conn, Map<String, Object> row) throws SQLException {
 
 		PreparedStatement statement = null;
 
-		String sql = "INSERT INTO ReconciliationEntryTransitionState \n" + 
-				"(id, bySystem, date, description, detail, sourceState, targetState, reconciliationEntry_id) \n" + 
+		String sql = "INSERT INTO BlazonRequestTransitionState \n" + 
+				"(id, bySystem, date, description, detail, sourceState, targetState, request_id) \n" + 
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
 
 		statement = conn.prepareStatement(sql);
@@ -97,7 +97,7 @@ class ImportReconciliationTransitionStatesFunctions {
 		if(row.get("detail") != null) { statement.setString(5, (String)row.get("detail")); } else { statement.setObject(5, null); }
 		if(row.get("sourceState") != null) { statement.setString(6, (String)row.get("sourceState")); } else { statement.setObject(6, null); }
 		if(row.get("targetState") != null) { statement.setString(7, (String)row.get("targetState")); } else { statement.setObject(7, null); }
-		if(row.get("reconciliationEntry_id") != null) { statement.setLong(8, (Long)row.get("reconciliationEntry_id")); } else { statement.setObject(8, null); }
+		if(row.get("reconciliationEntry_id") != null) { statement.setLong(8, (Long)row.get("request_id")); } else { statement.setObject(8, null); }
 
 		int affectedRows = statement.executeUpdate();
 
@@ -106,11 +106,11 @@ class ImportReconciliationTransitionStatesFunctions {
 		}
 	}
 
-	private static void setImportedReconciliationTransitionState(Connection conn, Map<String, Object> row) throws Exception {
+	private static void setImportedRequestTransitionState(Connection conn, Map<String, Object> row) throws Exception {
 
 		PreparedStatement statement = null;
 
-		String sql = "update ReconciliationEntryTransitionState set _imported_ = 1 where id = ?";
+		String sql = "update BlazonRequestTransitionState set _imported_ = 1 where id = ?";
 		statement = conn.prepareStatement(sql);
 		statement.setLong(1, (Long) row.get("id"));
 
