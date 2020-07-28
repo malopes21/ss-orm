@@ -1,6 +1,6 @@
 package blazon.script.request;
 
-import blazon.script.request.approvaltaskdetails.ImportBlazonRequestApprovalTaskDetailsService;
+import blazon.script.request.approvaltaskdetail.ImportBlazonRequestApprovalTaskDetailsService;
 import blazon.script.request.blazonrequest.ImportBlazonRequestsService;
 import blazon.script.request.transtionstate.ImportBlazonRequestTransitionStatesService;
 

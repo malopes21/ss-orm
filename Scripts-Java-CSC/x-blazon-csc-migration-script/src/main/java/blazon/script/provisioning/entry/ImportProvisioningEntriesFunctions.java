@@ -64,8 +64,15 @@ class ImportProvisioningEntriesFunctions {
 				Long beneficiary_id = ImportProvisioningBeneficiaryFunctions.insertBeneficiary(targetConn, row);
 				
 				Long provisioningInternalEntry_id = ImportProvisioningInternalEntryFunctions.insertInternalEntry(targetConn, row);
-
-				saveProvisioningEntry(targetConn, row, resource_id, beneficiary_id, provisioningInternalEntry_id);
+				
+				if(provisioningInternalEntry_id == null) {
+					
+					System.out.println("InternalEntry null, not imported provisioning entry: " + row.get("id"));
+					
+				} else {
+					
+					saveProvisioningEntry(targetConn, row, resource_id, beneficiary_id, provisioningInternalEntry_id);
+				}
 
 				setImportedProvisioningEntry(sourceConn, row);
 

@@ -1,4 +1,4 @@
-package blazon.script.request.approvaltaskdetails;
+package blazon.script.indexation.directory.role;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,10 +9,10 @@ import java.util.logging.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
-public class ImportBlazonRequestApprovalTaskDetailsService {
+public class ImportRoleDirectoryIndexationsService {
 	
 	
-	private final static Logger LOGGER = Logger.getLogger(ImportBlazonRequestApprovalTaskDetailsService.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(ImportRoleDirectoryIndexationsService.class.getName());
 	
 	
 	public static void main(String[] args) {
@@ -27,7 +27,7 @@ public class ImportBlazonRequestApprovalTaskDetailsService {
 
 	public static void execute() {
 		
-		LOGGER.log(Level.INFO, "Iniciando importação de Blazon Request Approval Task Details ...");
+		LOGGER.log(Level.INFO, "Iniciando importação de Role to Directory indexation ...");
 		
 		try {
 			
@@ -35,7 +35,7 @@ public class ImportBlazonRequestApprovalTaskDetailsService {
 			
 			int limit = 100;
 			
-			List<Map<String, Object>> rows = ImportBlazonRequestApprovalTaskDetailsFunctions.readSourceApprovalTaskDetails(limit);
+			List<Map<String, Object>> rows = ImportRoleDirectoryIndexationsFunctions.readSourceRoles(limit);
 			
 			int total = rows.size();
 			
@@ -46,9 +46,9 @@ public class ImportBlazonRequestApprovalTaskDetailsService {
 			
 			while(!rows.isEmpty()) {
 				
-				ImportBlazonRequestApprovalTaskDetailsFunctions.saveTargetApprovalTaskDetails(rows);
+				ImportRoleDirectoryIndexationsFunctions.saveTargetRoles(rows);
 				
-				rows = ImportBlazonRequestApprovalTaskDetailsFunctions.readSourceApprovalTaskDetails(limit);
+				rows = ImportRoleDirectoryIndexationsFunctions.readSourceRoles(limit);
 				
 				total = total + rows.size();
 				
@@ -67,7 +67,7 @@ public class ImportBlazonRequestApprovalTaskDetailsService {
 			e.printStackTrace();
 		}
 		
-		LOGGER.info("Finalizado importação de Blazon Request Approval Task Details!");
+		LOGGER.info("Finalizado importação de Role to Directory indexation!");
 	}
 	
 
@@ -78,7 +78,7 @@ public class ImportBlazonRequestApprovalTaskDetailsService {
 			Connection conn = ConnectionFactory.getSourceConnection();
 			PreparedStatement statement = null;
 			
-			String sql = "alter table ApprovalTaskDetail add column _imported_ int default 0";
+			String sql = "alter table Role add column _imported2_ int default 0";
 	
 			conn = ConnectionFactory.getSourceConnection();
 	
@@ -104,7 +104,7 @@ public class ImportBlazonRequestApprovalTaskDetailsService {
 		Connection conn = ConnectionFactory.getSourceConnection();
 		PreparedStatement statement = null;
 		
-		String sql = "alter table ApprovalTaskDetail drop column _imported_";
+		String sql = "alter table Role drop column _imported2_";
 
 		conn = ConnectionFactory.getSourceConnection();
 

@@ -1,9 +1,12 @@
 package blazon.script;
 
+import blazon.script.certification.MainCertificationScript;
 import blazon.script.directory.MainDirectoryScript;
+import blazon.script.indexation.MainIndexationScript;
 import blazon.script.provisioning.MainProvisioningScript;
 import blazon.script.reconciliation.MainReconciliationScript;
 import blazon.script.request.MainRequestScript;
+import blazon.script.roleright.MainRoleRightScript;
 
 public class MainBlazonScript {
 
@@ -18,6 +21,12 @@ public class MainBlazonScript {
 		MainReconciliationScript.main(args);
 		
 		MainRequestScript.main(args);
+		
+		MainCertificationScript.main(args);
+		
+		MainRoleRightScript.main(args);
+		
+		MainIndexationScript.main(args);
 		
 		System.out.println("TERMINOU! Tempo consumido: " + (System.currentTimeMillis() - inicio) + " ms");	
 	}

@@ -66,8 +66,15 @@ class ImportBlazonRequestsFunctions {
 				Long requester_id = ImportBlazonRequestRequesterFunctions.insertRequester(targetConn, row);
 
 				Long requestInternalEntry_id = ImportBlazonRequestInternalEntryFunctions.insertInternalEntry(targetConn, row);
-
-				saveBlazonRequest(targetConn, row, beneficiary_id, requester_id, requestInternalEntry_id);
+				
+				if(requestInternalEntry_id == null) {
+					
+					System.out.println("InternalEntry null, not imported blazon request: " + row.get("id"));
+					
+				} else {
+					
+					saveBlazonRequest(targetConn, row, beneficiary_id, requester_id, requestInternalEntry_id);
+				}
 
 				setImportedBlazonRequest(sourceConn, row);
 

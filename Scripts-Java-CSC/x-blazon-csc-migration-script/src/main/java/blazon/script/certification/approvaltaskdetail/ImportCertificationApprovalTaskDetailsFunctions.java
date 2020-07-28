@@ -1,4 +1,4 @@
-package blazon.script.request.approvaltaskdetails;
+package blazon.script.certification.approvaltaskdetail;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,11 +14,11 @@ import java.util.logging.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
-class ImportBlazonRequestApprovalTaskDetailsFunctions {
+class ImportCertificationApprovalTaskDetailsFunctions {
 
-	private final static Logger LOGGER = Logger.getLogger(ImportBlazonRequestApprovalTaskDetailsFunctions.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(ImportCertificationApprovalTaskDetailsFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceApprovalTaskDetails(int limit) throws Exception {
+	static List<Map<String, Object>> readSourceCertificationApprovalTaskDetails(int limit) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -26,11 +26,11 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 
-		String sql = "select atd.* from ApprovalTaskDetail atd \n" + 
-				"join BlazonRequest req on req.id = atd.request_id \n" + 
-				"where req.`type` <> 'MULTIPLE_REQUESTS' \n" +
-				"and atd._imported_ <> 1 \n" +
-				"limit %s ";
+		String sql = "select cat.* \n" + 
+				"from CertificationApprovalTaskDetail cat \n" + 
+				"join CertificationEntry ce on ce.id = cat.certificationEntry_id \n" + 
+				"where cat._imported_ <> 1 " +
+				"limit %s";
 
 		sql = String.format(sql, limit);
 		statement = conn.prepareStatement(sql);
@@ -53,7 +53,7 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 		return rows;
 	}
 
-	public static void saveTargetApprovalTaskDetails(List<Map<String, Object>> rows) throws Exception {
+	public static void saveTargetCertificationApprovalTaskDetails(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -62,13 +62,13 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 
 			try {
 				
-				saveApprovalTaskDetail(targetConn, row);
+				saveCertificationApprovalTaskDetail(targetConn, row);
 
-				setImportedApprovalTaskDetail(sourceConn, row);
+				setImportedCertificationApprovalTaskDetail(sourceConn, row);
 
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar approval task detail com id %s", row.get("id")));
+				LOGGER.log(Level.SEVERE, String.format("Erro ao importar certification approval task detail com id %s", row.get("id")));
 				throw e;
 			}
 		}
@@ -80,12 +80,12 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 		sourceConn.close();
 	}
 
-	private static void saveApprovalTaskDetail(Connection conn, Map<String, Object> row) throws SQLException {
+	private static void saveCertificationApprovalTaskDetail(Connection conn, Map<String, Object> row) throws SQLException {
 
 		PreparedStatement statement = null;
 
-		String sql = "INSERT INTO ApprovalTaskDetail \n" + 
-				"(id, approvalDate, creation, levelName, outcome, request_id, taskId)\n" + 
+		String sql = "INSERT INTO CertificationApprovalTaskDetail \n" + 
+				"(id, approvalDate, creation, levelName, outcome, certificationEntry_id, taskId)\n" + 
 				"VALUES (?, ?, ?, ?, ?, ?, ?) ";
 
 		statement = conn.prepareStatement(sql);
@@ -115,8 +115,8 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 		} else {
 			statement.setObject(5, null);
 		}
-		if (row.get("request_id") != null) {
-			statement.setLong(6, (Long) row.get("request_id"));
+		if (row.get("certificationEntry_id") != null) {
+			statement.setLong(6, (Long) row.get("certificationEntry_id"));
 		} else {
 			statement.setObject(6, null);
 		}
@@ -133,11 +133,11 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 		}
 	}
 
-	private static void setImportedApprovalTaskDetail(Connection conn, Map<String, Object> row) throws Exception {
+	private static void setImportedCertificationApprovalTaskDetail(Connection conn, Map<String, Object> row) throws Exception {
 
 		PreparedStatement statement = null;
 
-		String sql = "update ApprovalTaskDetail set _imported_ = 1 where id = ?";
+		String sql = "update CertificationApprovalTaskDetail set _imported_ = 1 where id = ?";
 		statement = conn.prepareStatement(sql);
 		statement.setLong(1, (Long) row.get("id"));
 

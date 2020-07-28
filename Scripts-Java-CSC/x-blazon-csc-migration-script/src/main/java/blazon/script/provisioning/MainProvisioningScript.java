@@ -1,6 +1,7 @@
 package blazon.script.provisioning;
 
 import blazon.script.provisioning.entry.ImportProvisioningEntriesService;
+import blazon.script.provisioning.taskdetail.ImportProvisioningTaskDetailsService;
 import blazon.script.provisioning.transitionstate.ImportProvisioningTransitionStatesService;
 
 public class MainProvisioningScript {
@@ -14,6 +15,8 @@ public class MainProvisioningScript {
 		ImportProvisioningEntriesService.execute();
 		
 		ImportProvisioningTransitionStatesService.execute();
+		
+		ImportProvisioningTaskDetailsService.execute();
 		
 		System.out.println("TERMINOU! Tempo consumido: " + (System.currentTimeMillis() - inicio) + " ms");	
 	}
