@@ -25,15 +25,15 @@ public class ImportUsersService {
 
 	public static void execute() {
 		
-		String propertyFileName = "importUsers.properties";
+		String propertyFile = "properties/directory/importUsers.properties";
 		
 		LOGGER.log(Level.INFO, "Iniciando importação de Users ...");
 		
 		try {
 			
-			Integer offset = Integer.parseInt(ImportUtil.getProperty(propertyFileName, "offset"));
+			Integer offset = Integer.parseInt(ImportUtil.getProperty(propertyFile, "offset"));
 			
-			Integer limit = Integer.parseInt(ImportUtil.getProperty(propertyFileName, "limit"));
+			Integer limit = Integer.parseInt(ImportUtil.getProperty(propertyFile, "limit"));
 			
 			List<Map<String, Object>> rows = ImportUsersFunctions.read(limit, offset);
 			
@@ -47,7 +47,7 @@ public class ImportUsersService {
 				
 				offset = offset + limit;
 				
-				ImportUtil.setProperty(propertyFileName, "offset", offset.toString());
+				ImportUtil.setProperty(propertyFile, "offset", offset.toString());
 				
 				rows = ImportUsersFunctions.read(limit, offset);
 				

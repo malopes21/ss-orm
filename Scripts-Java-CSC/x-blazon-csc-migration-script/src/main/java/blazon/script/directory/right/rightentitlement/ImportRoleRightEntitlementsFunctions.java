@@ -1,4 +1,4 @@
-package blazon.script.directory.right;
+package blazon.script.directory.right.rightentitlement;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

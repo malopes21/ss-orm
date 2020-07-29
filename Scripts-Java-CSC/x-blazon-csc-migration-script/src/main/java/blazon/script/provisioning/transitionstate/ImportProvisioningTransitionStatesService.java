@@ -1,13 +1,12 @@
 package blazon.script.provisioning.transitionstate;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import blazon.script.util.ConnectionFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import blazon.script.util.ImportUtil;
 
 public class ImportProvisioningTransitionStatesService {
 	
@@ -24,98 +23,46 @@ public class ImportProvisioningTransitionStatesService {
 		System.out.println("TERMINOU! Tempo consumido: " + (System.currentTimeMillis() - inicio) + " ms");	
 	}
 	
-
+	
 	public static void execute() {
 		
-		LOGGER.log(Level.INFO, "Iniciando importação de ProvisioningTransitionStates ...");
+		String propertyFileName = "properties/provisioning/importProvisioningTransitionStates.properties";
+		
+		LOGGER.log(Level.INFO, "Iniciando importação de Provisioning transition states ...");
 		
 		try {
 			
-			createImportValidationField();
+			Integer offset = Integer.parseInt(ImportUtil.getProperty(propertyFileName, "offset"));
 			
-			int limit = 100;
+			Integer limit = Integer.parseInt(ImportUtil.getProperty(propertyFileName, "limit"));
 			
-			List<Map<String, Object>> rows = ImportProvisioningTransitionStatesFunctions.readSourceProvisioningTransitionStates(limit);
+			List<Map<String, Object>> rows = ImportProvisioningTransitionStatesFunctions.read(limit, offset);
 			
 			int total = rows.size();
 			
-			if(rows.size() > 0) {
-				
-				LOGGER.info(String.format("Lido %s registros, do id %s até id %s. Total lido %s", rows.size(), rows.get(0).get("id"), rows.get(rows.size()-1).get("id"), total));
-			}
-			
 			while(!rows.isEmpty()) {
 				
-				ImportProvisioningTransitionStatesFunctions.saveTargetProvisioningTransitionStates(rows);
+				ImportProvisioningTransitionStatesFunctions.save(rows);
 				
-				rows = ImportProvisioningTransitionStatesFunctions.readSourceProvisioningTransitionStates(limit);
+				LOGGER.info(String.format("Importados %s registros. Total lido %s. Limit %s, offset %s.", rows.size(), total, limit, offset));
+				
+				offset = offset + limit;
+				
+				ImportUtil.setProperty(propertyFileName, "offset", offset.toString());
+				
+				rows = ImportProvisioningTransitionStatesFunctions.read(limit, offset);
 				
 				total = total + rows.size();
-				
-				if(rows.size() > 0) {
-					
-					LOGGER.info(String.format("Lido %s registros, do id %s até id %s. Total lido %s", rows.size(), rows.get(0).get("id"), rows.get(rows.size()-1).get("id"), total));
-				}
 			}
-			
-			//deleteImportValidationField();
 			
 		}catch (Exception e) {
 			
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			LOGGER.log(Level.ERROR, e.getMessage());
 
 			e.printStackTrace();
 		}
 		
-		LOGGER.info("Finalizado importação de ProvisioningTransitionStates!");
+		LOGGER.info("Finalizado importação de Provisioning transition states!");
 	}
 	
-
-	private static void createImportValidationField() throws Exception {
-		
-		try {
-
-			Connection conn = ConnectionFactory.getSourceConnection();
-			PreparedStatement statement = null;
-			
-			String sql = "alter table ProvisioningEntryTransitionState add column _imported_ int default 0";
-	
-			conn = ConnectionFactory.getSourceConnection();
-	
-			conn.setAutoCommit(false);
-			
-			statement = conn.prepareStatement(sql);
-			
-			statement.executeUpdate();
-			
-			conn.commit();
-			
-			LOGGER.info("Campo de validação criado ...");
-			
-		} catch (Exception e) {
-			
-			LOGGER.info("Campo de validação provavelmente já criado!");
-		}
-	}
-	
-	
-	private static void deleteImportValidationField() throws Exception {
-
-		Connection conn = ConnectionFactory.getSourceConnection();
-		PreparedStatement statement = null;
-		
-		String sql = "alter table ProvisioningEntryTransitionState drop column _imported_";
-
-		conn = ConnectionFactory.getSourceConnection();
-
-		conn.setAutoCommit(false);
-		
-		statement = conn.prepareStatement(sql);
-		
-		statement.executeUpdate();
-		
-		conn.commit();
-		
-		LOGGER.info("Campo de validação removido ...");
-	}
 }

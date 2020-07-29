@@ -10,13 +10,11 @@ public class MainProvisioningScript {
 		
 		long inicio = System.currentTimeMillis();
 		
-		//ImportResourceAdaptersService.execute();
-		
 		ImportProvisioningEntriesService.execute();
 		
-		ImportProvisioningTransitionStatesService.execute();
-		
 		ImportProvisioningTaskDetailsService.execute();
+		
+		ImportProvisioningTransitionStatesService.execute();
 		
 		System.out.println("TERMINOU! Tempo consumido: " + (System.currentTimeMillis() - inicio) + " ms");	
 	}

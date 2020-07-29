@@ -25,7 +25,7 @@ public class ImportRolesService {
 	
 	public static void execute() {
 		
-		String propertyFileName = "importRoles.properties";
+		String propertyFileName = "properties/directory/importRoles.properties";
 		
 		LOGGER.log(Level.INFO, "Iniciando importação de Roles ...");
 		

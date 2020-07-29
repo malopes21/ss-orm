@@ -1,4 +1,4 @@
-package blazon.script.directory.resource;
+package blazon.script.directory.entitlement.owner;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 import blazon.script.util.ConnectionFactory;
 
-public class ImportResourceOwnersFunctions {
+public class ImportEntitlementOwnersFunctions {
 	
 
 	public static void importOwners(Connection targetConn, Map<String, Object> row) throws Exception {
@@ -23,7 +23,7 @@ public class ImportResourceOwnersFunctions {
 	}
 	
 	
-	static List<Map<String, Object>> readSourceOwners(Long resourceId) throws Exception {
+	static List<Map<String, Object>> readSourceOwners(Long entitlementId) throws Exception {
 		
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -31,10 +31,10 @@ public class ImportResourceOwnersFunctions {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		
-		String sql = "select * from Resource_User ru where ru.managedResources_id = ? \n" ;
+		String sql = "select * from Entitlement_User ru where ru.Entitlement_id = ? \n" ;
 
 		statement = conn.prepareStatement(sql);
-		statement.setLong(1, resourceId);
+		statement.setLong(1, entitlementId);
 		
 		rs = statement.executeQuery();
 		
@@ -51,6 +51,7 @@ public class ImportResourceOwnersFunctions {
 		}
 		
 		conn.commit();
+		conn.close();
 		
 		return rows;
 	}
@@ -70,16 +71,16 @@ public class ImportResourceOwnersFunctions {
 
 		PreparedStatement statement = null;
 		
-		String sql = "INSERT INTO Resource_User \n" + 
+		String sql = "INSERT INTO Entitlement_User \n" + 
 				"(id, \n" + 
-				"managedResources_id, \n" + 
+				"Entitlement_id, \n" + 
 				"owners_id) \n" + 
 				"VALUES(?, ?, ?)";
 		
 		statement = conn.prepareStatement(sql);
 		
 		statement.setLong(1, (Long) row.get("id"));
-		statement.setLong(2, (Long) row.get("managedResources_id"));
+		statement.setLong(2, (Long) row.get("Entitlement_id"));
 		statement.setLong(3, (Long) row.get("owners_id"));
 		
 		int affectedRows = statement.executeUpdate();

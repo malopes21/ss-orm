@@ -1,4 +1,4 @@
-package blazon.script.reconciliation.entry;
+package blazon.script.provisioning.entry.internalentry;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,25 +10,26 @@ import java.util.Map;
 
 import blazon.script.util.ConnectionFactory;
 
-class ImportReconciliationResourceFunctions {
+public class ImportProvisioningBeneficiaryFunctions {
 
-	static Long insertResource(Connection conn, Map<String, Object> row) throws Exception {
+	public static Long insertBeneficiary(Connection conn, Map<String, Object> row) throws Exception {
 		
-		if(row.get("resource_id") == null) {
+		if(row.get("beneficiary_id") == null) {
 			
 			return null;
 		}
 		
-		Map<String, Object> resourceData = readResource((Long) row.get("resource_id"));
+		Map<String, Object> beneficiaryData = readBeneficiary((Long) row.get("beneficiary_id"));
 		
 		PreparedStatement statement = null;
 		
-		String sql = "insert into ReconciliationDirectoryEntry (type, name, directoryIdentifier) values (?, ?, ?) ";
-				
+		String sql = "insert into ProvisioningDirectoryEntry (type, username, displayName, directoryIdentifier) values (?, ?, ?, ?) ";
+		
 		statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-		statement.setString(1, (String) "RESOURCE");
-		statement.setString(2, (String) resourceData.get("name"));
-		statement.setLong(3, (Long) resourceData.get("id"));
+		statement.setString(1, (String) "USER");
+		statement.setString(2, (String) beneficiaryData.get("username"));
+		statement.setString(3, (String) beneficiaryData.get("displayName"));
+		statement.setLong(4, (Long) beneficiaryData.get("id"));
 		
 		int affectedRows = statement.executeUpdate();
 
@@ -36,32 +37,32 @@ class ImportReconciliationResourceFunctions {
 		    throw new RuntimeException("Creating instance failed, no rows affected.");
 		}
 		
-		Long resourceProvisioningEntryId = null;
+		Long beneficiaryProvisioningEntryId = null;
 
 		try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
 		    if (generatedKeys.next()) {
 		    	
-		    	resourceProvisioningEntryId = generatedKeys.getLong(1);
+		    	beneficiaryProvisioningEntryId = generatedKeys.getLong(1);
 		    }
 		    else {
 		        throw new RuntimeException("Creating instance failed, no ID obtained.");
 		    }
 		}
 		
-		return resourceProvisioningEntryId;
+		return beneficiaryProvisioningEntryId;
 	}
 	
 	
-	static Map<String, Object> readResource(Long resourceId) throws Exception {
+	static Map<String, Object> readBeneficiary(Long beneficiaryId) throws Exception {
 		
 		Connection conn = ConnectionFactory.getSourceConnection();
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		
-		String sql = "select * from Resource where id = ?";
+		String sql = "select * from User where id = ?";
 
 		statement = conn.prepareStatement(sql);
-		statement.setLong(1, resourceId);
+		statement.setLong(1, beneficiaryId);
 		
 		rs = statement.executeQuery();
 		

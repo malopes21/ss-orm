@@ -1,28 +1,33 @@
-package blazon.script.reconciliation.entry;
+package blazon.script.reconciliation.matchowner.internalentry;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import blazon.script.util.ConnectionFactory;
+public class ImportReconciliationMatchedInternalOwnerFunctions {
 
-class ImportReconciliationInternalEntryFunctions {
-
-	static Long insertInternalEntry(Connection conn, Map<String, Object> row) throws Exception {
+	public static Long insertInternalEntry(Connection sourceConn, Connection targetConn, Map<String, Object> row) throws Exception {
 		
-		//reconciliationMatchedEntryId
-		//schemaa
+		//ReconciliationEntry_id, matchedOwnersIds
 		
-		if(row.get("reconciliationMatchedEntryId") == null) {
+		if(row.get("matchedOwnersIds") == null) {
 			
 			return null;
 		}
 		
-		Map<String, Object> internalEntryData = readInternalEntry((Long) row.get("reconciliationMatchedEntryId"), (String) row.get("schemaa"));
+		String schema = getEntrySchema(sourceConn, (Long) row.get("matchedOwnersIds"));
+		
+		if(schema == null) {
+			
+			return null;
+		}
+		
+		Map<String, Object> internalEntryData = readInternalEntry(sourceConn, (Long) row.get("matchedOwnersIds"), schema);
 		
 		if(internalEntryData.isEmpty()) {
 			
@@ -31,60 +36,69 @@ class ImportReconciliationInternalEntryFunctions {
 		
 		PreparedStatement statement = null;
 		
-		if(row.get("schemaa").toString().equals("ACCOUNT")) {
+		if(schema.toString().equals("ACCOUNT")) {
 		
 			String sql = "insert into ReconciliationDirectoryEntry (type, accountIdentifier, directoryIdentifier) values (?, ?, ?) ";
 			
-			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			statement = targetConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "ACCOUNT");
 			statement.setString(2, (String) internalEntryData.get("accountIdentifier"));
-			statement.setLong(3, (Long) row.get("reconciliationMatchedEntryId"));
+			statement.setLong(3, (Long) row.get("matchedOwnersIds"));
 		
-		} else if(row.get("schemaa").toString().equals("MEMBERSHIP_ENTITLEMENT")) {
+		} else if(schema.toString().equals("MEMBERSHIP_ENTITLEMENT")) {
 			
 			String sql = "insert into ReconciliationDirectoryEntry (type, accountId, accountIdentifier, entitlementId, entitlementName, directoryIdentifier) "
 					+ " values (?, ?, ?, ?, ?, ?) ";
 			
-			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			statement = targetConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "MEMBERSHIP_ENTITLEMENT");
 			statement.setLong(2, (Long) internalEntryData.get("account_id"));
 			statement.setString(3, (String) internalEntryData.get("accountIdentifier"));
 			statement.setLong(4, (Long) internalEntryData.get("entitlement_id"));
 			statement.setString(5, (String) internalEntryData.get("name"));
-			statement.setLong(6, (Long) row.get("reconciliationMatchedEntryId"));
+			statement.setLong(6, (Long) row.get("matchedOwnersIds"));
 			
-		} else if(row.get("schemaa").toString().equals("ENTITLEMENT")) {
+		} else if(schema.toString().equals("ENTITLEMENT")) {
 			
 			String sql = "insert into ReconciliationDirectoryEntry (type, name, directoryIdentifier) values (?, ?, ?) ";
 			
-			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			statement = targetConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "ENTITLEMENT");
 			statement.setString(2, (String) internalEntryData.get("name"));
-			statement.setLong(3, (Long) row.get("reconciliationMatchedEntryId"));
+			statement.setLong(3, (Long) row.get("matchedOwnersIds"));
 			
-		} else if(row.get("schemaa").toString().equals("USER")) {
+		} else if(schema.toString().equals("USER")) {
 			
 			String sql = "insert into ReconciliationDirectoryEntry (type, username, displayName, directoryIdentifier) values (?, ?, ?, ?) ";
 			
-			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			statement = targetConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "USER");
 			statement.setString(2, (String) internalEntryData.get("username"));
 			statement.setString(3, (String) internalEntryData.get("displayName"));
-			statement.setLong(4, (Long) row.get("reconciliationMatchedEntryId"));
+			statement.setLong(4, (Long) row.get("matchedOwnersIds"));
 			
-		} else if(row.get("schemaa").toString().equals("MEMBERSHIP_ROLE")) {
+		} else if(schema.toString().equals("MEMBERSHIP_ROLE")) {
 			
 			String sql = "insert into ReconciliationDirectoryEntry (type, userId, username, displayName, roleId, roleName, directoryIdentifier) "
 					+ " values (?, ?, ?, ?, ?, ?, ?) ";
 			
-			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			statement = targetConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "MEMBERSHIP_ROLE");
 			statement.setLong(2, (Long) internalEntryData.get("user_id"));
 			statement.setString(3, (String) internalEntryData.get("username"));
 			statement.setString(4, (String) internalEntryData.get("displayName"));
 			statement.setLong(5, (Long) internalEntryData.get("role_id"));
 			statement.setString(6, (String) internalEntryData.get("name"));
-			statement.setLong(7, (Long) row.get("reconciliationMatchedEntryId"));
+			statement.setLong(7, (Long) row.get("matchedOwnersIds"));
+			
+		} else if(schema.toString().equals("ROLE")) {
+			
+			String sql = "insert into ReconciliationDirectoryEntry (type, name, directoryIdentifier) values (?, ?, ?) ";
+			
+			statement = targetConn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			statement.setString(1, (String) "ROLE");
+			statement.setString(2, (String) internalEntryData.get("name"));
+			statement.setLong(3, (Long) row.get("matchedOwnersIds"));
 			
 		}
 		
@@ -110,9 +124,26 @@ class ImportReconciliationInternalEntryFunctions {
 	}
 	
 	
-	static Map<String, Object> readInternalEntry(Long reconciliationMatchedEntryId, String schemaa) throws Exception {
+	private static String getEntrySchema(Connection sourceConn, Long entryId) throws SQLException {
+
+		String sql = "select type from Entry where id = ?";
 		
-		Connection conn = ConnectionFactory.getSourceConnection();
+		PreparedStatement statement = sourceConn.prepareStatement(sql);
+		statement.setLong(1, entryId);
+		
+		ResultSet rs = statement.executeQuery();
+		
+		if(rs.next()) {
+			
+			return rs.getString("type");
+		}
+		
+		return null;
+	}
+
+
+	static Map<String, Object> readInternalEntry(Connection conn, Long reconciliationMatchedEntryId, String schemaa) throws Exception {
+		
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		
@@ -144,7 +175,10 @@ class ImportReconciliationInternalEntryFunctions {
 					"join User u on u.id = mr.user_id \n" + 
 					"join Role r on r.id  = mr.role_id \n" + 
 					"where mr.id = ?";
-		} 
+		} else {
+			
+			sql = "select * from Role where id = ?";
+		}
 		
 		statement = conn.prepareStatement(sql);
 		statement.setLong(1, reconciliationMatchedEntryId);
@@ -161,9 +195,6 @@ class ImportReconciliationInternalEntryFunctions {
 				row.put(metaData.getColumnName(i), rs.getObject(i));
 			}
 		}
-		
-		conn.commit();
-		conn.close();
 		
 		return row;
 	}

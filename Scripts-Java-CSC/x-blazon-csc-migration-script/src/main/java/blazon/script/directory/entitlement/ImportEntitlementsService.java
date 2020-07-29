@@ -26,7 +26,7 @@ public class ImportEntitlementsService {
 	
 	public static void execute() {
 		
-		String propertyFileName = "importEntitlements.properties";
+		String propertyFileName = "properties/directory/importEntitlements.properties";
 		
 		LOGGER.log(Level.INFO, "Iniciando importação de Entitlements ...");
 		

@@ -26,7 +26,7 @@ public class ImportMembershipEntitlementsService {
 
 	public static void execute() {
 		
-		String propertyFileName = "importMembershipEntitlements.properties";
+		String propertyFileName = "properties/directory/importMembershipEntitlements.properties";
 		
 		LOGGER.log(Level.INFO, "Iniciando importação de Membership entitlements ...");
 		

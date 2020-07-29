@@ -9,16 +9,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
+import blazon.script.reconciliation.matchentry.internalentry.ImportReconciliationMatchedInternalEntryFunctions;
 import blazon.script.util.ConnectionFactory;
 
 class ImportReconciliationMatchedEntriesIdsFunctions {
 
 	private final static Logger LOGGER = Logger.getLogger(ImportReconciliationMatchedEntriesIdsFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceReconciliationMatchedIds(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -27,10 +31,10 @@ class ImportReconciliationMatchedEntriesIdsFunctions {
 		ResultSet rs = null;
 
 		String sql = "select * from ReconciliationEntry_matchedEntriesIds rm \n" + 
-				"where rm._imported_ <> 1 \n" + 
-				"limit %s ";
+				"where 1 = 1 \n" + 
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -51,7 +55,7 @@ class ImportReconciliationMatchedEntriesIdsFunctions {
 		return rows;
 	}
 
-	public static void saveTargetReconciliationMatchedIds(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -68,15 +72,13 @@ class ImportReconciliationMatchedEntriesIdsFunctions {
 					
 				} else {
 					
-					System.out.println(String.format("Directory entry null, for reconciliationEntry %s e directoryMathedEntryId %s", 
+					LOGGER.log(Level.WARN, String.format("Directory entry null, for reconciliationEntry %s e directoryMathedEntryId %s", 
 							row.get("ReconciliationEntry_id"), row.get("matchedEntriesIds")));
 				}
 
-				setImportedReconciliationMatchedId(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar reconciliation matched entry id com, "
+				LOGGER.log(Level.ERROR, String.format("Erro ao importar reconciliation matched entry id com, "
 						+ " ReconciliationEntry_id %s e matchedEntriesIds %s",row.get("ReconciliationEntry_id"), row.get("matchedEntriesIds")));
 				throw e;
 			}
@@ -110,27 +112,23 @@ class ImportReconciliationMatchedEntriesIdsFunctions {
 			statement.setObject(2, null);
 		}
 
-		int affectedRows = statement.executeUpdate();
+		try {
+			
+			int affectedRows = statement.executeUpdate();
 
-		if (affectedRows == 0) {
-			throw new RuntimeException("Insert instance failed, no rows affected.");
+			if (affectedRows == 0) {
+				throw new RuntimeException("Insert instance failed, no rows affected.");
+			}
+			
+			LOGGER.log(Level.INFO, String.format("Enviando comando SQL para importar reconciliation matched entry com ReconciliationEntry_id %s e matchedEntriesIds %s",
+					reconciliationEntryId, matchedEntryId));
+			
+		}catch (MySQLIntegrityConstraintViolationException e) {
+
+			LOGGER.log(Level.WARN, String.format("Não foi possivel importar reconciliation matched entry com ReconciliationEntry_id %s e matchedEntriesIds %s. Provavel entrada não importada.",
+					reconciliationEntryId, matchedEntryId));
 		}
-	}
-
-	private static void setImportedReconciliationMatchedId(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update ReconciliationEntry_matchedEntriesIds set _imported_ = 1 where ReconciliationEntry_id = ? and matchedEntriesIds = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("ReconciliationEntry_id"));
-		statement.setLong(2, (Long) row.get("matchedEntriesIds"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		
 	}
 
 }

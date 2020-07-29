@@ -9,16 +9,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
+import blazon.script.reconciliation.matchowner.internalentry.ImportReconciliationMatchedInternalOwnerFunctions;
 import blazon.script.util.ConnectionFactory;
 
 class ImportReconciliationMatchedOwnersIdsFunctions {
 
 	private final static Logger LOGGER = Logger.getLogger(ImportReconciliationMatchedOwnersIdsFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceReconciliationMatchedIds(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -27,10 +31,10 @@ class ImportReconciliationMatchedOwnersIdsFunctions {
 		ResultSet rs = null;
 
 		String sql = "select * from ReconciliationEntry_matchedOwnersIds rm \n" + 
-				"where rm._imported_ <> 1 \n" + 
-				"limit %s ";
+				"where 1 = 1 \n" + 
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -51,7 +55,7 @@ class ImportReconciliationMatchedOwnersIdsFunctions {
 		return rows;
 	}
 
-	public static void saveTargetReconciliationMatchedIds(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -72,11 +76,9 @@ class ImportReconciliationMatchedOwnersIdsFunctions {
 							row.get("ReconciliationEntry_id"), row.get("matchedEntriesIds")));
 				}
 
-				setImportedReconciliationMatchedId(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar reconciliation entry matched id com, "
+				LOGGER.log(Level.ERROR, String.format("Erro ao importar reconciliation owner matched id com, "
 						+ " ReconciliationEntry_id %s e matchedEntriesIds %s",row.get("ReconciliationEntry_id"), row.get("matchedEntriesIds")));
 				throw e;
 			}
@@ -109,28 +111,24 @@ class ImportReconciliationMatchedOwnersIdsFunctions {
 		} else {
 			statement.setObject(2, null);
 		}
+		
+		try {
+			
+			int affectedRows = statement.executeUpdate();
 
-		int affectedRows = statement.executeUpdate();
+			if (affectedRows == 0) {
+				throw new RuntimeException("Insert instance failed, no rows affected.");
+			}
+			
+			LOGGER.log(Level.INFO, String.format("Enviando comando SQL para importar reconciliation matched owner com ReconciliationEntry_id %s e matchedOwnersIds %s",
+					reconciliationEntryId, matchedOwnerId));
+			
+		} catch (MySQLIntegrityConstraintViolationException e) {
 
-		if (affectedRows == 0) {
-			throw new RuntimeException("Insert instance failed, no rows affected.");
+			LOGGER.log(Level.WARN, String.format("Não foi possivel importar reconciliation matched owner com ReconciliationEntry_id %s e matchedEntriesIds %s. Provavel entrada não importada.",
+					reconciliationEntryId, matchedOwnerId));
 		}
-	}
-
-	private static void setImportedReconciliationMatchedId(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update ReconciliationEntry_matchedOwnersIds set _imported_ = 1 where ReconciliationEntry_id = ? and matchedOwnersIds = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("ReconciliationEntry_id"));
-		statement.setLong(2, (Long) row.get("matchedOwnersIds"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		
 	}
 
 }

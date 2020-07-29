@@ -1,4 +1,4 @@
-package blazon.script.reconciliation.matchentry;
+package blazon.script.reconciliation.matchentry.internalentry;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,9 +9,9 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-class ImportReconciliationMatchedInternalEntryFunctions {
+public class ImportReconciliationMatchedInternalEntryFunctions {
 
-	static Long insertInternalEntry(Connection sourceConn, Connection targetConn, Map<String, Object> row) throws Exception {
+	public static Long insertInternalEntry(Connection sourceConn, Connection targetConn, Map<String, Object> row) throws Exception {
 		
 		//ReconciliationEntry_id, matchedEntriesIds
 		

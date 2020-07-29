@@ -1,4 +1,4 @@
-package blazon.script.directory.resource;
+package blazon.script.directory.resource.dependencies;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

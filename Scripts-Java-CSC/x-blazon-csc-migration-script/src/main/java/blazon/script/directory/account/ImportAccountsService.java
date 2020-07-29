@@ -26,7 +26,7 @@ public class ImportAccountsService {
 	
 	public static void execute() {
 		
-		String propertyFileName = "importAccounts.properties";
+		String propertyFileName = "properties/directory/importAccounts.properties";
 		
 		LOGGER.log(Level.INFO, "Iniciando importação de Accounts ...");
 		

@@ -12,9 +12,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import blazon.script.reconciliation.entry.dependencies.ImportReconciliationInternalEntryFunctions;
+import blazon.script.reconciliation.entry.dependencies.ImportReconciliationResourceFunctions;
 import blazon.script.util.ConnectionFactory;
 
 class ImportReconciliationEntriesFunctions {
@@ -23,7 +26,7 @@ class ImportReconciliationEntriesFunctions {
 
 	private final static Logger LOGGER = Logger.getLogger(ImportReconciliationEntriesFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceReconciliationEntries(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -32,11 +35,11 @@ class ImportReconciliationEntriesFunctions {
 		ResultSet rs = null;
 
 		String sql = "select * from ReconciliationEntry \n" + 
-					"where _imported_ <> 1 \n" +
-					"and status in ('PROCESSED', 'ERROR') \n" + 
-					"order by id \n" + "limit %s ";
+					"where status in ('PROCESSED', 'ERROR') \n" + 
+					"order by id \n" + 
+					"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -57,7 +60,7 @@ class ImportReconciliationEntriesFunctions {
 		return rows;
 	}
 
-	public static void saveTargetReconciliationEntries(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -79,11 +82,9 @@ class ImportReconciliationEntriesFunctions {
 					saveReconciliationEntry(targetConn, row, resource_id, reconciliationMatchedInternalEntry_id);
 				}
 				
-				setImportedReconciliationEntry(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar reconciliation entry com id %s", row.get("id")));
+				LOGGER.log(Level.ERROR, String.format("Erro ao importar reconciliation entry com id %s", row.get("id")));
 				throw e;
 			}
 		}
@@ -183,12 +184,12 @@ class ImportReconciliationEntriesFunctions {
 		} else {
 			statement.setObject(15, null);
 		}
-		if (row.get("reconciliationMatchedInternalEntry_id") != null) {
+		if (reconciliationMatchedInternalEntry_id != null) {
 			statement.setLong(16, reconciliationMatchedInternalEntry_id);
 		} else {
 			statement.setObject(16, null);
 		}
-		if (row.get("resource_id") != null) {
+		if (resource_id != null) {
 			statement.setLong(17, resource_id);
 		} else {
 			statement.setObject(17, null);
@@ -204,23 +205,10 @@ class ImportReconciliationEntriesFunctions {
 		if (affectedRows == 0) {
 			throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
+		
+		LOGGER.log(Level.INFO, "Enviando comando SQL para importar reconciliation entry com id " + row.get("id"));
 	}
 
-	private static void setImportedReconciliationEntry(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update ReconciliationEntry set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
-	}
-	
 	private static void readMappingReconciliationProfileId() throws IOException {
 
 		profileIdMap = new HashMap<Long, Long>();

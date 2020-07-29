@@ -1,4 +1,4 @@
-package blazon.script.provisioning.entry;
+package blazon.script.provisioning.entry.internalentry;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +10,9 @@ import java.util.Map;
 
 import blazon.script.util.ConnectionFactory;
 
-class ImportProvisioningResourceFunctions {
+public class ImportProvisioningResourceFunctions {
 
-	static Long insertResource(Connection conn, Map<String, Object> row) throws Exception {
+	public static Long insertResource(Connection conn, Map<String, Object> row) throws Exception {
 		
 		if(row.get("resource_id") == null) {
 			

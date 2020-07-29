@@ -17,6 +17,7 @@ import blazon.script.directory.common.ImportAdditionalFieldsFunctions;
 import blazon.script.directory.common.ImportCreatedByFunctions;
 import blazon.script.directory.common.ImportEntryFunctions;
 import blazon.script.directory.common.ImportManagedByFunctions;
+import blazon.script.directory.entitlement.owner.ImportEntitlementOwnersFunctions;
 import blazon.script.util.ConnectionFactory;
 
 class ImportEntitlementsFunctions {

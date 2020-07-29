@@ -26,7 +26,7 @@ public class ImportResourcesService {
 	
 	public static void execute() {
 		
-		String propertyFileName = "importResources.properties";
+		String propertyFileName = "properties/directory/importResources.properties";
 		
 		LOGGER.log(Level.INFO, "Iniciando importação de Resources ...");
 		

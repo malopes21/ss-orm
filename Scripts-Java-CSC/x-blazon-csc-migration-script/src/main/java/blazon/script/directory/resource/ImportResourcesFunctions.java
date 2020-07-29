@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import blazon.script.directory.resource.dependencies.ImportResourceOwnersFunctions;
 import blazon.script.util.ConnectionFactory;
 
 class ImportResourcesFunctions {

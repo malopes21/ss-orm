@@ -4,8 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
@@ -37,34 +38,26 @@ public class ImportReconciliationBatchsService {
 			
 			int offset = 0;
 			
-			List<Map<String, Object>> rows = ImportReconciliationBatchsFunctions.readSourceReconciliationBatchs(limit, offset);
+			List<Map<String, Object>> rows = ImportReconciliationBatchsFunctions.read(limit, offset);
 			
 			int total = rows.size();
 			
-			if(rows.size() > 0) {
-				
-				LOGGER.info(String.format("Lido %s registros, do id %s até id %s. Total lido %s", rows.size(), rows.get(0).get("id"), rows.get(rows.size()-1).get("id"), total));
-			}
-			
 			while(!rows.isEmpty()) {
 				
-				ImportReconciliationBatchsFunctions.saveTargetReconciliationBatchs(rows);
+				ImportReconciliationBatchsFunctions.save(rows);
+				
+				LOGGER.info(String.format("Importados %s registros. Total lido %s. Limit %s, offset %s.", rows.size(), total, limit, offset));
 				
 				offset = offset + limit;
 				
-				rows = ImportReconciliationBatchsFunctions.readSourceReconciliationBatchs(limit, offset);
+				rows = ImportReconciliationBatchsFunctions.read(limit, offset);
 				
 				total = total + rows.size();
-				
-				if(rows.size() > 0) {
-					
-					LOGGER.info(String.format("Lido %s registros, do id %s até id %s. Total lido %s", rows.size(), rows.get(0).get("id"), rows.get(rows.size()-1).get("id"), total));
-				}
 			}
 			
 		}catch (Exception e) {
 			
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			LOGGER.log(Level.ERROR, e.getMessage());
 
 			e.printStackTrace();
 		}
