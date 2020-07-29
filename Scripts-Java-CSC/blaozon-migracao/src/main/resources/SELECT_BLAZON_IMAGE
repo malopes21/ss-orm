@@ -1,0 +1,6 @@
+SELECT 
+	id,
+	description,
+	image,
+	name
+FROM BllazonImage;

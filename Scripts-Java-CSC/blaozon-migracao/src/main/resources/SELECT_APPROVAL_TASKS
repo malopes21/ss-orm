@@ -1,0 +1,41 @@
+SELECT 
+	DISTINCT task.id, 
+	task.createdBy, 
+	task.createdByObjectId, 
+	task.createdDate, 
+	task.deadline, 
+	task.notificationCount, 
+	task.priority, 
+	task.resolvedDate, 
+	task.result, 
+	task.status, 
+	task.workflowId, 
+	task.definition_id, 
+	task.userFrom, 
+	task.recipient_id, 
+	task.category, 
+	task.actionId,
+	approvalTask.disapprovalJustification,
+	approvalTask.request_id,
+	userFrom.id userFromId,
+	userFrom.displayName userFromDisplayName,
+	userFrom.username userFromUsername,
+	recipient.id recipientId,
+	recipient.displayName recipientDisplayName,
+	recipient.username recipientUsername,
+	blazonRequest.id requestId,
+	blazonRequest.type requestType,
+	blazonRequest.justification justification,
+	blazonRequest.payload requestPayload,
+	blazonRequest.accountId accountId,
+	blazonRequest.resourceId resourceId,
+	blazonRequest.entitlementId entitlementId,
+	blazonRequest.membershipId membershipId,
+	blazonRequest.roleId roleId
+FROM 
+	blazoniam.Task task
+INNER JOIN BlazonRequestApprovalTask approvalTask on approvalTask.id = task.id
+INNER JOIN User userFrom on userFrom.id = task.userFrom
+INNER JOIN User recipient on recipient.id = task.recipient_id
+INNER JOIN BlazonRequest blazonRequest on blazonRequest.id = approvalTask.request_id
+LIMIT ? OFFSET ? ;

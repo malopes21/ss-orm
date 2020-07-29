@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
@@ -28,40 +29,11 @@ public class ImportResourceProvisioningProfilesService {
 
 	public static void execute() throws Exception {
 
-		createImportValidationField();
-
-		List<Map<String, Object>> rows = readSourceResourceProvisioningProfiles();
-		saveTargetResourceProvisioningProfiles(rows);
+		List<Map<String, Object>> rows = read();
+		save(rows);
 	}
 
-	static void createImportValidationField() throws Exception {
-
-		try {
-
-			Connection conn = ConnectionFactory.getSourceConnection();
-			PreparedStatement statement = null;
-
-			String sql = "alter table ResourceProvisioningProfile add column _imported_ int default 0";
-
-			conn = ConnectionFactory.getSourceConnection();
-
-			conn.setAutoCommit(false);
-
-			statement = conn.prepareStatement(sql);
-
-			statement.executeUpdate();
-
-			conn.commit();
-
-			LOGGER.info("Campo de validação criado ...");
-
-		} catch (Exception e) {
-
-			LOGGER.info("Campo de validação provavelmente já criado!");
-		}
-	}
-
-	static List<Map<String, Object>> readSourceResourceProvisioningProfiles() throws Exception {
+	static List<Map<String, Object>> read() throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -69,7 +41,7 @@ public class ImportResourceProvisioningProfilesService {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 
-		String sql = "select * from ResourceProvisioningProfile where _imported_ <> 1 \n";
+		String sql = "select * from ResourceProvisioningProfile \n";
 
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
@@ -91,7 +63,7 @@ public class ImportResourceProvisioningProfilesService {
 		return rows;
 	}
 
-	public static void saveTargetResourceProvisioningProfiles(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -99,8 +71,6 @@ public class ImportResourceProvisioningProfilesService {
 		for (Map<String, Object> row : rows) {
 
 			saveProvisioningProfile(targetConn, row);
-
-			setImportedProvisioningProfile(sourceConn, row);
 		}
 
 		targetConn.commit();
@@ -591,20 +561,7 @@ public class ImportResourceProvisioningProfilesService {
 		if (affectedRows == 0) {
 			throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
-	}
-
-	private static void setImportedProvisioningProfile(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update ResourceProvisioningProfile set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		
+		LOGGER.info("Enviando comando SQL de importação de resource provisioning profile com id " + row.get("id"));
 	}
 }

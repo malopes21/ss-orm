@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import blazon.script.directory.common.ImportAdditionalFieldsFunctions;
 import blazon.script.directory.common.ImportCreatedByFunctions;
 import blazon.script.directory.common.ImportEntryFunctions;
@@ -18,7 +21,9 @@ import blazon.script.util.ConnectionFactory;
 
 class ImportUsersFunctions {
 	
-	static List<Map<String, Object>> readSourceUsers(int limit) throws Exception {
+	private final static Logger LOGGER = Logger.getLogger(ImportUsersService.class.getName());
+	
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 		
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -29,11 +34,10 @@ class ImportUsersFunctions {
 		String sql = "select * from User u \n" + 
 				"join Entry e on e.id = u.id \n" + 
 				"where e.state in ('ACTIVE', 'INACTIVE') \n" + 
-				"and _imported_ <> 1 \n" + 
 				"order by u.id \n" + 
-				"limit %s ";
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 		
@@ -55,7 +59,7 @@ class ImportUsersFunctions {
 	}
 	
 
-	public static void saveTargetUsers(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -68,8 +72,6 @@ class ImportUsersFunctions {
 			ImportEntryFunctions.saveEntry(targetConn, row, createdById, managedById);
 			ImportAdditionalFieldsFunctions.insertAdditionalFields(targetConn, row);
 			saveUser(targetConn, row);
-			
-			setImportedUser(sourceConn, row);
 		}
 		
 		targetConn.commit();
@@ -137,22 +139,8 @@ class ImportUsersFunctions {
 		if (affectedRows == 0) {
 		    throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
-	}
-	
-
-	private static void setImportedUser(Connection conn, Map<String, Object> row) throws Exception {
 		
-		PreparedStatement statement = null;
-		
-		String sql = "update User set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-		
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-		    throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		LOGGER.log(Level.INFO, "Enviando comando SQL para importar user com id " + row.get("id"));
 	}
 
 }

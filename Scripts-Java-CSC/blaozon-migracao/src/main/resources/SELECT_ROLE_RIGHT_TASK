@@ -1,0 +1,41 @@
+SELECT 
+	DISTINCT task.id, 
+	task.createdBy, 
+	task.createdByObjectId, 
+	task.createdDate, 
+	task.deadline, 
+	task.notificationCount, 
+	task.priority, 
+	task.resolvedDate, 
+	task.result, 
+	task.status, 
+	task.workflowId, 
+	task.definition_id, 
+	task.userFrom, 
+	task.recipient_id, 
+	task.category, 
+	task.actionId,
+	userFrom.id userFromId,
+	userFrom.displayName userFromDisplayName,
+	userFrom.username userFromUsername,
+	recipient.id recipientId,
+	recipient.displayName recipientDisplayName,
+	recipient.username recipientUsername,
+	roleRightApprovalTask.type roleRightApprovalTaskType,
+	roleRightApprovalTask.roleRightEntry_id,
+	roleRightEntry.action roleRightEntryAction,
+	roleRightEntry.approvalWorkflowId roleRightEntryWorkflowId,
+	roleRightEntry.creationDate roleRightEntryCreationDate,
+	roleRightEntry.executionDate roleRightExecutionDate,
+	roleRightEntry.roleId roleRightEntryRoleId,
+	roleRightEntry.roleRightPolicyId roleRightEntryPolicyId,
+	roleRightEntry.status roleRightEntryStatus,
+	roleRightEntry.justification roleRightEntryJustification,
+	roleRightEntry.requester_id roleRightEntryRequesterId
+FROM 
+	blazoniam.Task task
+INNER JOIN RoleRightApprovalTask roleRightApprovalTask on roleRightApprovalTask.id = task.id
+INNER JOIN User userFrom on userFrom.id = task.userFrom
+INNER JOIN User recipient on recipient.id = task.recipient_id
+INNER JOIN RoleRightEntry roleRightEntry on roleRightEntry.id = roleRightApprovalTask.roleRightEntry_id
+LIMIT ? OFFSET ?;

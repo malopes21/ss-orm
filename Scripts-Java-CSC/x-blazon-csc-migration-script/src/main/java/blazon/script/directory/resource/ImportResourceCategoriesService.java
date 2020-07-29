@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
@@ -29,43 +30,14 @@ public class ImportResourceCategoriesService {
 
 	public static void execute() throws Exception {
 		
-		createImportValidationField();
-
-		List<Map<String, Object>> rows = readSourceResourceCategories();
-		saveTargetResourceCategories(rows);
+		List<Map<String, Object>> rows = read();
+		save(rows);
 		
+		LOGGER.info(String.format("Importados %s registros de resource category", rows.size()));
 	}
 	
 	
-	static void createImportValidationField() throws Exception {
-		
-		try {
-
-			Connection conn = ConnectionFactory.getSourceConnection();
-			PreparedStatement statement = null;
-			
-			String sql = "alter table ResourceCategory add column _imported_ int default 0";
-	
-			conn = ConnectionFactory.getSourceConnection();
-	
-			conn.setAutoCommit(false);
-			
-			statement = conn.prepareStatement(sql);
-			
-			statement.executeUpdate();
-			
-			conn.commit();
-			
-			LOGGER.info("Campo de validação criado ...");
-			
-		} catch (Exception e) {
-			
-			LOGGER.info("Campo de validação provavelmente já criado!");
-		}
-	}
-	
-	
-	static List<Map<String, Object>> readSourceResourceCategories() throws Exception {
+	static List<Map<String, Object>> read() throws Exception {
 		
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -73,7 +45,7 @@ public class ImportResourceCategoriesService {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 		
-		String sql = "select * from ResourceCategory rc where _imported_ <> 1 limit 100000 offset 1 \n" ;
+		String sql = "select * from ResourceCategory rc limit 100000 offset 1 \n" ;
 
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
@@ -96,7 +68,7 @@ public class ImportResourceCategoriesService {
 	}
 	
 
-	static void saveTargetResourceCategories(List<Map<String, Object>> rows) throws Exception {
+	static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -104,8 +76,6 @@ public class ImportResourceCategoriesService {
 		for(Map<String, Object> row: rows) {
 			
 			saveCategory(targetConn, row);
-			
-			setImportedCategory(sourceConn, row);
 		}
 		
 		targetConn.commit();
@@ -137,21 +107,8 @@ public class ImportResourceCategoriesService {
 		if (affectedRows == 0) {
 		    throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
+		
+		LOGGER.info("Enviando comando SQL de importação de resource category com id " + row.get("id"));
 	}
 
-	
-	private static void setImportedCategory(Connection conn, Map<String, Object> row) throws Exception {
-		
-		PreparedStatement statement = null;
-		
-		String sql = "update ResourceCategory set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-		
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-		    throw new RuntimeException("Update instance failed, no rows affected.");
-		}
-	}
 }

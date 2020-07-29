@@ -1,0 +1,43 @@
+SELECT 
+	DISTINCT task.id, 
+	task.createdBy, 
+	task.createdByObjectId, 
+	task.createdDate, 
+	task.deadline, 
+	task.notificationCount, 
+	task.priority, 
+	task.resolvedDate, 
+	task.result, 
+	task.status, 
+	task.workflowId, 
+	task.definition_id, 
+	task.userFrom, 
+	task.recipient_id, 
+	task.category, 
+	task.actionId,
+	userFrom.id userFromId,
+	userFrom.displayName userFromDisplayName,
+	userFrom.username userFromUsername,
+	recipient.id recipientId,
+	recipient.displayName recipientDisplayName,
+	recipient.username recipientUsername,
+	provisioningTask.notProvisionedJustification,
+	provisioningTask.provisioningEntry_id,
+	provisioningEntry.resource_id provisioningEntryResourceId,
+	provisioningEntry.entitlementId provisioningEntryEntitlementId,
+	provisioningEntry.roleId provisioningEntryRoleId,
+	provisioningEntry.accountId provisioningEntryAccountId,
+	provisioningEntry.workflowId provisioningEntryWorkflowId,
+	provisioningEntry.id provisioningEntryId,
+	provisioningEntry.entryType provisioningEntryEntryType,
+	provisioningEntry.provisioningType provisioningEntryProvisioningType,
+	provisioningEntry.provisioningTypeObjectId provisioningEntryProvisioningTypeObjectId,
+	provisioningEntry.targetId provisioningEntryTargetId,
+	provisioningEntry.targetType provisioningEntryTargetType
+FROM 
+	blazoniam.Task task
+INNER JOIN ProvisioningTask provisioningTask on provisioningTask.id = task.id
+INNER JOIN User userFrom on userFrom.id = task.userFrom
+INNER JOIN User recipient on recipient.id = task.recipient_id
+INNER JOIN ProvisioningEntry provisioningEntry on provisioningEntry.id = provisioningTask.provisioningEntry_id
+LIMIT ? OFFSET ?;

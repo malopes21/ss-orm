@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import blazon.script.directory.common.ImportAdditionalFieldsFunctions;
 import blazon.script.directory.common.ImportCreatedByFunctions;
 import blazon.script.directory.common.ImportEntryFunctions;
@@ -18,7 +21,9 @@ import blazon.script.util.ConnectionFactory;
 
 class ImportAccountsFunctions {
 	
-	static List<Map<String, Object>> readSourceAccounts(int limit) throws Exception {
+	private final static Logger LOGGER = Logger.getLogger(ImportAccountsService.class.getName());
+	
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 		
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -29,11 +34,10 @@ class ImportAccountsFunctions {
 		String sql = "select * from Account ac \n" + 
 				"join Entry e on e.id = ac.id \n" + 
 				"where e.state in ('ACTIVE', 'INACTIVE') \n" + 
-				"and _imported_ <> 1 \n" + 
 				"order by ac.id \n" + 
-				"limit %s ";
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 		
@@ -55,7 +59,7 @@ class ImportAccountsFunctions {
 	}
 	
 
-	public static void saveTargetAccounts(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -63,13 +67,14 @@ class ImportAccountsFunctions {
 		for(Map<String, Object> row: rows) {
 			
 			Long createdById = ImportCreatedByFunctions.insertCreatedBy(targetConn, row);
+			
 			Long managedById = ImportManagedByFunctions.insertManagedByFull(targetConn, row);
 			
 			ImportEntryFunctions.saveEntry(targetConn, row, createdById, managedById);
-			ImportAdditionalFieldsFunctions.insertAdditionalFields(targetConn, row);
-			saveAccount(targetConn, row);
 			
-			setImportedAccount(sourceConn, row);
+			ImportAdditionalFieldsFunctions.insertAdditionalFields(targetConn, row);
+			
+			saveAccount(targetConn, row);
 		}
 		
 		targetConn.commit();
@@ -99,7 +104,11 @@ class ImportAccountsFunctions {
 		statement.setLong(1, (Long) row.get("id"));
 		statement.setString(2, (String) row.get("accountIdentifier"));
 		statement.setString(3, (String) row.get("description"));
-		if(row.get("lastPasswordModificationDate") != null) statement.setTimestamp(4, (java.sql.Timestamp) row.get("lastPasswordModificationDate") ); statement.setObject(4, null);
+		if (row.get("lastPasswordModificationDate") != null) {
+			statement.setTimestamp(4, (java.sql.Timestamp) row.get("lastPasswordModificationDate"));
+		} else {
+			statement.setObject(4, null);
+		}
 		statement.setString(5, (String) row.get("name"));
 		statement.setLong(6, (Long) row.get("resource_id"));
 		statement.setLong(7, (Long) row.get("user_id"));
@@ -109,22 +118,8 @@ class ImportAccountsFunctions {
 		if (affectedRows == 0) {
 		    throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
+		
+		LOGGER.log(Level.INFO, "Enviando comando SQL para importar account com id " + row.get("id"));
 	}
 	
-
-	private static void setImportedAccount(Connection conn, Map<String, Object> row) throws Exception {
-		
-		PreparedStatement statement = null;
-		
-		String sql = "update Account set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-		
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-		    throw new RuntimeException("Update instance failed, no rows affected.");
-		}
-	}
-
 }

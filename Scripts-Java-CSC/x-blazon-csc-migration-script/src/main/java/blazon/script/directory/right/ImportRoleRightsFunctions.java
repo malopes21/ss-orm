@@ -9,16 +9,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
 class ImportRoleRightsFunctions {
 
-	private final static Logger LOGGER = Logger.getLogger(ImportRoleRightsFunctions.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(ImportRoleRightsService.class.getName());
 
-	static List<Map<String, Object>> readSourceRoleRights(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -26,9 +27,11 @@ class ImportRoleRightsFunctions {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 
-		String sql = "select * from Rightt \n" + "where _imported_ <> 1 \n" + "order by id \n" + "limit %s ";
+		String sql = "select * from Rightt \n" + 
+					"order by id \n" + 
+					"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -49,7 +52,7 @@ class ImportRoleRightsFunctions {
 		return rows;
 	}
 
-	public static void saveTargetRoleRights(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -62,11 +65,9 @@ class ImportRoleRightsFunctions {
 
 				ImportRoleRightEntitlementsFunctions.insertRightEntitlements(targetConn, row);
 
-				setImportedRoleRight(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE,
+				LOGGER.log(Level.ERROR,
 						String.format("Erro ao importar role right com id %s", row.get("id")));
 				throw e;
 			}
@@ -78,6 +79,7 @@ class ImportRoleRightsFunctions {
 		targetConn.close();
 		sourceConn.close();
 	}
+	
 
 	private static void saveRoleRight(Connection conn, Map<String, Object> row) throws SQLException {
 
@@ -115,21 +117,8 @@ class ImportRoleRightsFunctions {
 		if (affectedRows == 0) {
 			throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
-	}
-
-	private static void setImportedRoleRight(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update Rightt set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		
+		LOGGER.log(Level.INFO, "Enviando comando SQL para importar role right com id " + row.get("id"));
 	}
 
 }

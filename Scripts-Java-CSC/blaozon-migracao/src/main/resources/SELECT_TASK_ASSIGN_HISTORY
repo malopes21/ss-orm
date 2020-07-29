@@ -1,0 +1,17 @@
+SELECT 
+	history.id, 
+	history.assign_date, 
+	history.from_id, 
+	history.task_id, 
+	history.to_id,
+	fromUser.id fromUserId,
+	fromUser.username fromUserUsername,
+	fromUser.displayName fromUserDisplayName,
+	toUser.id toUserId,
+	toUser.username toUserUsername,
+	toUser.displayName toUserDisplayName
+FROM 
+	blazoniam.TaskAssignHistory history
+LEFT JOIN User fromUser on fromUser.id = history.from_id
+INNER JOIN User toUser on toUser.id = history.to_id
+LIMIT ? OFFSET ?;

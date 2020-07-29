@@ -1,0 +1,39 @@
+SELECT 
+	DISTINCT task.id, 
+	task.createdBy, 
+	task.createdByObjectId, 
+	task.createdDate, 
+	task.deadline, 
+	task.notificationCount, 
+	task.priority, 
+	task.resolvedDate, 
+	task.result, 
+	task.status, 
+	task.workflowId, 
+	task.definition_id, 
+	task.userFrom, 
+	task.recipient_id, 
+	task.category, 
+	task.actionId,
+	userFrom.id userFromId,
+	userFrom.displayName userFromDisplayName,
+	userFrom.username userFromUsername,
+	recipient.id recipientId,
+	recipient.displayName recipientDisplayName,
+	recipient.username recipientUsername,
+	certificationTask.entryId entryId,
+	certificationTask.entryType,
+	certificationTask.justification,
+	certificationTask.revokedJustification,
+	certificationTask.certificationEntry_id,
+	certificationEntry.entryType,
+	certificationEntry.resourceId,
+	certificationEntry.entitlementId,
+	certificationEntry.roleId
+FROM 
+	blazoniam.Task task
+INNER JOIN CertificationApprovalTask certificationTask on certificationTask.id = task.id
+INNER JOIN User userFrom on userFrom.id = task.userFrom
+INNER JOIN User recipient on recipient.id = task.recipient_id
+INNER JOIN CertificationEntry certificationEntry on certificationEntry.id = certificationTask.certificationEntry_id
+LIMIT ? OFFSET ?;

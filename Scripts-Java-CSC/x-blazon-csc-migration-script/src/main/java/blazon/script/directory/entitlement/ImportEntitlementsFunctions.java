@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import blazon.script.directory.common.ImportAdditionalFieldsFunctions;
 import blazon.script.directory.common.ImportCreatedByFunctions;
 import blazon.script.directory.common.ImportEntryFunctions;
@@ -18,7 +21,9 @@ import blazon.script.util.ConnectionFactory;
 
 class ImportEntitlementsFunctions {
 	
-	static List<Map<String, Object>> readSourceEntitlements(int limit) throws Exception {
+	private final static Logger LOGGER = Logger.getLogger(ImportEntitlementsService.class.getName());
+	
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 		
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -29,11 +34,10 @@ class ImportEntitlementsFunctions {
 		String sql = "select * from Entitlement ent \n" + 
 				"join Entry e on e.id = ent.id \n" + 
 				"where e.state in ('ACTIVE', 'INACTIVE') \n" + 
-				"and _imported_ <> 1 \n" + 
 				"order by ent.id \n" + 
-				"limit %s ";
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 		
@@ -55,7 +59,7 @@ class ImportEntitlementsFunctions {
 	}
 	
 
-	public static void saveTargetEntitlements(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -63,14 +67,16 @@ class ImportEntitlementsFunctions {
 		for(Map<String, Object> row: rows) {
 			
 			Long createdById = ImportCreatedByFunctions.insertCreatedBy(targetConn, row);
+			
 			Long managedById = ImportManagedByFunctions.insertManagedByFull(targetConn, row);
 			
 			ImportEntryFunctions.saveEntry(targetConn, row, createdById, managedById);
-			ImportAdditionalFieldsFunctions.insertAdditionalFields(targetConn, row);
-			saveEntitlement(targetConn, row);
-			ImportEntitlementOwnersFunctions.importOwners(targetConn, row);
 			
-			setImportedEntitlement(sourceConn, row);
+			ImportAdditionalFieldsFunctions.insertAdditionalFields(targetConn, row);
+			
+			saveEntitlement(targetConn, row);
+			
+			ImportEntitlementOwnersFunctions.importOwners(targetConn, row);
 		}
 		
 		targetConn.commit();
@@ -108,22 +114,8 @@ class ImportEntitlementsFunctions {
 		if (affectedRows == 0) {
 		    throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
+		
+		LOGGER.log(Level.INFO, "Enviando comando SQL para importar entitlement com id " + row.get("id"));
 	}
 	
-
-	private static void setImportedEntitlement(Connection conn, Map<String, Object> row) throws Exception {
-		
-		PreparedStatement statement = null;
-		
-		String sql = "update Entitlement set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-		
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-		    throw new RuntimeException("Update instance failed, no rows affected.");
-		}
-	}
-
 }

@@ -1,0 +1,12 @@
+SELECT 
+	taskComment.id, 
+	taskComment.comment, 
+	taskComment.date, 
+	taskComment.task_id, 
+	user.id userId,
+	user.username username,
+	user.displayName displayName
+FROM 
+	blazoniam.TaskComment taskComment
+INNER JOIN User user on user.id = taskComment.user_id
+LIMIT ? OFFSET ?;

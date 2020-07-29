@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import blazon.script.directory.common.ImportAdditionalFieldsFunctions;
 import blazon.script.directory.common.ImportCreatedByFunctions;
 import blazon.script.directory.common.ImportEntryFunctions;
@@ -18,7 +21,9 @@ import blazon.script.util.ConnectionFactory;
 
 class ImportRolesFunctions {
 	
-	static List<Map<String, Object>> readSourceRoles(int limit) throws Exception {
+	private final static Logger LOGGER = Logger.getLogger(ImportRolesFunctions.class.getName());
+	
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 		
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -29,11 +34,10 @@ class ImportRolesFunctions {
 		String sql = "select * from Role r \n" + 
 				"join Entry e on e.id = r.id \n" + 
 				"where e.state in ('ACTIVE', 'INACTIVE') \n" + 
-				"and _imported_ <> 1 \n" + 
 				"order by r.id \n" + 
-				"limit %s ";
+				"limit %s offset %s";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 		
@@ -55,7 +59,7 @@ class ImportRolesFunctions {
 	}
 	
 
-	public static void saveTargetRoles(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -63,13 +67,13 @@ class ImportRolesFunctions {
 		for(Map<String, Object> row: rows) {
 			
 			Long createdById = ImportCreatedByFunctions.insertCreatedBy(targetConn, row);
+			
 			Long managedById = ImportManagedByFunctions.insertManagedByFull(targetConn, row);
 			
 			ImportEntryFunctions.saveEntry(targetConn, row, createdById, managedById);
+			
 			ImportAdditionalFieldsFunctions.insertAdditionalFields(targetConn, row);
 			saveRole(targetConn, row);
-			
-			setImportedRole(sourceConn, row);
 		}
 		
 		targetConn.commit();
@@ -105,22 +109,8 @@ class ImportRolesFunctions {
 		if (affectedRows == 0) {
 		    throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
-	}
-	
-
-	private static void setImportedRole(Connection conn, Map<String, Object> row) throws Exception {
 		
-		PreparedStatement statement = null;
-		
-		String sql = "update Role set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-		
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-		    throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		LOGGER.log(Level.INFO, "Enviando comando SQL para importar role com id " + row.get("id"));
 	}
 
 }
