@@ -5,9 +5,9 @@ import blazon.script.directory.entitlement.ImportEntitlementsService;
 import blazon.script.directory.membershipentitlement.ImportMembershipEntitlementsService;
 import blazon.script.directory.membershiprole.ImportMembershipRolesService;
 import blazon.script.directory.resource.ImportResourcesService;
-import blazon.script.directory.resource.dependencies.ImportResourceProvisioningProfilesService;
 import blazon.script.directory.right.ImportRoleRightsService;
 import blazon.script.directory.role.ImportRolesService;
+import blazon.script.directory.schema.ImportSchemaService;
 import blazon.script.directory.user.ImportUsersService;
 
 public class MainDirectoryScript {
@@ -16,13 +16,15 @@ public class MainDirectoryScript {
 		
 		long inicio = System.currentTimeMillis();
 		
+		ImportSchemaService.execute();
+		
 		ImportUsersService.execute();
 		
 		ImportRolesService.execute();
 		
 		//ImportResourceCategoriesService.execute(); 
 		ImportResourcesService.execute();
-		ImportResourceProvisioningProfilesService.execute();
+		//ImportResourceProvisioningProfilesService.execute();
 		
 		ImportEntitlementsService.execute();
 		
