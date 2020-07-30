@@ -13,6 +13,8 @@ import java.util.Map;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import blazon.script.util.ConnectionFactory;
 
 class ImportCertificationApprovalTaskDetailsFunctions {
@@ -125,14 +127,22 @@ class ImportCertificationApprovalTaskDetailsFunctions {
 		} else {
 			statement.setObject(7, null);
 		}
+		
+		try {
+			
+			int affectedRows = statement.executeUpdate();
 
-		int affectedRows = statement.executeUpdate();
+			if (affectedRows == 0) {
+				throw new RuntimeException("Insert instance failed, no rows affected.");
+			}
+			
+			LOGGER.log(Level.INFO, String.format("Comando SQL emitido para importar certification approval task detail com id %s", row.get("id")));
+			
+		} catch (MySQLIntegrityConstraintViolationException e) {
 
-		if (affectedRows == 0) {
-			throw new RuntimeException("Insert instance failed, no rows affected.");
+			LOGGER.log(Level.ERROR, String.format("Erro ao importar certification approval task detail com id %s. Provavel entrada não importada.", row.get("id")));
 		}
 		
-		LOGGER.log(Level.INFO, String.format("Comando SQL emitido para importar certification approval task detail com id %s", row.get("id")));
 	}
 
 }

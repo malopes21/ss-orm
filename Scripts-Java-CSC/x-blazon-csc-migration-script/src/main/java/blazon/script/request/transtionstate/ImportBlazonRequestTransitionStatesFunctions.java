@@ -13,6 +13,8 @@ import java.util.Map;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import blazon.script.util.ConnectionFactory;
 
 class ImportBlazonRequestTransitionStatesFunctions {
@@ -124,19 +126,28 @@ class ImportBlazonRequestTransitionStatesFunctions {
 		} else {
 			statement.setObject(7, null);
 		}
-		if (row.get("reconciliationEntry_id") != null) {
+		if (row.get("request_id") != null) {
 			statement.setLong(8, (Long) row.get("request_id"));
 		} else {
 			statement.setObject(8, null);
 		}
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Insert instance failed, no rows affected.");
-		}
 		
-		LOGGER.log(Level.INFO, String.format("Comando SQL emitido para importar blazon request transition state com id %s", row.get("id")));
+		try {
+			
+			int affectedRows = statement.executeUpdate();
+
+			if (affectedRows == 0) {
+				throw new RuntimeException("Insert instance failed, no rows affected.");
+			}
+			
+			LOGGER.log(Level.INFO, String.format("Comando SQL emitido para importar blazon request transition state com id %s", row.get("id")));
+			
+		} catch (MySQLIntegrityConstraintViolationException e) {
+
+			LOGGER.log(Level.ERROR, String.format("Erro ao importar transition state com id %s. Provavel request não importada.", row.get("id")));
+		}
+
+		
 	}
 
 }
