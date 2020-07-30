@@ -1,4 +1,4 @@
-package blazon.script.indexation.directory.resource;
+package blazon.script.indexation.directory.account.builder;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -9,48 +9,78 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ImportResourceToIndexationBuilder {
+public class ImportAccountToIndexationBuilder {
 
-	public static JSONObject createEntry(Map<String, Object> row) {
+	public static JSONObject createEntry(Map<String, Map<String, Object>> schema, Map<String, Object> row) {
 
-		String key = generateMd5Key("RESOURCE", row.get("id").toString());
+		String key = generateMd5Key("ACCOUNT", row.get("id").toString());
 		
 		JSONObject entryJson = new JSONObject();
 
 		entryJson.put("key", key);
 		entryJson.put("identifier", (Long) row.get("id")); 
-		entryJson.put("schema", "RESOURCE");
-		entryJson.put("resourceName", row.get("name"));
-		entryJson.put("resourceIdentifier", row.get("id"));
+		entryJson.put("schema", "ACCOUNT");
+		entryJson.put("resourceName", row.get("resourceName"));
+		entryJson.put("resourceIdentifier", row.get("resourceId"));
 		entryJson.put("resourceType", "REGULAR");
 		
 		JSONArray fieldsJson = new JSONArray();
 		
-		JSONObject field = createField("STRING", "name", row.get("name"));
+		for(String fieldName: schema.keySet()) {
+			
+			Object attributeValue = row.get(fieldName);
+			
+			Map<String, Object> fieldMetadata = schema.get(fieldName);
+			
+			String displayType = fieldMetadata.get("displayType").toString();
+			
+			if (displayType.equals("STRING")
+					|| displayType.equals("TEXTAREA")
+					|| displayType.equals("PASSWORD")) {
+				
+				if (attributeValue != null) {
+					
+					JSONObject field = createField("STRING", fieldName, attributeValue);
+					
+					fieldsJson.put(field);
+				}
+				
+			} else if (displayType.equals("NUMBER")) {
+				
+				if (attributeValue != null) {
+					
+					JSONObject field = createField("NUMBER", fieldName, attributeValue);
+					
+					fieldsJson.put(field);
+				}
+				
+			} else if (displayType.equals("CHECKBOX")) {
+				
+				if (attributeValue != null) {
+					
+					JSONObject field = createField("BOOLEAN", fieldName, attributeValue);
+					
+					fieldsJson.put(field);
+				}
+				
+			} else if (displayType.equals("DATE")) {
+				
+				if (attributeValue != null) {
+					
+					JSONObject field = createField("DATE", fieldName, attributeValue);
+					
+					fieldsJson.put(field);
+				}
+			}
+		}
+		
+		JSONObject field = createField("BOOLEAN", "visibleToSelfService", row.get("visibleToSelfService"));
 		fieldsJson.put(field);
 		
-		field = createField("STRING", "description", row.get("description"));
-		fieldsJson.put(field);
-		
-		field = createField("DATE", "creationDate", row.get("creationDate"));
-		fieldsJson.put(field);
-		
-		field = createField("STRING", "uri", row.get("uri"));
+		field = createField("DATE", "createdAt", row.get("createdAt"));
 		fieldsJson.put(field);
 		
 		field = createField("STRING", "tags", row.get("tags"));
-		fieldsJson.put(field);
-		
-		field = createField("NUMBER", "categoryId", row.get("category_id"));
-		fieldsJson.put(field);
-		
-		//field = createField("STRING", "categoryName", row.get("categoryName"));
-		//fieldsJson.put(field);
-		
-		field = createField("BOOLEAN", "visibleToSelfService", row.get("visibleToSelfService"));
-		fieldsJson.put(field);
-		
-		field = createField("STRING", "logoImageId", row.get("logoImageId"));
 		fieldsJson.put(field);
 		
 		entryJson.put("fields", fieldsJson);
@@ -108,4 +138,5 @@ public class ImportResourceToIndexationBuilder {
 		}
 	}
 	
+
 }

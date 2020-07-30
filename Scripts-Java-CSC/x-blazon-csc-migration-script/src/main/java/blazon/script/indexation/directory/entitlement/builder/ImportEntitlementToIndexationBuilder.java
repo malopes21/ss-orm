@@ -1,4 +1,4 @@
-package blazon.script.indexation.directory.account;
+package blazon.script.indexation.directory.entitlement.builder;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -9,17 +9,17 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ImportAccountToIndexationBuilder {
+public class ImportEntitlementToIndexationBuilder {
 
 	public static JSONObject createEntry(Map<String, Map<String, Object>> schema, Map<String, Object> row) {
 
-		String key = generateMd5Key("ACCOUNT", row.get("id").toString());
+		String key = generateMd5Key("ENTITLEMENT", row.get("id").toString());
 		
 		JSONObject entryJson = new JSONObject();
 
 		entryJson.put("key", key);
 		entryJson.put("identifier", (Long) row.get("id")); 
-		entryJson.put("schema", "ACCOUNT");
+		entryJson.put("schema", "ENTITLEMENT");
 		entryJson.put("resourceName", row.get("resourceName"));
 		entryJson.put("resourceIdentifier", row.get("resourceId"));
 		entryJson.put("resourceType", "REGULAR");

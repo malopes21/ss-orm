@@ -8,23 +8,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import blazon.script.indexation.common.ImportAttributeSchemaService;
+import blazon.script.indexation.directory.account.builder.ImportAccountToIndexationBuilder;
 import blazon.script.util.ConnectionFactory;
 
 class ImportAccountDirectoryIndexationsFunctions {
 
 	private final static Logger LOGGER = Logger.getLogger(ImportAccountDirectoryIndexationsFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceAccounts(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -35,10 +36,10 @@ class ImportAccountDirectoryIndexationsFunctions {
 		String sql = "select * \n" + 
 				"from Account r \n" + 
 				"join Entry e on e.id = r.id \n" + 
-				"where r._imported2_ <> 1 \n" +
-				"limit %s";
+				"where 1 = 1 \n" +
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -59,7 +60,7 @@ class ImportAccountDirectoryIndexationsFunctions {
 		return rows;
 	}
 
-	public static void saveTargetAccounts(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
 		
@@ -79,11 +80,9 @@ class ImportAccountDirectoryIndexationsFunctions {
 				
 				saveTargetEntitlement(entryJson);
 
-				setImportedEntitlement(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar account com id %s", row.get("id")));
+				LOGGER.log(Level.ERROR, String.format("Erro ao importar account com id %s", row.get("id")));
 				throw e;
 			}
 		}
@@ -110,22 +109,8 @@ class ImportAccountDirectoryIndexationsFunctions {
 			throw new RuntimeException("Failed : HTTP error code : "
 				+ response.getStatusLine().getStatusCode());
 		}
+		
+		LOGGER.log(Level.INFO, String.format("Comando HTTP POST emitido para importar account com id %s", entryJson.getLong("identifier")));
 	}
 	
-
-	private static void setImportedEntitlement(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update Account set _imported2_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
-	}
-
 }

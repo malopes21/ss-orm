@@ -1,4 +1,4 @@
-package blazon.script.indexation.directory.role;
+package blazon.script.indexation.directory.user.builder;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -9,17 +9,17 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class ImportRoleToIndexationBuilder {
+public class ImportUserToIndexationBuilder {
 
 	public static JSONObject createEntry(Map<String, Map<String, Object>> schema, Map<String, Object> row) {
 
-		String key = generateMd5Key("ROLE", row.get("id").toString());
+		String key = generateMd5Key("USER", row.get("id").toString());
 		
 		JSONObject entryJson = new JSONObject();
 
 		entryJson.put("key", key);
 		entryJson.put("identifier", (Long) row.get("id")); 
-		entryJson.put("schema", "ROLE");
+		entryJson.put("schema", "USER");
 		entryJson.put("resourceName", JSONObject.NULL);
 		entryJson.put("resourceIdentifier", JSONObject.NULL);
 		entryJson.put("resourceType", JSONObject.NULL);
@@ -74,13 +74,28 @@ public class ImportRoleToIndexationBuilder {
 			}
 		}
 		
-		JSONObject field = createField("BOOLEAN", "visibleToSelfService", row.get("visibleToSelfService"));
+		JSONObject field = createField("STRING", "status", row.get("state"));
 		fieldsJson.put(field);
 		
 		field = createField("DATE", "createdAt", row.get("createdAt"));
 		fieldsJson.put(field);
 		
-		field = createField("STRING", "tags", row.get("tags"));
+		field = createField("NUMBER", "createdByObjectId", row.get("createdByObjectId"));
+		fieldsJson.put(field);
+		
+		field = createField("STRING", "createdByType", row.get("createdByType"));
+		fieldsJson.put(field);
+		
+		field = createField("DATE", "expireAt", row.get("expireAt"));
+		fieldsJson.put(field);
+		
+		field = createField("DATE", "certificatedAt", row.get("certificatedAt"));
+		fieldsJson.put(field);
+		
+		field = createField("STRING", "thumbImageId", row.get("thumbImageId"));
+		fieldsJson.put(field);
+		
+		field = createField("STRING", "photoImageId", row.get("photoImageId"));
 		fieldsJson.put(field);
 		
 		entryJson.put("fields", fieldsJson);
