@@ -67,10 +67,13 @@ class ImportUsersFunctions {
 		for(Map<String, Object> row: rows) {
 			
 			Long createdById = ImportCreatedByFunctions.insertCreatedBy(targetConn, row);
+			
 			Long managedById = ImportManagedByFunctions.insertManagedByFull(targetConn, row);
 			
 			ImportEntryFunctions.saveEntry(targetConn, row, createdById, managedById);
+			
 			ImportAdditionalFieldsFunctions.insertAdditionalFields(targetConn, row);
+			
 			saveUser(targetConn, row);
 		}
 		

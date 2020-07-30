@@ -269,7 +269,6 @@ class InternalEntryInfo {
 
 	private Long accountId;
 	private Long entitlementId;
-	private Long resourceId;
 
 	public Long getId() {
 		return id;
@@ -301,14 +300,6 @@ class InternalEntryInfo {
 
 	public void setEntitlementId(Long entitlementId) {
 		this.entitlementId = entitlementId;
-	}
-
-	public Long getResourceId() {
-		return resourceId;
-	}
-
-	public void setResourceId(Long resourceId) {
-		this.resourceId = resourceId;
 	}
 
 }

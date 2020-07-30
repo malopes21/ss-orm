@@ -5,7 +5,6 @@ import blazon.script.directory.entitlement.ImportEntitlementsService;
 import blazon.script.directory.membershipentitlement.ImportMembershipEntitlementsService;
 import blazon.script.directory.membershiprole.ImportMembershipRolesService;
 import blazon.script.directory.resource.ImportResourcesService;
-import blazon.script.directory.resource.dependencies.ImportResourceCategoriesService;
 import blazon.script.directory.resource.dependencies.ImportResourceProvisioningProfilesService;
 import blazon.script.directory.right.ImportRoleRightsService;
 import blazon.script.directory.role.ImportRolesService;
@@ -21,7 +20,7 @@ public class MainDirectoryScript {
 		
 		ImportRolesService.execute();
 		
-		ImportResourceCategoriesService.execute();
+		//ImportResourceCategoriesService.execute(); 
 		ImportResourcesService.execute();
 		ImportResourceProvisioningProfilesService.execute();
 		

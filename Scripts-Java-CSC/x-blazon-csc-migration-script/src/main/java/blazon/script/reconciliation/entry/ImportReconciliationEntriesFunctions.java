@@ -73,14 +73,14 @@ class ImportReconciliationEntriesFunctions {
 
 				Long reconciliationMatchedInternalEntry_id = ImportReconciliationInternalEntryFunctions.insertInternalEntry(targetConn, row);
 				
-				if(reconciliationMatchedInternalEntry_id == null) {
+				//if(reconciliationMatchedInternalEntry_id == null) {
 					
-					System.out.println("InternalEntry null, not imported reconciliation entry: " + row.get("id"));
+				//	LOGGER.log(Level.WARN, "InternalEntry null, not imported reconciliation entry: " + row.get("id"));
 					
-				} else {
+				//} else {
 					
 					saveReconciliationEntry(targetConn, row, resource_id, reconciliationMatchedInternalEntry_id);
-				}
+				//}
 				
 			} catch (Exception e) {
 
