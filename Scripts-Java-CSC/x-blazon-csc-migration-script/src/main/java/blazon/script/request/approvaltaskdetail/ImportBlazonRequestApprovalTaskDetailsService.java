@@ -1,14 +1,11 @@
 package blazon.script.request.approvaltaskdetail;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import blazon.script.util.ConnectionFactory;
 import blazon.script.util.ImportUtil;
 
 public class ImportBlazonRequestApprovalTaskDetailsService {

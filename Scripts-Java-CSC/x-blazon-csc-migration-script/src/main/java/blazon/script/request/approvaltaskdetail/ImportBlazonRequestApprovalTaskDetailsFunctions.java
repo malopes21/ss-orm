@@ -13,6 +13,8 @@ import java.util.Map;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import blazon.script.util.ConnectionFactory;
 
 class ImportBlazonRequestApprovalTaskDetailsFunctions {
@@ -124,14 +126,21 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 		} else {
 			statement.setObject(7, null);
 		}
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Insert instance failed, no rows affected.");
-		}
 		
-		LOGGER.log(Level.INFO, String.format("Comando SQL emitido para importar approval task detail com id %s", row.get("id")));
+		try {
+			
+			int affectedRows = statement.executeUpdate();
+
+			if (affectedRows == 0) {
+				throw new RuntimeException("Insert instance failed, no rows affected.");
+			}
+			
+			LOGGER.log(Level.INFO, String.format("Comando SQL emitido para importar approval task detail com id %s", row.get("id")));
+			
+		} catch (MySQLIntegrityConstraintViolationException e) {
+
+			LOGGER.log(Level.ERROR, String.format("Erro ao importar approval task detail com id %s. Provavel request não importada.", row.get("id")));
+		}
 	}
 
 }
