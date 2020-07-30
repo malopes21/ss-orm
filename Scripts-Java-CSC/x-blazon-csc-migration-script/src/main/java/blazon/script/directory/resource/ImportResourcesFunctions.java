@@ -62,6 +62,7 @@ class ImportResourcesFunctions {
 		for(Map<String, Object> row: rows) {
 			
 			saveResource(targetConn, row);
+			
 			ImportResourceOwnersFunctions.importOwners(targetConn, row);
 		}
 		
@@ -105,21 +106,45 @@ class ImportResourcesFunctions {
 		statement.setBoolean(2, (Boolean) row.get("certifiable"));
 		statement.setDate(3, (java.sql.Date) row.get("creationDate"));
 		statement.setString(4, (String) row.get("description"));
-		if(row.get("directoryIndexationSynchronized") != null) { statement.setBoolean(5, (Boolean) row.get("directoryIndexationSynchronized"));} else { statement.setBoolean(5, false);}
+		if (row.get("directoryIndexationSynchronized") != null) {
+			statement.setBoolean(5, (Boolean) row.get("directoryIndexationSynchronized"));
+		} else {
+			statement.setBoolean(5, false);
+		}
 		statement.setString(6, (String) row.get("logoImageId"));
 		statement.setString(7, (String) row.get("name"));
 		statement.setBoolean(8, (Boolean) row.get("passwordVaultEnabled"));
 		statement.setBoolean(9, (Boolean) row.get("provisioningEnabled"));
 		statement.setString(10, (String) row.get("risk"));
-		if(row.get("selfServiceSynchronized") != null) { statement.setBoolean(11, (Boolean) row.get("selfServiceSynchronized"));} else { statement.setBoolean(11, false);} 
+		if (row.get("selfServiceSynchronized") != null) {
+			statement.setBoolean(11, (Boolean) row.get("selfServiceSynchronized"));
+		} else {
+			statement.setBoolean(11, false);
+		}
 		statement.setBoolean(12, (Boolean) row.get("syncPassword"));
 		statement.setString(13, (String) row.get("tags"));
-		if(row.get("type") != null) { statement.setString(14, (String) row.get("creator_id")); } else { statement.setString(14, "REGULAR");}
+		if (row.get("type") != null) {
+			statement.setString(14, (String) row.get("creator_id"));
+		} else {
+			statement.setString(14, "REGULAR");
+		}
 		statement.setString(15, (String) row.get("uri"));
 		statement.setBoolean(16, (Boolean) row.get("visibleToSelfService"));
-		if(row.get("accessClassification_id") != null) { statement.setBoolean(17, (Boolean) row.get("accessClassification_id"));} else { statement.setObject(17, null); }
-		if(row.get("category_id") != null) {statement.setLong(18, (Long) row.get("category_id"));} else { statement.setObject(18, null);}
-		if(row.get("creator_id") != null) {statement.setLong(19, (Long) row.get("creator_id"));} else { statement.setObject(19, null);}
+		if (row.get("accessClassification_id") != null) {
+			statement.setBoolean(17, (Boolean) row.get("accessClassification_id"));
+		} else {
+			statement.setObject(17, null);
+		}
+		if (row.get("category_id") != null) {
+			statement.setLong(18, (Long) row.get("category_id"));
+		} else {
+			statement.setObject(18, null);
+		}
+		if (row.get("creator_id") != null) {
+			statement.setLong(19, (Long) row.get("creator_id"));
+		} else {
+			statement.setObject(19, null);
+		}
 		
 		int affectedRows = statement.executeUpdate();
 
