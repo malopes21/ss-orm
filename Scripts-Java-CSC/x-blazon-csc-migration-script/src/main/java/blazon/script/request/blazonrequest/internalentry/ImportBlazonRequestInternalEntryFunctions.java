@@ -21,14 +21,14 @@ public class ImportBlazonRequestInternalEntryFunctions {
 			return null;
 		}
 
-		InternalEntryInfo internalEntryInfo = getDirectoryInternalInfo(row);
+		InternalEntryInfo directoryInfo = getDirectoryInternalInfo(row);
 
-		if (internalEntryInfo.getType() == null) {
+		if (directoryInfo.getType() == null) {
 
 			return null;
 		}
 
-		Map<String, Object> internalEntryData = readInternalEntry(internalEntryInfo);
+		Map<String, Object> internalEntryData = readInternalEntry(directoryInfo);
 
 		if (internalEntryData.isEmpty()) {
 
@@ -37,16 +37,18 @@ public class ImportBlazonRequestInternalEntryFunctions {
 
 		PreparedStatement statement = null;
 
-		if (internalEntryInfo.getType().toString().equals("ACCOUNT")) {
+		if (directoryInfo.getType().toString().equals("ACCOUNT")) {
 
-			String sql = "insert into BlazonRequestDirectoryEntry (type, accountIdentifier, directoryIdentifier) values (?, ?, ?) ";
+			String sql = "insert into BlazonRequestDirectoryEntry (type, accountIdentifier, directoryIdentifier, resourceId, resourceName) values (?, ?, ?, ?, ?) ";
 
 			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "ACCOUNT");
 			statement.setString(2, (String) internalEntryData.get("accountIdentifier"));
 			statement.setLong(3, (Long) internalEntryData.get("accountId"));
+			statement.setLong(4, (Long) internalEntryData.get("resourceId"));
+			statement.setString(5, (String) internalEntryData.get("resourceName"));
 
-		} else if (internalEntryInfo.getType().toString().equals("MEMBERSHIP_ENTITLEMENT")) {
+		} else if (directoryInfo.getType().toString().equals("MEMBERSHIP_ENTITLEMENT")) {
 
 			String sql = "insert into BlazonRequestDirectoryEntry (type, accountId, accountIdentifier, entitlementId, entitlementName, resourceId, resourceName) "
 					+ " values (?, ?, ?, ?, ?, ?, ?) ";
@@ -60,7 +62,7 @@ public class ImportBlazonRequestInternalEntryFunctions {
 			statement.setLong(6, (Long) internalEntryData.get("resourceId"));
 			statement.setString(7, (String) internalEntryData.get("resourceName"));
 
-		} else if (internalEntryInfo.getType().toString().equals("RESOURCE")) {
+		} else if (directoryInfo.getType().toString().equals("RESOURCE")) {
 
 			String sql = "insert into BlazonRequestDirectoryEntry (type, name, directoryIdentifier) values (?, ?, ?) ";
 
@@ -69,7 +71,7 @@ public class ImportBlazonRequestInternalEntryFunctions {
 			statement.setString(2, (String) internalEntryData.get("resourceName"));
 			statement.setLong(3, (Long) internalEntryData.get("resourceId"));
 
-		} else if (internalEntryInfo.getType().toString().equals("ROLE")) {
+		} else if (directoryInfo.getType().toString().equals("ROLE")) {
 
 			String sql = "insert into BlazonRequestDirectoryEntry (type, name, directoryIdentifier) values (?, ?, ?) ";
 
@@ -78,7 +80,7 @@ public class ImportBlazonRequestInternalEntryFunctions {
 			statement.setString(2, (String) internalEntryData.get("roleName"));
 			statement.setLong(3, (Long) internalEntryData.get("roleId"));
 
-		} else if (internalEntryInfo.getType().toString().equals("USER")) {
+		} else if (directoryInfo.getType().toString().equals("USER")) {
 
 			String sql = "insert into BlazonRequestDirectoryEntry (type, username, displayName, directoryIdentifier) "
 					+ " values (?, ?, ?, ?) ";
@@ -119,31 +121,65 @@ public class ImportBlazonRequestInternalEntryFunctions {
 		InternalEntryInfo info = new InternalEntryInfo();
 
 		if (row.get("type").equals("ASSIGN_ROLE")) {
+			
+			if(row.get("roleId") == null) {
+				throw new RuntimeException("id not found!");
+			}
 			info.setId((Long) row.get("roleId"));
 			info.setType("ROLE");
+			
 		} else if (row.get("type").equals("CREATE_ACCOUNT")) {
+			
+			if(row.get("resourceId") == null) {
+				throw new RuntimeException("id not found!");
+			}
 			info.setId((Long) row.get("resourceId"));
 			info.setType("RESOURCE");
 		} else if (row.get("type").equals("ASSIGN_ENTITLEMENT")) {
-			info.setAccountId((Long) row.get("accountId"));
+			
+			if(row.get("entitlementId") == null || row.get("beneficiary_id") == null) {
+				throw new RuntimeException("ids not found!");
+			}
+			if(row.get("accountId") != null) {
+				info.setAccountId((Long) row.get("accountId"));
+			} else {
+				System.out.println("OK, account id null ... but");
+			}
 			info.setEntitlementId((Long) row.get("entitlementId"));
+			info.setUserId((Long) row.get("beneficiary_id"));
 			info.setType("MEMBERSHIP_ENTITLEMENT");
+			
 		} else if (row.get("type").equals("UPDATE_USER")) {
+			
+			if(row.get("beneficiary_id") == null) {
+				throw new RuntimeException("id not found!");
+			}
 			info.setId((Long) row.get("beneficiary_id"));
 			info.setType("USER");
+			
 		} else if (row.get("type").equals("ACTIVATE_ACCOUNT")) {
+			
 			JSONObject payload = new JSONObject(row.get("payload").toString());
 			String accountIdString = payload.getString("accountId");
 			info.setId(Long.valueOf(accountIdString));
 			info.setType("ACCOUNT");
+			
 		} else if (row.get("type").equals("INACTIVATE_ACCOUNT")) {
+			
 			JSONObject payload = new JSONObject(row.get("payload").toString());
 			info.setId(Long.valueOf(payload.getString("accountId")));
 			info.setType("ACCOUNT");
+			
 		} else if (row.get("type").equals("CHANGE_STATUS_USER")) {
+			
+			if(row.get("beneficiary_id") == null) {
+				throw new RuntimeException("id not found!");
+			}
 			info.setId((Long) row.get("beneficiary_id"));
 			info.setType("USER");
+			
 		} else if (row.get("type").equals("REMOVE_USER_FROM_ROLE")) {
+			
 			if(row.get("roleId") != null) {
 				info.setId((Long) row.get("roleId"));
 			} else {
@@ -151,17 +187,26 @@ public class ImportBlazonRequestInternalEntryFunctions {
 				info.setId(Long.valueOf(payload.getLong("roleId")));
 			}
 			info.setType("ROLE");
+			
 		} else if (row.get("type").equals("REMOVE_ACCOUNT")) {
+			
 			JSONObject payload = new JSONObject(row.get("payload").toString());
 			String accountIdString = payload.getString("accountId");
 			info.setId(Long.valueOf(accountIdString));
 			info.setType("ACCOUNT");
+			
 		} else if (row.get("type").equals("REMOVE_ENTITLEMENT_FROM_ACCOUNT")) {
+			
 			JSONObject payload = new JSONObject(row.get("payload").toString());
 			info.setAccountId(Long.valueOf(payload.getString("accountId")));
 			info.setEntitlementId(Long.valueOf(payload.getString("entitlementId")));
 			info.setType("MEMBERSHIP_ENTITLEMENT");
+			
 		} else if (row.get("type").equals("UPDATE_ACCOUNT")) {
+			
+			if(row.get("accountId") == null) {
+				throw new RuntimeException("id not found!");
+			}
 			info.setId((Long) row.get("accountId"));
 			info.setType("ACCOUNT");
 		}
@@ -180,39 +225,80 @@ public class ImportBlazonRequestInternalEntryFunctions {
 
 		String sql = null;
 		if (targetType.equals("ACCOUNT")) {
+			
 			sql = "select \n" + 
 					"	ac.id as accountId, \n" + 
-					"	ac.accountIdentifier as accountIdentifier \n" + 
-					"from Account ac \n" + 
-					"where id = ?";
-			statement = conn.prepareStatement(sql);
-			statement.setLong(1, targetId);
-		} else if (targetType.equals("MEMBERSHIP_ENTITLEMENT")) {
-			sql = "select \n" + 
-					"	me.id as membershipId, \n" + 
-					"	ac.id as accountId,\n" + 
 					"	ac.accountIdentifier as accountIdentifier, \n" + 
-					"	ent.id as entitlementId, \n" + 
-					"	ent.name as entitlementName, \n" + 
 					"	re.id as resourceId, \n" + 
 					"	re.name as resourceName \n" + 
-					"from MembershipEntitlement me \n" + 
-					"join Account ac on ac.id = me.account_id \n" + 
-					"join Entitlement  ent on ent.id  = me.entitlement_id \n" + 
-					"join Resource re on re.id = ent.resource_id \n" + 
-					"where ac.id = ? and ent.id = ?";
+					"from Account ac \n" + 
+					"join Resource re on re.id = ac.resource_id \n" + 
+					"where ac.id = ? ";
 			statement = conn.prepareStatement(sql);
-			if (internalEntryInfo.getAccountId() != null) {
-				statement.setLong(1, internalEntryInfo.getAccountId());
+			statement.setLong(1, targetId);
+			
+		} else if (targetType.equals("MEMBERSHIP_ENTITLEMENT")) {
+			
+			if(internalEntryInfo.getAccountId() != null && internalEntryInfo.getEntitlementId() != null) {
+				
+				sql = "select \n" + 
+						"	me.id as membershipId, \n" + 
+						"	ac.id as accountId,\n" + 
+						"	ac.accountIdentifier as accountIdentifier, \n" + 
+						"	ent.id as entitlementId, \n" + 
+						"	ent.name as entitlementName, \n" + 
+						"	re.id as resourceId, \n" + 
+						"	re.name as resourceName \n" + 
+						"from MembershipEntitlement me \n" + 
+						"join Account ac on ac.id = me.account_id \n" + 
+						"join Entitlement  ent on ent.id  = me.entitlement_id \n" + 
+						"join Resource re on re.id = ent.resource_id \n" + 
+						"where ac.id = ? and ent.id = ?";
+				statement = conn.prepareStatement(sql);
+				
+				if (internalEntryInfo.getAccountId() != null) {
+					statement.setLong(1, internalEntryInfo.getAccountId());
+				} else {
+					statement.setObject(1, null);
+				}
+				if (internalEntryInfo.getEntitlementId() != null) {
+					statement.setLong(2, internalEntryInfo.getEntitlementId());
+				} else {
+					statement.setObject(2, null);
+				}
+			
 			} else {
-				statement.setObject(1, null);
+				
+				sql = "select \n" + 
+						"	me.id as membershipId, \n" + 
+						"	ac.id as accountId, \n" + 
+						"	ac.accountIdentifier as accountIdentifier, \n" + 
+						"	ent.id as entitlementId, \n" + 
+						"	ent.name as entitlementName, \n" + 
+						"	re.id as resourceId, \n" + 
+						"	re.name as resourceName \n" + 
+						"from MembershipEntitlement me \n" + 
+						"join Entitlement ent on ent.id = me.entitlement_id \n" + 
+						"join Account ac on ac.id = me.account_id \n" + 
+						"join Resource re on re.id = ent.resource_id \n" + 
+						"join User u on u.id = ac.user_id \n" + 
+						"where ent.id = ? and u.id = ? ";
+				statement = conn.prepareStatement(sql);
+				
+				if (internalEntryInfo.getEntitlementId() != null) {
+					statement.setLong(1, internalEntryInfo.getEntitlementId());
+				} else {
+					statement.setObject(1, null);
+				}
+				if (internalEntryInfo.getUserId() != null) {
+					statement.setLong(2, internalEntryInfo.getUserId());
+				} else {
+					statement.setObject(2, null);
+				}
 			}
-			if (internalEntryInfo.getEntitlementId() != null) {
-				statement.setLong(2, internalEntryInfo.getEntitlementId());
-			} else {
-				statement.setObject(1, null);
-			}
+			
 		} else if (targetType.equals("ROLE")) {
+			
 			sql = "select \n" + 
 					"	r.id as roleId, \n" + 
 					"	r.name as roleName \n" + 
@@ -220,7 +306,9 @@ public class ImportBlazonRequestInternalEntryFunctions {
 					"where id = ? ";
 			statement = conn.prepareStatement(sql);
 			statement.setLong(1, targetId);
+			
 		} else if (targetType.equals("RESOURCE")) {
+			
 			sql = "select \n" + 
 					"	r.id as resourceId, \n" + 
 					"	r.name as resourceName \n" + 
@@ -228,7 +316,9 @@ public class ImportBlazonRequestInternalEntryFunctions {
 					"where id = ? ";
 			statement = conn.prepareStatement(sql);
 			statement.setLong(1, targetId);
+			
 		} else if (targetType.equals("USER")) {
+			
 			sql = "select \n" + 
 					"	u.id as userId, \n" + 
 					"	u.username as username,\n" + 
@@ -237,7 +327,9 @@ public class ImportBlazonRequestInternalEntryFunctions {
 					"where id = ? ";
 			statement = conn.prepareStatement(sql);
 			statement.setLong(1, targetId);
+			
 		} else {
+			
 			throw new RuntimeException("Unknow target type!");
 		}
 
@@ -269,6 +361,7 @@ class InternalEntryInfo {
 
 	private Long accountId;
 	private Long entitlementId;
+	private Long userId;
 
 	public Long getId() {
 		return id;
@@ -300,6 +393,14 @@ class InternalEntryInfo {
 
 	public void setEntitlementId(Long entitlementId) {
 		this.entitlementId = entitlementId;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 }

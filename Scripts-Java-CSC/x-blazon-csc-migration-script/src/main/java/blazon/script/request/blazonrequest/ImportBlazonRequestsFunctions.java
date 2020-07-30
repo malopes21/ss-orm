@@ -5,13 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import blazon.script.request.blazonrequest.internalentry.ImportBlazonRequestBeneficiaryFunctions;
@@ -67,19 +71,27 @@ class ImportBlazonRequestsFunctions {
 			try {
 
 				Long beneficiary_id = ImportBlazonRequestBeneficiaryFunctions.insertBeneficiary(targetConn, row);
+				
+				if(beneficiary_id == null) {
+					LOGGER.log(Level.WARN, "beneficiary_id null, not imported blazon request: " + row.get("id"));
+					continue;
+				}
 
 				Long requester_id = ImportBlazonRequestRequesterFunctions.insertRequester(targetConn, row);
+				
+				if(requester_id == null) {
+					LOGGER.log(Level.WARN, "requester_id null, not imported blazon request: " + row.get("id"));
+					continue;
+				}
 
 				Long requestInternalEntry_id = ImportBlazonRequestInternalEntryFunctions.insertInternalEntry(targetConn, row);
 				
 				if(requestInternalEntry_id == null) {
-					
 					LOGGER.log(Level.WARN, "InternalEntry null, not imported blazon request: " + row.get("id"));
+					continue;
+				} 
 					
-				} else {
-					
-					saveBlazonRequest(targetConn, row, beneficiary_id, requester_id, requestInternalEntry_id);
-				}
+				saveBlazonRequest(targetConn, row, beneficiary_id, requester_id, requestInternalEntry_id);
 
 			} catch (Exception e) {
 
@@ -101,10 +113,38 @@ class ImportBlazonRequestsFunctions {
 		PreparedStatement statement = null;
 
 		String sql = "INSERT INTO BlazonRequest \n"
-				+ "(id, approvalFinishedAt, approvalPolicy_id, approvalProcess, approvalStartedAt, approvalWorkflowId, createDate, createdBy, "
-				+ "createdByObjectId, dependenciesVerifiedAt, effectiveDate, finalizeDate, generatedBySystem, justification, lockDate, lockNumber, needApproval, "
-				+ "payload, payloadWithItemThatViolatesSodPolicy, provisioningEntryId, provisioningFinishedAt, provisioningStartedAt, sodEntryId, sodFinishedAt, sodProcess, "
-				+ "sodStartedAt, sodWorkflowId, status, type, beneficiary_id, requestInternalEntry_id, requester_id) \n"
+				+ "(id, "
+				+ " approvalFinishedAt, "
+				+ " approvalPolicy_id, "
+				+ " approvalProcess, "
+				+ " approvalStartedAt, "
+				+ " approvalWorkflowId, "
+				+ " createDate, "
+				+ " createdBy, "
+				+ " createdByObjectId, "
+				+ " dependenciesVerifiedAt, "
+				+ " effectiveDate, "
+				+ " finalizeDate, "
+				+ " generatedBySystem, "
+				+ " justification, "
+				+ " lockDate, "
+				+ " lockNumber, "
+				+ " needApproval, "
+				+ " payload, "
+				+ " payloadWithItemThatViolatesSodPolicy, "
+				+ " provisioningEntryId, "
+				+ " provisioningFinishedAt, "
+				+ " provisioningStartedAt, "
+				+ " sodEntryId, "
+				+ " sodFinishedAt, "
+				+ " sodProcess, "
+				+ " sodStartedAt, "
+				+ " sodWorkflowId, "
+				+ " status, "
+				+ " type, "
+				+ " beneficiary_id, "
+				+ " requestInternalEntry_id, "
+				+ " requester_id) \n"
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
 
 		statement = conn.prepareStatement(sql);
@@ -197,8 +237,18 @@ class ImportBlazonRequestsFunctions {
 		if (row.get("payload") != null) {
 			if(row.get("type").toString().equals("UPDATE_USER")) {
 				JSONObject payload = new JSONObject(row.get("payload").toString());
-				String userPayload = payload.getJSONObject("user").toString();
+				String userPayload = buildUpdateUserPayload(payload.getJSONObject("user"));
 				statement.setString(18, userPayload);
+			} else if(row.get("type").toString().equals("CREATE_ACCOUNT")) {
+				JSONObject payload = new JSONObject(row.get("payload").toString());
+				if(payload.has("expireAt") && payload.get("expireAt") != JSONObject.NULL) {
+					Long expireAtLong = payload.getLong("expireAt");
+					String expireAtString = serialize(new Date(expireAtLong));
+					payload.put("expireAt", expireAtString);
+					statement.setString(18, payload.toString());
+				} else {
+					statement.setString(18, row.get("payload").toString());
+				}
 			} else {
 				statement.setString(18, row.get("payload").toString());
 			}
@@ -300,5 +350,39 @@ class ImportBlazonRequestsFunctions {
 		
 		LOGGER.log(Level.INFO, String.format("Comando SQL enviado para importar Blazon request com id %s", row.get("id")));
 	}
+	
+	private static String buildUpdateUserPayload(JSONObject payload) {
+		
+		Map<String, Object> attributes = new HashMap<String, Object>();
+		Iterator<String> keys = payload.keys();
 
+		while(keys.hasNext()) {
+		    String key = keys.next();
+		    if (payload.get(key) instanceof JSONArray) {
+		    	JSONArray attr = payload.getJSONArray(key);
+		    	for(int i=0; i<attr.length(); i++) {
+		    		JSONObject obj = attr.getJSONObject(i);
+		    		if(obj.has("value")) {
+		    			attributes.put(obj.getString("name"), obj.get("value"));
+		    		}
+		    	}
+		    } else {
+		    	attributes.put(key, payload.get(key));
+		    }
+		}
+		
+		if(attributes.get("state") != null) {
+			attributes.put("status", attributes.get("state"));
+			attributes.remove("state");
+		}
+		
+		return new JSONObject().put("attributes", attributes).toString();
+	}
+
+	public static String serialize(Date date) {
+		
+		SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+	    return FORMATTER.format(date);
+	}
 }

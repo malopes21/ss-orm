@@ -21,6 +21,11 @@ public class ImportBlazonRequestBeneficiaryFunctions {
 		
 		Map<String, Object> beneficiaryData = readBeneficiary((Long) row.get("beneficiary_id"));
 		
+		if(beneficiaryData.isEmpty()) {
+			
+			return null;
+		}
+		
 		PreparedStatement statement = null;
 		
 		String sql = "insert into BlazonRequestDirectoryEntry (type, username, displayName, directoryIdentifier) values (?, ?, ?, ?) ";
