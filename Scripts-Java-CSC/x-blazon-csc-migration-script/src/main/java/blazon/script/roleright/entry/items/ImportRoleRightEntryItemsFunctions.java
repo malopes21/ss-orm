@@ -1,4 +1,4 @@
-package blazon.script.roleright.entry;
+package blazon.script.roleright.entry.items;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +15,7 @@ import blazon.script.util.ConnectionFactory;
 public class ImportRoleRightEntryItemsFunctions {
 
 	
-	static void insertItems(Connection conn, Map<String, Object> row) throws Exception {
+	public static void insertItems(Connection conn, Map<String, Object> row) throws Exception {
 		
 		List<Map<String, Object>> itemsData = readItems((Long) row.get("id"));
 		

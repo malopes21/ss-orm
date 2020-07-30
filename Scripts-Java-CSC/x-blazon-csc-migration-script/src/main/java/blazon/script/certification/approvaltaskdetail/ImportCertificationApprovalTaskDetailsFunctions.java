@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
@@ -18,7 +19,7 @@ class ImportCertificationApprovalTaskDetailsFunctions {
 
 	private final static Logger LOGGER = Logger.getLogger(ImportCertificationApprovalTaskDetailsFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceCertificationApprovalTaskDetails(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -29,10 +30,11 @@ class ImportCertificationApprovalTaskDetailsFunctions {
 		String sql = "select cat.* \n" + 
 				"from CertificationApprovalTaskDetail cat \n" + 
 				"join CertificationEntry ce on ce.id = cat.certificationEntry_id \n" + 
-				"where cat._imported_ <> 1 " +
-				"limit %s";
+				"where ce.id is not null " +
+				"order by cat.id " +
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -53,7 +55,7 @@ class ImportCertificationApprovalTaskDetailsFunctions {
 		return rows;
 	}
 
-	public static void saveTargetCertificationApprovalTaskDetails(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -64,11 +66,9 @@ class ImportCertificationApprovalTaskDetailsFunctions {
 				
 				saveCertificationApprovalTaskDetail(targetConn, row);
 
-				setImportedCertificationApprovalTaskDetail(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar certification approval task detail com id %s", row.get("id")));
+				LOGGER.log(Level.ERROR, String.format("Erro ao importar certification approval task detail com id %s", row.get("id")));
 				throw e;
 			}
 		}
@@ -131,21 +131,8 @@ class ImportCertificationApprovalTaskDetailsFunctions {
 		if (affectedRows == 0) {
 			throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
-	}
-
-	private static void setImportedCertificationApprovalTaskDetail(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update CertificationApprovalTaskDetail set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		
+		LOGGER.log(Level.INFO, String.format("Comando SQL emitido para importar certification approval task detail com id %s", row.get("id")));
 	}
 
 }

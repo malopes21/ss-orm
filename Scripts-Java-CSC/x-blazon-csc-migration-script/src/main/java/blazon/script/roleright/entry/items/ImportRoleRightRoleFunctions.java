@@ -1,4 +1,4 @@
-package blazon.script.roleright.entry;
+package blazon.script.roleright.entry.items;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +10,9 @@ import java.util.Map;
 
 import blazon.script.util.ConnectionFactory;
 
-class ImportRoleRightRoleFunctions {
+public class ImportRoleRightRoleFunctions {
 
-	static Long insertRole(Connection conn, Map<String, Object> row) throws Exception {
+	public static Long insertRole(Connection conn, Map<String, Object> row) throws Exception {
 		
 		if(row.get("roleId") == null) {
 			

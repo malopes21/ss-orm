@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -20,7 +21,7 @@ class ImportRoleRightApprovalTaskDetailsFunctions {
 
 	private final static Logger LOGGER = Logger.getLogger(ImportRoleRightApprovalTaskDetailsFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceRoleRightApprovalTaskDetails(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -31,10 +32,10 @@ class ImportRoleRightApprovalTaskDetailsFunctions {
 		String sql = "select rrat.* \n" + 
 				"from RoleRightApprovalTaskDetail rrat \n" + 
 				"join RoleRightEntry rre on rre.id = rrat.roleRightEntry_id \n" + 
-				"where rrat._imported_ <> 1 " +
-				"limit %s";
+				"where 1 = 1 " +
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -55,7 +56,7 @@ class ImportRoleRightApprovalTaskDetailsFunctions {
 		return rows;
 	}
 
-	public static void saveTargetRoleRightApprovalTaskDetails(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -66,11 +67,9 @@ class ImportRoleRightApprovalTaskDetailsFunctions {
 				
 				saveRoleRightApprovalTaskDetail(targetConn, row);
 
-				setImportedRoleRightApprovalTaskDetail(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar roleRight approval task detail com id %s", row.get("id")));
+				LOGGER.log(Level.ERROR, String.format("Erro ao importar roleRight approval task detail com id %s", row.get("id")));
 				throw e;
 			}
 		}
@@ -136,25 +135,13 @@ class ImportRoleRightApprovalTaskDetailsFunctions {
 				throw new RuntimeException("Insert instance failed, no rows affected.");
 			}
 			
+			LOGGER.log(Level.INFO, String.format("Comando SQL emitido para importar roleRight approval task detail com id %s", row.get("id")));
+			
 		}catch (MySQLIntegrityConstraintViolationException e) {
 
+			LOGGER.log(Level.WARN, String.format("Erro ao importar roleRight approval task detail com id %s. Provavel entrada de roleRight não importada.", row.get("id")));
 		}
 		
-	}
-
-	private static void setImportedRoleRightApprovalTaskDetail(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update RoleRightApprovalTaskDetail set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
 	}
 
 }

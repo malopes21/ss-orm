@@ -1,13 +1,12 @@
 package blazon.script.roleright.entry;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import blazon.script.util.ConnectionFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import blazon.script.util.ImportUtil;
 
 public class ImportRoleRightEntriesService {
 	
@@ -24,98 +23,46 @@ public class ImportRoleRightEntriesService {
 		System.out.println("TERMINOU! Tempo consumido: " + (System.currentTimeMillis() - inicio) + " ms");	
 	}
 	
-
+	
 	public static void execute() {
 		
-		LOGGER.log(Level.INFO, "Iniciando importação de RoleRightEntries ...");
+		String propertyFileName = "properties/roleright/importRightEntries.properties";
+		
+		LOGGER.log(Level.INFO, "Iniciando importação de RoleRight Entries ...");
 		
 		try {
 			
-			createImportValidationField();
+			Integer offset = Integer.parseInt(ImportUtil.getProperty(propertyFileName, "offset"));
 			
-			int limit = 100;
+			Integer limit = Integer.parseInt(ImportUtil.getProperty(propertyFileName, "limit"));
 			
-			List<Map<String, Object>> rows = ImportRoleRightEntriesFunctions.readSourceRoleRightEntries(limit);
+			List<Map<String, Object>> rows = ImportRoleRightEntriesFunctions.read(limit, offset);
 			
 			int total = rows.size();
 			
-			if(rows.size() > 0) {
-				
-				LOGGER.info(String.format("Lido %s registros, do id %s até id %s. Total lido %s", rows.size(), rows.get(0).get("id"), rows.get(rows.size()-1).get("id"), total));
-			}
-			
 			while(!rows.isEmpty()) {
 				
-				ImportRoleRightEntriesFunctions.saveTargetRoleRightEntries(rows);
+				ImportRoleRightEntriesFunctions.save(rows);
 				
-				rows = ImportRoleRightEntriesFunctions.readSourceRoleRightEntries(limit);
+				LOGGER.info(String.format("Importados %s registros. Total lido %s. Limit %s, offset %s.", rows.size(), total, limit, offset));
+				
+				offset = offset + limit;
+				
+				ImportUtil.setProperty(propertyFileName, "offset", offset.toString());
+				
+				rows = ImportRoleRightEntriesFunctions.read(limit, offset);
 				
 				total = total + rows.size();
-				
-				if(rows.size() > 0) {
-					
-					LOGGER.info(String.format("Lido %s registros, do id %s até id %s. Total lido %s", rows.size(), rows.get(0).get("id"), rows.get(rows.size()-1).get("id"), total));
-				}
 			}
-			
-			//deleteImportValidationField();
 			
 		}catch (Exception e) {
 			
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			LOGGER.log(Level.ERROR, e.getMessage());
 
 			e.printStackTrace();
 		}
 		
-		LOGGER.info("Finalizado importação de RoleRightEntries!");
+		LOGGER.info("Finalizado importação de RoleRight Entries!");
 	}
-	
 
-	private static void createImportValidationField() throws Exception {
-		
-		try {
-
-			Connection conn = ConnectionFactory.getSourceConnection();
-			PreparedStatement statement = null;
-			
-			String sql = "alter table RoleRightEntry add column _imported_ int default 0";
-	
-			conn = ConnectionFactory.getSourceConnection();
-	
-			conn.setAutoCommit(false);
-			
-			statement = conn.prepareStatement(sql);
-			
-			statement.executeUpdate();
-			
-			conn.commit();
-			
-			LOGGER.info("Campo de validação criado ...");
-			
-		} catch (Exception e) {
-			
-			LOGGER.info("Campo de validação provavelmente já criado!");
-		}
-	}
-	
-	
-	private static void deleteImportValidationField() throws Exception {
-
-		Connection conn = ConnectionFactory.getSourceConnection();
-		PreparedStatement statement = null;
-		
-		String sql = "alter table RoleRightEntry drop column _imported_";
-
-		conn = ConnectionFactory.getSourceConnection();
-
-		conn.setAutoCommit(false);
-		
-		statement = conn.prepareStatement(sql);
-		
-		statement.executeUpdate();
-		
-		conn.commit();
-		
-		LOGGER.info("Campo de validação removido ...");
-	}
 }

@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -20,7 +21,7 @@ class ImportCertificationTransitionStatesFunctions {
 
 	private final static Logger LOGGER = Logger.getLogger(ImportCertificationTransitionStatesFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceCertificationTransitionStates(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -30,10 +31,11 @@ class ImportCertificationTransitionStatesFunctions {
 
 		String sql = "select pets.* from CertificationEntryTransitionState pets \n" + 
 				"join CertificationEntry pe on pets.certificationEntry_id = pe.id \n" + 
-				"where pets._imported_ <> 1 \n" + 
-				"limit %s ";
+				"where pe.id is not null \n" + 
+				"order by pets.id " + 
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -54,7 +56,7 @@ class ImportCertificationTransitionStatesFunctions {
 		return rows;
 	}
 
-	public static void saveTargetCertificationTransitionStates(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -65,11 +67,9 @@ class ImportCertificationTransitionStatesFunctions {
 				
 				saveCertificationTransitionState(targetConn, row);
 
-				setImportedCertificationTransitionState(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar certification entry transition state com id %s", row.get("id")));
+				LOGGER.log(Level.ERROR, String.format("Erro ao importar certification entry transition state com id %s", row.get("id")));
 				throw e;
 			}
 		}
@@ -91,14 +91,46 @@ class ImportCertificationTransitionStatesFunctions {
 
 		statement = conn.prepareStatement(sql);
 
-		if(row.get("id") != null) { statement.setLong(1, (Long)row.get("id")); } else { statement.setObject(1, null); }
-		if(row.get("bySystem") != null) { statement.setBoolean(2, (Boolean)row.get("bySystem")); } else { statement.setObject(2, null); }
-		if(row.get("date") != null) { statement.setTimestamp(3, (java.sql.Timestamp)row.get("date")); } else { statement.setObject(3, null); }
-		if(row.get("description") != null) { statement.setString(4, (String)row.get("description")); } else { statement.setObject(4, null); }
-		if(row.get("detail") != null) { statement.setString(5, (String)row.get("detail")); } else { statement.setObject(5, null); }
-		if(row.get("sourceState") != null) { statement.setString(6, (String)row.get("sourceState")); } else { statement.setObject(6, null); }
-		if(row.get("targetState") != null) { statement.setString(7, (String)row.get("targetState")); } else { statement.setObject(7, null); }
-		if(row.get("certificationEntry_id") != null) { statement.setLong(8, (Long)row.get("certificationEntry_id")); } else { statement.setObject(8, null); }
+		if (row.get("id") != null) {
+			statement.setLong(1, (Long) row.get("id"));
+		} else {
+			statement.setObject(1, null);
+		}
+		if (row.get("bySystem") != null) {
+			statement.setBoolean(2, (Boolean) row.get("bySystem"));
+		} else {
+			statement.setObject(2, null);
+		}
+		if (row.get("date") != null) {
+			statement.setTimestamp(3, (java.sql.Timestamp) row.get("date"));
+		} else {
+			statement.setObject(3, null);
+		}
+		if (row.get("description") != null) {
+			statement.setString(4, (String) row.get("description"));
+		} else {
+			statement.setObject(4, null);
+		}
+		if (row.get("detail") != null) {
+			statement.setString(5, (String) row.get("detail"));
+		} else {
+			statement.setObject(5, null);
+		}
+		if (row.get("sourceState") != null) {
+			statement.setString(6, (String) row.get("sourceState"));
+		} else {
+			statement.setObject(6, null);
+		}
+		if (row.get("targetState") != null) {
+			statement.setString(7, (String) row.get("targetState"));
+		} else {
+			statement.setObject(7, null);
+		}
+		if (row.get("certificationEntry_id") != null) {
+			statement.setLong(8, (Long) row.get("certificationEntry_id"));
+		} else {
+			statement.setObject(8, null);
+		}
 
 		try {
 			
@@ -109,24 +141,11 @@ class ImportCertificationTransitionStatesFunctions {
 			}
 			
 		}catch (MySQLIntegrityConstraintViolationException e) {
-			// TODO: handle exception
+
+			LOGGER.log(Level.ERROR, String.format("Erro ao importar certification entry transition state com id %s. Provavel entrada de certificacão não importada", row.get("id")));
 		}
 		
-	}
-
-	private static void setImportedCertificationTransitionState(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update CertificationEntryTransitionState set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		LOGGER.log(Level.INFO, String.format("Comando SQl emitido para importar certification entry transition state com id %s", row.get("id")));
 	}
 
 }

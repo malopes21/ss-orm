@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import blazon.script.util.ConnectionFactory;
 
@@ -18,7 +19,7 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 
 	private final static Logger LOGGER = Logger.getLogger(ImportBlazonRequestApprovalTaskDetailsFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceApprovalTaskDetails(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -29,10 +30,10 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 		String sql = "select atd.* from ApprovalTaskDetail atd \n" + 
 				"join BlazonRequest req on req.id = atd.request_id \n" + 
 				"where req.`type` <> 'MULTIPLE_REQUESTS' \n" +
-				"and atd._imported_ <> 1 \n" +
-				"limit %s ";
+				"and req.id is not null " +
+				"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -53,7 +54,7 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 		return rows;
 	}
 
-	public static void saveTargetApprovalTaskDetails(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -64,11 +65,9 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 				
 				saveApprovalTaskDetail(targetConn, row);
 
-				setImportedApprovalTaskDetail(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar approval task detail com id %s", row.get("id")));
+				LOGGER.log(Level.ERROR, String.format("Erro ao importar approval task detail com id %s", row.get("id")));
 				throw e;
 			}
 		}
@@ -131,21 +130,8 @@ class ImportBlazonRequestApprovalTaskDetailsFunctions {
 		if (affectedRows == 0) {
 			throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
-	}
-
-	private static void setImportedApprovalTaskDetail(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update ApprovalTaskDetail set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		
+		LOGGER.log(Level.INFO, String.format("Comando SQL emitido para importar approval task detail com id %s", row.get("id")));
 	}
 
 }

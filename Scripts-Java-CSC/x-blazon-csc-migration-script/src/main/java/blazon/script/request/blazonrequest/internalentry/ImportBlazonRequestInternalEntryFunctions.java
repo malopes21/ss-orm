@@ -1,4 +1,4 @@
-package blazon.script.request.blazonrequest;
+package blazon.script.request.blazonrequest.internalentry;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,10 +12,9 @@ import org.json.JSONObject;
 
 import blazon.script.util.ConnectionFactory;
 
-class ImportBlazonRequestInternalEntryFunctions {
+public class ImportBlazonRequestInternalEntryFunctions {
 
-
-	static Long insertInternalEntry(Connection conn, Map<String, Object> row) throws Exception {
+	public static Long insertInternalEntry(Connection conn, Map<String, Object> row) throws Exception {
 
 		if (row.get("type") == null) {
 
@@ -23,9 +22,9 @@ class ImportBlazonRequestInternalEntryFunctions {
 		}
 
 		InternalEntryInfo internalEntryInfo = getDirectoryInternalInfo(row);
-		
-		if(internalEntryInfo.getType() == null) {
-			
+
+		if (internalEntryInfo.getType() == null) {
+
 			return null;
 		}
 
@@ -45,39 +44,40 @@ class ImportBlazonRequestInternalEntryFunctions {
 			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "ACCOUNT");
 			statement.setString(2, (String) internalEntryData.get("accountIdentifier"));
-			statement.setLong(3, (Long) internalEntryData.get("id"));
+			statement.setLong(3, (Long) internalEntryData.get("accountId"));
 
 		} else if (internalEntryInfo.getType().toString().equals("MEMBERSHIP_ENTITLEMENT")) {
 
-			String sql = "insert into BlazonRequestDirectoryEntry (type, accountId, accountIdentifier, entitlementId, entitlementName) "
-					+ " values (?, ?, ?, ?, ?) ";
+			String sql = "insert into BlazonRequestDirectoryEntry (type, accountId, accountIdentifier, entitlementId, entitlementName, resourceId, resourceName) "
+					+ " values (?, ?, ?, ?, ?, ?, ?) ";
 
 			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "MEMBERSHIP_ENTITLEMENT");
-			statement.setLong(2, (Long) internalEntryData.get("account_id"));
+			statement.setLong(2, (Long) internalEntryData.get("accountId"));
 			statement.setString(3, (String) internalEntryData.get("accountIdentifier"));
-			statement.setLong(4, (Long) internalEntryData.get("entitlement_id"));
-			statement.setString(5, (String) internalEntryData.get("name"));
-			//statement.setLong(6, (Long) row.get("targetId"));
-			
-		} else if(internalEntryInfo.getType().toString().equals("RESOURCE")) {
-			
+			statement.setLong(4, (Long) internalEntryData.get("entitlementId"));
+			statement.setString(5, (String) internalEntryData.get("entitlementName"));
+			statement.setLong(6, (Long) internalEntryData.get("resourceId"));
+			statement.setString(7, (String) internalEntryData.get("resourceName"));
+
+		} else if (internalEntryInfo.getType().toString().equals("RESOURCE")) {
+
 			String sql = "insert into BlazonRequestDirectoryEntry (type, name, directoryIdentifier) values (?, ?, ?) ";
 
 			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "RESOURCE");
-			statement.setString(2, (String) internalEntryData.get("name"));
-			statement.setLong(3, (Long) internalEntryData.get("id"));
-			
-		} else if(internalEntryInfo.getType().toString().equals("ROLE")) {
-			
+			statement.setString(2, (String) internalEntryData.get("resourceName"));
+			statement.setLong(3, (Long) internalEntryData.get("resourceId"));
+
+		} else if (internalEntryInfo.getType().toString().equals("ROLE")) {
+
 			String sql = "insert into BlazonRequestDirectoryEntry (type, name, directoryIdentifier) values (?, ?, ?) ";
 
 			statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, (String) "ROLE");
-			statement.setString(2, (String) internalEntryData.get("name"));
-			statement.setLong(3, (Long) internalEntryData.get("id"));
-			
+			statement.setString(2, (String) internalEntryData.get("roleName"));
+			statement.setLong(3, (Long) internalEntryData.get("roleId"));
+
 		} else if (internalEntryInfo.getType().toString().equals("USER")) {
 
 			String sql = "insert into BlazonRequestDirectoryEntry (type, username, displayName, directoryIdentifier) "
@@ -87,10 +87,10 @@ class ImportBlazonRequestInternalEntryFunctions {
 			statement.setString(1, (String) "USER");
 			statement.setString(2, (String) internalEntryData.get("username"));
 			statement.setString(3, (String) internalEntryData.get("displayName"));
-			statement.setLong(4, (Long) internalEntryData.get("id"));
-			
+			statement.setLong(4, (Long) internalEntryData.get("userId"));
+
 		} else {
-			
+
 			throw new RuntimeException("Unknow target type!");
 		}
 
@@ -144,7 +144,12 @@ class ImportBlazonRequestInternalEntryFunctions {
 			info.setId((Long) row.get("beneficiary_id"));
 			info.setType("USER");
 		} else if (row.get("type").equals("REMOVE_USER_FROM_ROLE")) {
-			info.setId((Long) row.get("roleId"));
+			if(row.get("roleId") != null) {
+				info.setId((Long) row.get("roleId"));
+			} else {
+				JSONObject payload = new JSONObject(row.get("payload").toString());
+				info.setId(Long.valueOf(payload.getLong("roleId")));
+			}
 			info.setType("ROLE");
 		} else if (row.get("type").equals("REMOVE_ACCOUNT")) {
 			JSONObject payload = new JSONObject(row.get("payload").toString());
@@ -165,38 +170,71 @@ class ImportBlazonRequestInternalEntryFunctions {
 	}
 
 	static Map<String, Object> readInternalEntry(InternalEntryInfo internalEntryInfo) throws Exception {
-		
+
 		Long targetId = internalEntryInfo.getId();
 		String targetType = internalEntryInfo.getType();
-		
+
 		Connection conn = ConnectionFactory.getSourceConnection();
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 
 		String sql = null;
 		if (targetType.equals("ACCOUNT")) {
-			sql = "select * from Account where id = ?";
+			sql = "select \n" + 
+					"	ac.id as accountId, \n" + 
+					"	ac.accountIdentifier as accountIdentifier \n" + 
+					"from Account ac \n" + 
+					"where id = ?";
 			statement = conn.prepareStatement(sql);
 			statement.setLong(1, targetId);
 		} else if (targetType.equals("MEMBERSHIP_ENTITLEMENT")) {
-			sql = "select * \n" + 
+			sql = "select \n" + 
+					"	me.id as membershipId, \n" + 
+					"	ac.id as accountId,\n" + 
+					"	ac.accountIdentifier as accountIdentifier, \n" + 
+					"	ent.id as entitlementId, \n" + 
+					"	ent.name as entitlementName, \n" + 
+					"	re.id as resourceId, \n" + 
+					"	re.name as resourceName \n" + 
 					"from MembershipEntitlement me \n" + 
 					"join Account ac on ac.id = me.account_id \n" + 
 					"join Entitlement  ent on ent.id  = me.entitlement_id \n" + 
+					"join Resource re on re.id = ent.resource_id \n" + 
 					"where ac.id = ? and ent.id = ?";
 			statement = conn.prepareStatement(sql);
-			if (internalEntryInfo.getAccountId() != null) {statement.setLong(1, internalEntryInfo.getAccountId());} else {statement.setObject(1, null);}
-			if (internalEntryInfo.getEntitlementId() != null) { statement.setLong(2, internalEntryInfo.getEntitlementId());} else {statement.setObject(1, null);}
+			if (internalEntryInfo.getAccountId() != null) {
+				statement.setLong(1, internalEntryInfo.getAccountId());
+			} else {
+				statement.setObject(1, null);
+			}
+			if (internalEntryInfo.getEntitlementId() != null) {
+				statement.setLong(2, internalEntryInfo.getEntitlementId());
+			} else {
+				statement.setObject(1, null);
+			}
 		} else if (targetType.equals("ROLE")) {
-			sql = "select * from Role where id = ?";
+			sql = "select \n" + 
+					"	r.id as roleId, \n" + 
+					"	r.name as roleName \n" + 
+					"from Role r \n" + 
+					"where id = ? ";
 			statement = conn.prepareStatement(sql);
 			statement.setLong(1, targetId);
-		} else if(targetType.equals("RESOURCE")) {
-			sql = "select * from Resource where id = ?";
+		} else if (targetType.equals("RESOURCE")) {
+			sql = "select \n" + 
+					"	r.id as resourceId, \n" + 
+					"	r.name as resourceName \n" + 
+					"from Resource r \n" + 
+					"where id = ? ";
 			statement = conn.prepareStatement(sql);
 			statement.setLong(1, targetId);
-		} else if(targetType.equals("USER")) {
-			sql = "select * from User where id = ?";
+		} else if (targetType.equals("USER")) {
+			sql = "select \n" + 
+					"	u.id as userId, \n" + 
+					"	u.username as username,\n" + 
+					"	u.displayName as displayName \n" + 
+					"from User u \n" + 
+					"where id = ? ";
 			statement = conn.prepareStatement(sql);
 			statement.setLong(1, targetId);
 		} else {
@@ -212,7 +250,7 @@ class ImportBlazonRequestInternalEntryFunctions {
 			ResultSetMetaData metaData = rs.getMetaData();
 
 			for (int i = 1; i <= metaData.getColumnCount(); i++) {
-				row.put(metaData.getColumnName(i), rs.getObject(i));
+				row.put(metaData.getColumnLabel(i), rs.getObject(i));
 			}
 		}
 
@@ -231,6 +269,7 @@ class InternalEntryInfo {
 
 	private Long accountId;
 	private Long entitlementId;
+	private Long resourceId;
 
 	public Long getId() {
 		return id;
@@ -262,6 +301,14 @@ class InternalEntryInfo {
 
 	public void setEntitlementId(Long entitlementId) {
 		this.entitlementId = entitlementId;
+	}
+
+	public Long getResourceId() {
+		return resourceId;
+	}
+
+	public void setResourceId(Long resourceId) {
+		this.resourceId = resourceId;
 	}
 
 }

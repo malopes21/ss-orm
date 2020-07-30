@@ -9,18 +9,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import blazon.script.request.blazonrequest.internalentry.ImportBlazonRequestBeneficiaryFunctions;
+import blazon.script.request.blazonrequest.internalentry.ImportBlazonRequestInternalEntryFunctions;
+import blazon.script.request.blazonrequest.internalentry.ImportBlazonRequestRequesterFunctions;
 import blazon.script.util.ConnectionFactory;
 
 class ImportBlazonRequestsFunctions {
 
 	private final static Logger LOGGER = Logger.getLogger(ImportBlazonRequestsFunctions.class.getName());
 
-	static List<Map<String, Object>> readSourceBlazonRequests(int limit) throws Exception {
+	static List<Map<String, Object>> read(int limit, int offset) throws Exception {
 
 		Connection conn = ConnectionFactory.getSourceConnection();
 		List<Map<String, Object>> rows = new ArrayList<>();
@@ -28,10 +31,12 @@ class ImportBlazonRequestsFunctions {
 		PreparedStatement statement = null;
 		ResultSet rs = null;
 
-		String sql = "select * from BlazonRequest \n" + "where _imported_ <> 1 \n"
-				+ "and type <> 'MULTIPLE_REQUESTS' \n" + "order by id \n" + "limit %s ";
+		String sql = "select * from BlazonRequest \n" + 
+					"where type <> 'MULTIPLE_REQUESTS' \n" + 
+					"order by id \n" + 
+					"limit %s offset %s ";
 
-		sql = String.format(sql, limit);
+		sql = String.format(sql, limit, offset);
 		statement = conn.prepareStatement(sql);
 		rs = statement.executeQuery();
 
@@ -52,7 +57,7 @@ class ImportBlazonRequestsFunctions {
 		return rows;
 	}
 
-	public static void saveTargetBlazonRequests(List<Map<String, Object>> rows) throws Exception {
+	public static void save(List<Map<String, Object>> rows) throws Exception {
 
 		Connection targetConn = ConnectionFactory.getTargetConnection();
 		Connection sourceConn = ConnectionFactory.getSourceConnection();
@@ -69,18 +74,16 @@ class ImportBlazonRequestsFunctions {
 				
 				if(requestInternalEntry_id == null) {
 					
-					System.out.println("InternalEntry null, not imported blazon request: " + row.get("id"));
+					LOGGER.log(Level.WARN, "InternalEntry null, not imported blazon request: " + row.get("id"));
 					
 				} else {
 					
 					saveBlazonRequest(targetConn, row, beneficiary_id, requester_id, requestInternalEntry_id);
 				}
 
-				setImportedBlazonRequest(sourceConn, row);
-
 			} catch (Exception e) {
 
-				LOGGER.log(Level.SEVERE, String.format("Erro ao importar blazon request com id %s", row.get("id")));
+				LOGGER.log(Level.ERROR, String.format("Erro ao importar blazon request com id %s", row.get("id")));
 				throw e;
 			}
 		}
@@ -192,7 +195,13 @@ class ImportBlazonRequestsFunctions {
 			statement.setObject(17, null);
 		}
 		if (row.get("payload") != null) {
-			statement.setString(18, (String) row.get("payload"));
+			if(row.get("type").toString().equals("UPDATE_USER")) {
+				JSONObject payload = new JSONObject(row.get("payload").toString());
+				String userPayload = payload.getJSONObject("user").toString();
+				statement.setString(18, userPayload);
+			} else {
+				statement.setString(18, row.get("payload").toString());
+			}
 		} else {
 			statement.setObject(18, null);
 		}
@@ -288,21 +297,8 @@ class ImportBlazonRequestsFunctions {
 		if (affectedRows == 0) {
 			throw new RuntimeException("Insert instance failed, no rows affected.");
 		}
-	}
-
-	private static void setImportedBlazonRequest(Connection conn, Map<String, Object> row) throws Exception {
-
-		PreparedStatement statement = null;
-
-		String sql = "update BlazonRequest set _imported_ = 1 where id = ?";
-		statement = conn.prepareStatement(sql);
-		statement.setLong(1, (Long) row.get("id"));
-
-		int affectedRows = statement.executeUpdate();
-
-		if (affectedRows == 0) {
-			throw new RuntimeException("Update instance failed, no rows affected.");
-		}
+		
+		LOGGER.log(Level.INFO, String.format("Comando SQL enviado para importar Blazon request com id %s", row.get("id")));
 	}
 
 }

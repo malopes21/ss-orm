@@ -7,8 +7,9 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import blazon.script.certification.CampaignKey;
 import blazon.script.util.ConnectionFactory;
@@ -115,7 +116,7 @@ public class ImportCertificationCampaigns {
 			
 		}catch (Exception e) {
 			
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			LOGGER.log(Level.ERROR, e.getMessage());
 
 			e.printStackTrace();
 		}

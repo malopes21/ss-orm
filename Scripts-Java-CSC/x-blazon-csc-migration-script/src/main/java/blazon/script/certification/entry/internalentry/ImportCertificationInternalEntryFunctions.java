@@ -1,4 +1,4 @@
-package blazon.script.certification.entry;
+package blazon.script.certification.entry.internalentry;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +10,9 @@ import java.util.Map;
 
 import blazon.script.util.ConnectionFactory;
 
-class ImportCertificationInternalEntryFunctions {
+public class ImportCertificationInternalEntryFunctions {
 
-	static Long insertInternalEntry(Connection conn, Map<String, Object> row) throws Exception {
+	public static Long insertInternalEntry(Connection conn, Map<String, Object> row) throws Exception {
 		
 		if(row.get("entryId") == null) {
 			

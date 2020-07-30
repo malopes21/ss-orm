@@ -1,4 +1,4 @@
-package blazon.script.request.blazonrequest;
+package blazon.script.request.blazonrequest.internalentry;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +10,9 @@ import java.util.Map;
 
 import blazon.script.util.ConnectionFactory;
 
-class ImportBlazonRequestBeneficiaryFunctions {
+public class ImportBlazonRequestBeneficiaryFunctions {
 
-	static Long insertBeneficiary(Connection conn, Map<String, Object> row) throws Exception {
+	public static Long insertBeneficiary(Connection conn, Map<String, Object> row) throws Exception {
 		
 		if(row.get("beneficiary_id") == null) {
 			
